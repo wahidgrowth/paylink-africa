@@ -158,7 +158,8 @@ export default function PaymentPage() {
             <div style={{ borderTop: '0.5px solid #1F1F1F', paddingTop: '32px', marginBottom: '32px' }}>
               <div
                 dangerouslySetInnerHTML={{ __html: product.content }}
-                style={{ color: '#9CA3AF', lineHeight: '1.8', fontSize: '15px' }}
+                className="rich-content"
+                style={{ fontSize: '15px' }}
               />
             </div>
           )}
@@ -272,21 +273,6 @@ export default function PaymentPage() {
         </div>
 
       </div>
-
-      {/* STYLES pour le contenu riche */}
-      <style>{`
-        .ProseMirror h1, [dangerouslySetInnerHTML] h1 { font-size: 24px; font-weight: 700; color: #fff; margin: 24px 0 12px; }
-        .ProseMirror h2, [dangerouslySetInnerHTML] h2 { font-size: 20px; font-weight: 700; color: #fff; margin: 20px 0 10px; }
-        .ProseMirror h3, [dangerouslySetInnerHTML] h3 { font-size: 17px; font-weight: 600; color: #fff; margin: 16px 0 8px; }
-        .ProseMirror ul, [dangerouslySetInnerHTML] ul { padding-left: 20px; margin: 12px 0; }
-        .ProseMirror ol, [dangerouslySetInnerHTML] ol { padding-left: 20px; margin: 12px 0; }
-        .ProseMirror li, [dangerouslySetInnerHTML] li { margin-bottom: 6px; color: #9CA3AF; }
-        .ProseMirror strong, [dangerouslySetInnerHTML] strong { color: #fff; font-weight: 700; }
-        .ProseMirror blockquote, [dangerouslySetInnerHTML] blockquote { border-left: 3px solid #10B981; padding-left: 16px; margin: 16px 0; color: #6B7280; font-style: italic; }
-        .ProseMirror hr, [dangerouslySetInnerHTML] hr { border: none; border-top: 0.5px solid #1F1F1F; margin: 24px 0; }
-        .ProseMirror p, [dangerouslySetInnerHTML] p { margin: 0 0 12px; }
-      `}</style>
-
     </div>
   )
 }
