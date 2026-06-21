@@ -5,8 +5,10 @@ import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 const nav = [
   { href: '/dashboard', label: 'Accueil' },
-  { href: '/dashboard/links', label: 'Mes liens' },
+  { href: '/dashboard/products', label: 'Mes produits' },
+  { href: '/dashboard/cart', label: 'Panier' },
   { href: '/dashboard/transactions', label: 'Transactions' },
+  { href: '/dashboard/withdrawals', label: 'Retraits' },
   { href: '/dashboard/account', label: 'Mon compte' },
 ]
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
