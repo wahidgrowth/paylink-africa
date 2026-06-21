@@ -8,9 +8,12 @@ type Product = {
   id: string
   title: string
   description: string
+  content: string
   price: number
+  original_price?: number
   slug: string
   image_url?: string
+  file_url?: string
   user_id: string
 }
 
@@ -61,6 +64,7 @@ export default function PaymentPage() {
 
   const fee = product ? Math.round(product.price * 0.01) : 0
   const total = product ? product.price + fee : 0
+  const discount = product?.original_price ? Math.round((1 - product.price / product.original_price) * 100) : 0
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -86,6 +90,13 @@ export default function PaymentPage() {
         <p style={{ color: '#6B7280', fontSize: '15px', margin: '0 0 24px', lineHeight: '1.6' }}>
           Merci {buyerName}. Ton paiement de <strong style={{ color: '#10B981' }}>{total.toLocaleString('fr-FR')} FCFA</strong> a bien été reçu.
         </p>
+        {product.file_url && (
+          <a href={product.file_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+            <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px 24px', borderRadius: '10px', cursor: 'pointer', marginBottom: '16px' }}>
+              📄 Télécharger mon fichier →
+            </button>
+          </a>
+        )}
         <p style={{ color: '#444', fontSize: '12px', margin: 0 }}>Tu recevras une confirmation via {operator?.name || 'Mobile Money'}.</p>
       </div>
     </div>
@@ -105,38 +116,55 @@ export default function PaymentPage() {
       {/* LAYOUT 2 COLONNES */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 420px', gap: '0', maxWidth: '1100px', margin: '0 auto', padding: '40px 24px', alignItems: 'start' }}>
 
-        {/* COLONNE GAUCHE — Description */}
+        {/* COLONNE GAUCHE */}
         <div style={{ paddingRight: '48px' }}>
 
           {/* Image */}
           {product.image_url ? (
-            <img
-              src={product.image_url}
-              alt={product.title}
-              style={{ width: '100%', maxHeight: '360px', objectFit: 'cover', borderRadius: '16px', marginBottom: '32px', border: '0.5px solid #1F1F1F' }}
-            />
+            <img src={product.image_url} alt={product.title} style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '16px', marginBottom: '32px', border: '0.5px solid #1F1F1F' }} />
           ) : (
             <div style={{ width: '100%', height: '240px', background: '#111111', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px', border: '0.5px solid #1F1F1F' }}>
               <span style={{ fontSize: '48px' }}>🛍️</span>
             </div>
           )}
 
-          {/* Titre + Prix */}
-          <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 12px', lineHeight: '1.3' }}>{product.title}</h1>
-          <p style={{ fontSize: '32px', fontWeight: '700', color: '#10B981', margin: '0 0 24px' }}>
-            {product.price.toLocaleString('fr-FR')} <span style={{ fontSize: '16px', color: '#6B7280', fontWeight: '400' }}>FCFA</span>
-          </p>
+          {/* Titre */}
+          <h1 style={{ fontSize: '32px', fontWeight: '800', color: '#fff', margin: '0 0 12px', lineHeight: '1.2' }}>{product.title}</h1>
 
-          {/* Description */}
+          {/* Description courte */}
           {product.description && (
-            <div style={{ borderTop: '0.5px solid #1F1F1F', paddingTop: '24px' }}>
-              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>Description</p>
-              <p style={{ fontSize: '15px', color: '#9CA3AF', lineHeight: '1.8', margin: 0, whiteSpace: 'pre-wrap' }}>{product.description}</p>
+            <p style={{ fontSize: '17px', color: '#9CA3AF', margin: '0 0 20px', lineHeight: '1.6' }}>{product.description}</p>
+          )}
+
+          {/* Prix */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
+            <span style={{ fontSize: '36px', fontWeight: '800', color: '#10B981' }}>
+              {product.price.toLocaleString('fr-FR')} <span style={{ fontSize: '18px', color: '#6B7280', fontWeight: '400' }}>FCFA</span>
+            </span>
+            {product.original_price && product.original_price > product.price && (
+              <>
+                <span style={{ fontSize: '20px', color: '#6B7280', textDecoration: 'line-through' }}>
+                  {product.original_price.toLocaleString('fr-FR')} FCFA
+                </span>
+                <span style={{ background: '#EF444420', color: '#EF4444', fontSize: '12px', fontWeight: '700', padding: '4px 10px', borderRadius: '20px' }}>
+                  -{discount}%
+                </span>
+              </>
+            )}
+          </div>
+
+          {/* Contenu riche */}
+          {product.content && (
+            <div style={{ borderTop: '0.5px solid #1F1F1F', paddingTop: '32px', marginBottom: '32px' }}>
+              <div
+                dangerouslySetInnerHTML={{ __html: product.content }}
+                style={{ color: '#9CA3AF', lineHeight: '1.8', fontSize: '15px' }}
+              />
             </div>
           )}
 
-          {/* Opérateurs acceptés */}
-          <div style={{ marginTop: '32px', borderTop: '0.5px solid #1F1F1F', paddingTop: '24px' }}>
+          {/* Opérateurs */}
+          <div style={{ borderTop: '0.5px solid #1F1F1F', paddingTop: '24px' }}>
             <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>Paiement accepté via</p>
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               {OPERATORS.map(op => (
@@ -154,12 +182,22 @@ export default function PaymentPage() {
         <div style={{ position: 'sticky', top: '24px' }}>
           <div style={{ background: '#111111', borderRadius: '16px', border: '0.5px solid #1F1F1F', overflow: 'hidden' }}>
 
-            {/* Header carte */}
+            {/* Header */}
             <div style={{ padding: '20px 24px', borderBottom: '0.5px solid #1F1F1F', background: '#0D0D0D' }}>
+              {product.original_price && product.original_price > product.price && (
+                <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#6B7280', textDecoration: 'line-through' }}>
+                  {product.original_price.toLocaleString('fr-FR')} FCFA
+                </p>
+              )}
               <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#6B7280' }}>Total à payer</p>
               <p style={{ margin: 0, fontSize: '28px', fontWeight: '800', color: '#10B981' }}>
                 {total.toLocaleString('fr-FR')} <span style={{ fontSize: '14px', color: '#6B7280', fontWeight: '400' }}>FCFA</span>
               </p>
+              {product.original_price && product.original_price > product.price && (
+                <div style={{ display: 'inline-block', background: '#EF444420', color: '#EF4444', fontSize: '11px', fontWeight: '700', padding: '3px 10px', borderRadius: '20px', marginTop: '8px' }}>
+                  Tu économises {(product.original_price - product.price).toLocaleString('fr-FR')} FCFA 🎉
+                </div>
+              )}
             </div>
 
             <div style={{ padding: '24px' }}>
@@ -198,7 +236,7 @@ export default function PaymentPage() {
                 )}
               </div>
 
-              {/* Récap frais */}
+              {/* Récap */}
               <div style={{ background: '#0D0D0D', borderRadius: '8px', padding: '14px', marginBottom: '16px', border: '0.5px solid #1F1F1F' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontSize: '13px', color: '#6B7280' }}>Prix produit</span>
@@ -214,7 +252,7 @@ export default function PaymentPage() {
                 </div>
               </div>
 
-              {/* Bouton payer */}
+              {/* Bouton */}
               <button
                 onClick={() => { if (buyerName && phone) setSuccess(true) }}
                 disabled={!buyerName || !phone}
@@ -223,7 +261,7 @@ export default function PaymentPage() {
                 {operator ? `Payer via ${operator.name} →` : 'Payer maintenant →'}
               </button>
 
-              {/* Badge sécurité */}
+              {/* Badge */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                 <span style={{ fontSize: '12px' }}>🔒</span>
                 <span style={{ fontSize: '11px', color: '#444' }}>Paiement sécurisé · Propulsé par PayLink Africa</span>
@@ -234,6 +272,21 @@ export default function PaymentPage() {
         </div>
 
       </div>
+
+      {/* STYLES pour le contenu riche */}
+      <style>{`
+        .ProseMirror h1, [dangerouslySetInnerHTML] h1 { font-size: 24px; font-weight: 700; color: #fff; margin: 24px 0 12px; }
+        .ProseMirror h2, [dangerouslySetInnerHTML] h2 { font-size: 20px; font-weight: 700; color: #fff; margin: 20px 0 10px; }
+        .ProseMirror h3, [dangerouslySetInnerHTML] h3 { font-size: 17px; font-weight: 600; color: #fff; margin: 16px 0 8px; }
+        .ProseMirror ul, [dangerouslySetInnerHTML] ul { padding-left: 20px; margin: 12px 0; }
+        .ProseMirror ol, [dangerouslySetInnerHTML] ol { padding-left: 20px; margin: 12px 0; }
+        .ProseMirror li, [dangerouslySetInnerHTML] li { margin-bottom: 6px; color: #9CA3AF; }
+        .ProseMirror strong, [dangerouslySetInnerHTML] strong { color: #fff; font-weight: 700; }
+        .ProseMirror blockquote, [dangerouslySetInnerHTML] blockquote { border-left: 3px solid #10B981; padding-left: 16px; margin: 16px 0; color: #6B7280; font-style: italic; }
+        .ProseMirror hr, [dangerouslySetInnerHTML] hr { border: none; border-top: 0.5px solid #1F1F1F; margin: 24px 0; }
+        .ProseMirror p, [dangerouslySetInnerHTML] p { margin: 0 0 12px; }
+      `}</style>
+
     </div>
   )
 }
