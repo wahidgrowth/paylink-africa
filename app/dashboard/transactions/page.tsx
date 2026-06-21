@@ -13,6 +13,12 @@ type Transaction = {
   buyer_phone: string
 }
 
+const UserIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+const EmptyIcon = () => <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+const RevenueIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+const CheckIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+const ListIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,13 +30,11 @@ export default function TransactionsPage() {
     const getData = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth'); return }
-
       const { data } = await supabase
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-
       setTransactions(data || [])
       setLoading(false)
     }
@@ -61,15 +65,18 @@ export default function TransactionsPage() {
         <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>Historique de tous tes paiements reçus</p>
       </div>
 
-      {/* STATS RAPIDES */}
+      {/* STATS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
-          { label: 'Total encaissé', value: totalRevenue.toLocaleString('fr-FR') + ' FCFA', color: '#10B981' },
-          { label: 'Transactions réussies', value: transactions.filter(t => t.status === 'success').length.toString(), color: '#10B981' },
-          { label: 'Total transactions', value: transactions.length.toString(), color: '#9CA3AF' },
+          { label: 'Total encaissé', value: totalRevenue.toLocaleString('fr-FR') + ' FCFA', color: '#10B981', icon: <RevenueIcon /> },
+          { label: 'Transactions réussies', value: transactions.filter(t => t.status === 'success').length.toString(), color: '#10B981', icon: <CheckIcon /> },
+          { label: 'Total transactions', value: transactions.length.toString(), color: '#9CA3AF', icon: <ListIcon /> },
         ].map((s, i) => (
           <div key={i} style={{ background: '#111111', borderRadius: '12px', padding: '20px', border: '0.5px solid #1F1F1F' }}>
-            <p style={{ fontSize: '12px', color: '#6B7280', margin: '0 0 8px' }}>{s.label}</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <p style={{ fontSize: '12px', color: '#6B7280', margin: 0 }}>{s.label}</p>
+              <span style={{ color: s.color, display: 'flex' }}>{s.icon}</span>
+            </div>
             <p style={{ fontSize: '22px', fontWeight: '700', color: s.color, margin: 0 }}>{s.value}</p>
           </div>
         ))}
@@ -96,7 +103,6 @@ export default function TransactionsPage() {
       {/* LISTE */}
       <div style={{ background: '#111111', borderRadius: '12px', border: '0.5px solid #1F1F1F', overflow: 'hidden' }}>
 
-        {/* Header tableau */}
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', padding: '14px 24px', borderBottom: '0.5px solid #1F1F1F' }}>
           {['Client', 'Date', 'Montant', 'Statut'].map((h, i) => (
             <p key={i} style={{ margin: 0, fontSize: '11px', color: '#444', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>{h}</p>
@@ -109,7 +115,7 @@ export default function TransactionsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px' }}>
-            <p style={{ fontSize: '32px', margin: '0 0 12px' }}>💸</p>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}><EmptyIcon /></div>
             <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>
               {filter === 'all' ? 'Aucune transaction pour le moment' : `Aucune transaction "${filter}"`}
             </p>
@@ -123,7 +129,9 @@ export default function TransactionsPage() {
                 style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', padding: '16px 24px', borderBottom: i < filtered.length - 1 ? '0.5px solid #1F1F1F' : 'none', alignItems: 'center' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '36px', height: '36px', background: '#10B98115', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', flexShrink: 0 }}>👤</div>
+                  <div style={{ width: '36px', height: '36px', background: '#10B98115', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
+                    <UserIcon />
+                  </div>
                   <div>
                     <p style={{ margin: '0 0 2px', fontSize: '13px', color: '#fff', fontWeight: '500' }}>{tx.buyer_name || 'Client'}</p>
                     {tx.buyer_phone && <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{tx.buyer_phone}</p>}
