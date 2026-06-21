@@ -22,6 +22,8 @@ const TrashIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="no
 const ProductEmptyIcon = () => <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
 const ProductPlaceholderIcon = () => <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
 const CheckIcon = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+const PauseIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+const PlayIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -30,6 +32,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true)
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
   const supabase = createClient()
   const router = useRouter()
 
@@ -59,6 +62,17 @@ export default function ProductsPage() {
     navigator.clipboard.writeText(url)
     setCopiedSlug(slug)
     setTimeout(() => setCopiedSlug(null), 2000)
+  }
+
+  const toggleActive = async (product: Product) => {
+    setTogglingId(product.id)
+    const newStatus = !product.is_active
+    await supabase
+      .from('payment_links')
+      .update({ is_active: newStatus })
+      .eq('id', product.id)
+    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, is_active: newStatus } : p))
+    setTogglingId(null)
   }
 
   const deleteProduct = async (id: string) => {
@@ -130,11 +144,11 @@ export default function ProductsPage() {
       {!loading && filtered.length > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
           {filtered.map((product) => (
-            <div key={product.id} style={{ background: '#111111', borderRadius: '14px', border: '0.5px solid #1F1F1F', overflow: 'hidden' }}>
+            <div key={product.id} style={{ background: '#111111', borderRadius: '14px', border: `0.5px solid ${product.is_active ? '#1F1F1F' : '#2a2a2a'}`, overflow: 'hidden', opacity: product.is_active ? 1 : 0.6, transition: 'opacity 0.2s' }}>
 
               {/* IMAGE */}
               {product.image_url ? (
-                <img src={product.image_url} alt={product.title} style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
+                <img src={product.image_url} alt={product.title} style={{ width: '100%', height: '160px', objectFit: 'cover', filter: product.is_active ? 'none' : 'grayscale(50%)' }} />
               ) : (
                 <div style={{ width: '100%', height: '160px', background: '#1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ProductPlaceholderIcon />
@@ -145,7 +159,9 @@ export default function ProductsPage() {
               <div style={{ padding: '16px 20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                   <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#fff', margin: 0, lineHeight: '1.4', flex: 1, marginRight: '8px' }}>{product.title}</h3>
-                  <span style={{ background: '#10B98120', color: '#10B981', fontSize: '11px', fontWeight: '600', padding: '3px 10px', borderRadius: '20px', flexShrink: 0 }}>Actif</span>
+                  <span style={{ background: product.is_active ? '#10B98120' : '#2a2a2a', color: product.is_active ? '#10B981' : '#6B7280', fontSize: '11px', fontWeight: '600', padding: '3px 10px', borderRadius: '20px', flexShrink: 0 }}>
+                    {product.is_active ? 'Actif' : 'Inactif'}
+                  </span>
                 </div>
                 <p style={{ fontSize: '12px', color: '#6B7280', margin: '0 0 12px', lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {product.description || 'Aucune description'}
@@ -166,6 +182,17 @@ export default function ProductsPage() {
                 >
                   {copiedSlug === product.slug ? <><CheckIcon /> Copié</> : <><LinkIcon /> Copier</>}
                 </button>
+
+                {/* TOGGLE ACTIF/INACTIF */}
+                <button
+                  onClick={() => toggleActive(product)}
+                  disabled={togglingId === product.id}
+                  title={product.is_active ? 'Désactiver' : 'Activer'}
+                  style={{ background: product.is_active ? '#F59E0B15' : '#10B98115', border: `0.5px solid ${product.is_active ? '#F59E0B40' : '#10B98140'}`, color: product.is_active ? '#F59E0B' : '#10B981', fontSize: '12px', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                  {togglingId === product.id ? '...' : product.is_active ? <PauseIcon /> : <PlayIcon />}
+                </button>
+
                 <Link href={`/dashboard/products/${product.id}/edit`} style={{ textDecoration: 'none' }}>
                   <button style={{ background: '#1A1A1A', border: '0.5px solid #2a2a2a', color: '#9CA3AF', fontSize: '12px', fontWeight: '600', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                     <EditIcon />
