@@ -29,6 +29,16 @@ const faqs = [
   },
 ]
 
+const EditIcon = () => <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+const LinkIcon = () => <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+const MoneyIcon = () => <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+const ShopIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+const PhoneIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+const PixelIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+const AnalyticsIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+const ZapIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+const AiIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
@@ -93,30 +103,14 @@ export default function LandingPage() {
           <p style={{ fontSize: '15px', color: '#6B7280', margin: 0 }}>Pas de technique. Pas de frais cachés. Juste toi et tes clients.</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0', maxWidth: '860px', margin: '0 auto', position: 'relative' }}>
-          {/* Ligne de connexion entre les étapes */}
           <div style={{ position: 'absolute', top: '36px', left: 'calc(16.67% + 16px)', right: 'calc(16.67% + 16px)', height: '1px', background: 'linear-gradient(to right, #10B981, #10B98150)', zIndex: 0 }} />
           {[
-            {
-              step: '01',
-              title: 'Crée ta page',
-              desc: 'Ajoute un titre, une description, une image et ton prix. Ta page de vente est prête en moins de 2 minutes.',
-              icon: '✏️'
-            },
-            {
-              step: '02',
-              title: 'Partage ton lien',
-              desc: 'Copie ton lien PayLink et partage-le sur WhatsApp, Instagram, TikTok ou par SMS. Tes clients arrivent directement sur ta page.',
-              icon: '🔗'
-            },
-            {
-              step: '03',
-              title: 'Encaisse en Mobile Money',
-              desc: 'Ton client entre son numéro, confirme sur son téléphone. L\'argent arrive directement. Tu gardes 99%.',
-              icon: '💸'
-            },
+            { step: '01', title: 'Crée ta page', desc: "Ajoute un titre, une description, une image et ton prix. Ta page de vente est prête en moins de 2 minutes.", icon: <EditIcon /> },
+            { step: '02', title: 'Partage ton lien', desc: "Copie ton lien PayLink et partage-le sur WhatsApp, Instagram, TikTok ou par SMS. Tes clients arrivent directement sur ta page.", icon: <LinkIcon /> },
+            { step: '03', title: 'Encaisse en Mobile Money', desc: "Ton client entre son numéro, confirme sur son téléphone. L'argent arrive directement. Tu gardes 99%.", icon: <MoneyIcon /> },
           ].map((item, i) => (
             <div key={i} style={{ textAlign: 'center', padding: '0 24px', position: 'relative', zIndex: 1 }}>
-              <div style={{ width: '72px', height: '72px', background: '#10B981', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: '24px' }}>
+              <div style={{ width: '72px', height: '72px', background: '#10B981', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', color: '#000' }}>
                 {item.icon}
               </div>
               <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '2px', margin: '0 0 8px' }}>ÉTAPE {item.step}</p>
@@ -135,15 +129,17 @@ export default function LandingPage() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', maxWidth: '900px', margin: '0 auto' }}>
           {[
-            { title: 'Page de vente complète', desc: 'Photo, description, prix. Tes clients paient directement sans quitter la page.', icon: '🛍️' },
-            { title: 'Mobile Money intégré', desc: 'MTN, Moov, Orange, Wave. Détection automatique de l\'opérateur par numéro.', icon: '📱' },
-            { title: 'Pixel Facebook', desc: 'Installe ton pixel en 1 clic. Track tes conversions et optimise tes pubs.', icon: '🎯' },
-            { title: 'Analytics en temps réel', desc: 'Vues, ventes, revenus. Tout en direct dans ton dashboard.', icon: '📊' },
-            { title: 'Checkout sans friction', desc: 'Un seul champ à remplir. Moins de friction = plus de ventes.', icon: '⚡' },
-            { title: 'Audit IA des conversions', desc: 'Claude analyse ta page et te dit exactement quoi améliorer pour vendre plus.', icon: '🤖' },
+            { title: 'Page de vente complète', desc: "Photo, description, prix. Tes clients paient directement sans quitter la page.", icon: <ShopIcon /> },
+            { title: 'Mobile Money intégré', desc: "MTN, Moov, Orange, Wave. Détection automatique de l'opérateur par numéro.", icon: <PhoneIcon /> },
+            { title: 'Pixel Facebook', desc: "Installe ton pixel en 1 clic. Track tes conversions et optimise tes pubs.", icon: <PixelIcon /> },
+            { title: 'Analytics en temps réel', desc: "Vues, ventes, revenus. Tout en direct dans ton dashboard.", icon: <AnalyticsIcon /> },
+            { title: 'Checkout sans friction', desc: "Un seul champ à remplir. Moins de friction = plus de ventes.", icon: <ZapIcon /> },
+            { title: 'Audit IA des conversions', desc: "Claude analyse ta page et te dit exactement quoi améliorer pour vendre plus.", icon: <AiIcon /> },
           ].map((feature) => (
-            <div key={feature.title} style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F', transition: 'border-color 0.2s' }}>
-              <div style={{ fontSize: '28px', marginBottom: '16px' }}>{feature.icon}</div>
+            <div key={feature.title} style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
+              <div style={{ width: '44px', height: '44px', background: '#10B98115', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', color: '#10B981' }}>
+                {feature.icon}
+              </div>
               <h3 style={{ fontSize: '15px', fontWeight: '600', margin: '0 0 8px' }}>{feature.title}</h3>
               <p style={{ fontSize: '13px', color: '#6B7280', margin: 0, lineHeight: '1.5' }}>{feature.desc}</p>
             </div>
@@ -159,7 +155,6 @@ export default function LandingPage() {
         </div>
         <div style={{ maxWidth: '700px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0', background: '#111', borderRadius: '16px', overflow: 'hidden', border: '0.5px solid #1F1F1F' }}>
-            {/* Header */}
             <div style={{ padding: '20px', background: '#0A0A0A', borderBottom: '0.5px solid #1F1F1F' }}>
               <p style={{ margin: 0, fontSize: '13px', color: '#6B7280', fontWeight: '600' }}>Critère</p>
             </div>
@@ -169,7 +164,6 @@ export default function LandingPage() {
             <div style={{ padding: '20px', background: '#0A0A0A', borderBottom: '0.5px solid #1F1F1F', textAlign: 'center' }}>
               <p style={{ margin: 0, fontSize: '13px', color: '#6B7280', fontWeight: '600' }}>Concurrents</p>
             </div>
-            {/* Rows */}
             {[
               { label: 'Commission', ours: '1%', theirs: '5% à 15%' },
               { label: 'Abonnement', ours: '0 FCFA', theirs: 'Payant' },
@@ -201,11 +195,7 @@ export default function LandingPage() {
         </div>
         <div style={{ maxWidth: '680px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {faqs.map((faq, i) => (
-            <div
-              key={i}
-              style={{ background: '#111111', borderRadius: '12px', border: `0.5px solid ${openFaq === i ? '#10B98140' : '#1F1F1F'}`, overflow: 'hidden', cursor: 'pointer' }}
-              onClick={() => setOpenFaq(openFaq === i ? null : i)}
-            >
+            <div key={i} style={{ background: '#111111', borderRadius: '12px', border: `0.5px solid ${openFaq === i ? '#10B98140' : '#1F1F1F'}`, overflow: 'hidden', cursor: 'pointer' }} onClick={() => setOpenFaq(openFaq === i ? null : i)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px' }}>
                 <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#fff' }}>{faq.q}</p>
                 <span style={{ color: '#10B981', fontSize: '18px', fontWeight: '300', marginLeft: '16px', flexShrink: 0 }}>{openFaq === i ? '−' : '+'}</span>
