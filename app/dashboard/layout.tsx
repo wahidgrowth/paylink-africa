@@ -11,8 +11,9 @@ const AnalyticsIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill
 const AuditIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 const TransactionIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
 const WithdrawIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-const AccountIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
 const KycIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+const AccountIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+const SupportIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
 const LogoutIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
 
 const nav = [
@@ -22,8 +23,9 @@ const nav = [
   { href: '/dashboard/audit', label: 'Audit IA', icon: <AuditIcon /> },
   { href: '/dashboard/transactions', label: 'Transactions', icon: <TransactionIcon /> },
   { href: '/dashboard/withdrawals', label: 'Retraits', icon: <WithdrawIcon /> },
-  { href: '/dashboard/kyc', label: 'Vérification KYC', icon: <KycIcon /> },
+  { href: '/dashboard/kyc', label: 'Verification KYC', icon: <KycIcon /> },
   { href: '/dashboard/account', label: 'Mon compte', icon: <AccountIcon /> },
+  { href: '/support', label: 'Support', icon: <SupportIcon /> },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -40,14 +42,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0A0A0A' }}>
       <aside style={{ width: '220px', background: '#111111', borderRight: '0.5px solid #1F1F1F', display: 'flex', flexDirection: 'column', padding: '24px 0', position: 'fixed', top: 0, left: 0, height: '100vh' }}>
 
-        {/* LOGO */}
         <div style={{ padding: '0 20px 32px' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <Logo size="sm" />
           </Link>
         </div>
 
-        {/* NAV */}
         <nav style={{ flex: 1, padding: '0 12px', overflowY: 'auto' }}>
           {nav.map((item) => {
             const active = pathname === item.href
@@ -62,7 +62,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           })}
         </nav>
 
-        {/* DÉCONNEXION */}
         <div style={{ padding: '12px 12px 0' }}>
           <div style={{ borderTop: '0.5px solid #1F1F1F', paddingTop: '12px' }}>
             <button
@@ -70,7 +69,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', background: 'transparent', border: 'none', color: '#6B7280', fontSize: '14px', cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: '10px' }}
             >
               <span style={{ display: 'flex', alignItems: 'center' }}><LogoutIcon /></span>
-              <span>Déconnexion</span>
+              <span>Deconnexion</span>
             </button>
           </div>
         </div>
