@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 
 function getPasswordStrength(password: string): { score: number; label: string; color: string } {
   let score = 0
@@ -20,6 +21,13 @@ function getPasswordStrength(password: string): { score: number; label: string; 
   ]
   return levels[score]
 }
+
+const MoneyIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+const PhoneIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+const AiIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+const GlobeIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+const EyeOnIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+const EyeOffIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
 
 export default function AuthPage() {
   const [email, setEmail] = useState('')
@@ -50,7 +58,7 @@ export default function AuthPage() {
     } else {
       const { data, error } = await supabase.auth.signUp({ email, password })
       if (error) {
-        setMessage(error.message || 'Erreur lors de l\'inscription.')
+        setMessage(error.message || "Erreur lors de l'inscription.")
       } else if (data.user) {
         await supabase.from('profiles').upsert({ id: data.user.id, first_name: firstName, last_name: lastName })
         router.push('/dashboard')
@@ -74,11 +82,10 @@ export default function AuthPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', fontFamily: 'Inter, sans-serif' }}>
 
-      {/* PANNEAU GAUCHE — Avantages (visible desktop) */}
+      {/* PANNEAU GAUCHE */}
       <div style={{ flex: 1, background: '#111111', borderRight: '0.5px solid #1F1F1F', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '60px 48px' }}>
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '48px' }}>
-          <div style={{ width: '36px', height: '36px', background: '#10B981', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '16px', color: '#000' }}>P</div>
-          <span style={{ fontSize: '18px', fontWeight: '700', color: '#fff' }}>PayLink <span style={{ color: '#10B981' }}>Africa</span></span>
+        <Link href="/" style={{ textDecoration: 'none', marginBottom: '48px', display: 'inline-block' }}>
+          <Logo size="md" />
         </Link>
 
         <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 12px', lineHeight: '1.3' }}>
@@ -90,13 +97,15 @@ export default function AuthPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {[
-            { icon: '💸', title: '1% de commission seulement', desc: 'Les concurrents prennent jusqu\'à 15%. Pas nous.' },
-            { icon: '📱', title: 'MTN, Moov, Orange, Wave', desc: 'Détection automatique de l\'opérateur par numéro.' },
-            { icon: '🤖', title: 'Audit IA inclus', desc: 'Claude analyse ta page et optimise tes conversions.' },
-            { icon: '🌍', title: '9+ pays africains', desc: 'Bénin, CI, Sénégal, Togo, Cameroun et plus encore.' },
+            { icon: <MoneyIcon />, title: '1% de commission seulement', desc: "Les concurrents prennent jusqu'à 15%. Pas nous." },
+            { icon: <PhoneIcon />, title: 'MTN, Moov, Orange, Wave', desc: "Détection automatique de l'opérateur par numéro." },
+            { icon: <AiIcon />, title: 'Audit IA inclus', desc: "Notre IA analyse ta page et optimise tes conversions." },
+            { icon: <GlobeIcon />, title: '9+ pays africains', desc: 'Bénin, CI, Sénégal, Togo, Cameroun et plus encore.' },
           ].map((item, i) => (
             <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-              <div style={{ width: '40px', height: '40px', background: '#10B98115', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', flexShrink: 0 }}>{item.icon}</div>
+              <div style={{ width: '40px', height: '40px', background: '#10B98115', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
+                {item.icon}
+              </div>
               <div>
                 <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: '600', color: '#fff' }}>{item.title}</p>
                 <p style={{ margin: 0, fontSize: '12px', color: '#6B7280' }}>{item.desc}</p>
@@ -106,7 +115,7 @@ export default function AuthPage() {
         </div>
       </div>
 
-      {/* PANNEAU DROIT — Formulaire */}
+      {/* PANNEAU DROIT */}
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
         <div style={{ width: '100%', maxWidth: '400px' }}>
 
@@ -114,37 +123,19 @@ export default function AuthPage() {
             {isLogin ? 'Connexion' : 'Créer un compte'}
           </h1>
           <p style={{ color: '#6B7280', fontSize: '14px', margin: '0 0 32px' }}>
-            {isLogin ? 'Content de te revoir 👋' : 'Gratuit. Sans carte bancaire.'}
+            {isLogin ? 'Content de te revoir' : 'Gratuit. Sans carte bancaire.'}
           </p>
 
           {!isLogin && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-              <input
-                type="text"
-                placeholder="Prénom"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                style={inputStyle}
-              />
-              <input
-                type="text"
-                placeholder="Nom"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                style={inputStyle}
-              />
+              <input type="text" placeholder="Prénom" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={inputStyle} />
+              <input type="text" placeholder="Nom" value={lastName} onChange={(e) => setLastName(e.target.value)} style={inputStyle} />
             </div>
           )}
 
-          <input
-            type="email"
-            placeholder="Adresse email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ ...inputStyle, marginBottom: '12px' }}
-          />
+          <input type="email" placeholder="Adresse email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} />
 
-          {/* Mot de passe avec œil */}
+          {/* Mot de passe */}
           <div style={{ position: 'relative', marginBottom: !isLogin && password ? '8px' : '20px' }}>
             <input
               type={showPassword ? 'text' : 'password'}
@@ -153,15 +144,12 @@ export default function AuthPage() {
               onChange={(e) => setPassword(e.target.value)}
               style={{ ...inputStyle, paddingRight: '44px' }}
             />
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', fontSize: '16px', color: '#6B7280' }}
-            >
-              {showPassword ? '🙈' : '👁️'}
+            <span onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#6B7280', display: 'flex', alignItems: 'center' }}>
+              {showPassword ? <EyeOffIcon /> : <EyeOnIcon />}
             </span>
           </div>
 
-          {/* Barre de force du mot de passe */}
+          {/* Barre force mot de passe */}
           {!isLogin && password && (
             <div style={{ marginBottom: '20px' }}>
               <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
@@ -169,9 +157,7 @@ export default function AuthPage() {
                   <div key={level} style={{ flex: 1, height: '3px', borderRadius: '2px', background: strength.score >= level ? strength.color : '#1F1F1F', transition: 'background 0.3s' }} />
                 ))}
               </div>
-              {strength.label && (
-                <p style={{ margin: 0, fontSize: '11px', color: strength.color }}>{strength.label}</p>
-              )}
+              {strength.label && <p style={{ margin: 0, fontSize: '11px', color: strength.color }}>{strength.label}</p>}
             </div>
           )}
 
@@ -198,7 +184,7 @@ export default function AuthPage() {
             disabled={loading}
             style={{ width: '100%', background: loading ? '#059669' : '#10B981', border: 'none', color: '#000', fontWeight: '700', fontSize: '14px', padding: '14px', borderRadius: '10px', cursor: loading ? 'not-allowed' : 'pointer', transition: 'background 0.2s' }}
           >
-            {loading ? 'Chargement...' : isLogin ? 'Se connecter →' : "Créer mon compte gratuitement →"}
+            {loading ? 'Chargement...' : isLogin ? 'Se connecter →' : 'Créer mon compte gratuitement →'}
           </button>
 
           {message && (
