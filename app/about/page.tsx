@@ -69,9 +69,11 @@ export default function AboutPage() {
         <div style={{ marginBottom: '64px', paddingBottom: '64px', borderBottom: '0.5px solid #1F1F1F' }}>
           <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 16px' }}>Le fondateur</p>
           <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
-            <div style={{ width: '80px', height: '80px', background: '#10B98120', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '2px solid #10B98140' }}>
-              <span style={{ fontSize: '28px', fontWeight: '800', color: '#10B981' }}>W</span>
-            </div>
+            <img
+              src="https://trywfiqrykivmhmgisbg.supabase.co/storage/v1/object/public/product-images/My%20pic%20VSL.jpg"
+              alt="Wahid Mohamed"
+              style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', objectPosition: 'center top', flexShrink: 0, border: '2px solid #10B98140' }}
+            />
             <div>
               <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#fff', margin: '0 0 4px' }}>Wahid Mohamed</h3>
               <p style={{ fontSize: '14px', color: '#10B981', margin: '0 0 16px', fontWeight: '500' }}>Fondateur & CEO — Cotonou, Bénin</p>
@@ -90,7 +92,7 @@ export default function AboutPage() {
           <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 32px' }}>PayLink Africa en chiffres</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
             {[
-              { value: '1%', label: 'Commission seulement', desc: 'Les concurrents prennent jusqu\'à 15%' },
+              { value: '1%', label: 'Commission seulement', desc: "Les concurrents prennent jusqu'à 15%" },
               { value: '9+', label: 'Pays couverts', desc: 'Bénin, CI, Sénégal, Togo, Cameroun...' },
               { value: '4', label: 'Opérateurs Mobile Money', desc: 'MTN, Moov, Orange et Wave' },
             ].map((stat, i) => (
