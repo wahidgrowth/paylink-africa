@@ -53,6 +53,7 @@ export default function LandingPage() {
         </Link>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <Link href="/pricing" style={{ textDecoration: 'none', color: '#9CA3AF', fontSize: '14px' }}>Tarifs</Link>
+          <Link href="/about" style={{ textDecoration: 'none', color: '#9CA3AF', fontSize: '14px' }}>À propos</Link>
           <Link href="/auth" style={{ textDecoration: 'none' }}>
             <button style={{ background: 'transparent', border: '0.5px solid #2a2a2a', color: '#fff', fontSize: '13px', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Connexion</button>
           </Link>
@@ -242,6 +243,7 @@ export default function LandingPage() {
             <p style={{ fontSize: '12px', color: '#9CA3AF', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 16px' }}>Produit</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <Link href="/pricing" style={{ textDecoration: 'none', fontSize: '13px', color: '#6B7280' }}>Tarifs</Link>
+              <Link href="/about" style={{ textDecoration: 'none', fontSize: '13px', color: '#6B7280' }}>À propos</Link>
               <Link href="/auth" style={{ textDecoration: 'none', fontSize: '13px', color: '#6B7280' }}>Connexion</Link>
               <Link href="/auth" style={{ textDecoration: 'none', fontSize: '13px', color: '#6B7280' }}>S'inscrire</Link>
             </div>
