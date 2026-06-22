@@ -67,17 +67,17 @@ export default function AboutPage() {
 
         {/* LE FONDATEUR */}
         <div style={{ marginBottom: '64px', paddingBottom: '64px', borderBottom: '0.5px solid #1F1F1F' }}>
-          <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 16px' }}>Le fondateur</p>
-          <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+          <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 32px' }}>Le fondateur</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '40px', alignItems: 'start' }}>
             <img
               src="https://trywfiqrykivmhmgisbg.supabase.co/storage/v1/object/public/product-images/My%20pic%20VSL.jpg"
               alt="Wahid Mohamed"
-              style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', objectPosition: 'center top', flexShrink: 0, border: '2px solid #10B98140' }}
+              style={{ width: '200px', height: '260px', borderRadius: '16px', objectFit: 'cover', objectPosition: 'center top', border: '0.5px solid #1F1F1F' }}
             />
-            <div>
-              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#fff', margin: '0 0 4px' }}>Wahid Mohamed</h3>
-              <p style={{ fontSize: '14px', color: '#10B981', margin: '0 0 16px', fontWeight: '500' }}>Fondateur & CEO — Cotonou, Bénin</p>
-              <p style={{ fontSize: '15px', color: '#6B7280', lineHeight: '1.8', margin: '0 0 12px' }}>
+            <div style={{ paddingTop: '8px' }}>
+              <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', margin: '0 0 4px' }}>Wahid Mohamed</h3>
+              <p style={{ fontSize: '14px', color: '#10B981', margin: '0 0 20px', fontWeight: '500' }}>Fondateur & CEO — Cotonou, Bénin</p>
+              <p style={{ fontSize: '15px', color: '#6B7280', lineHeight: '1.8', margin: '0 0 16px' }}>
                 Entrepreneur digital basé à Cotonou, j'ai créé PayLink Africa après avoir constaté les limites des outils existants pour les vendeurs africains. Trop chers, trop complexes, trop peu adaptés à nos réalités.
               </p>
               <p style={{ fontSize: '15px', color: '#6B7280', lineHeight: '1.8', margin: 0 }}>
