@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
+import Logo from '@/components/Logo'
 
 const faqs = [
   {
@@ -47,10 +48,9 @@ export default function LandingPage() {
 
       {/* NAV */}
       <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 40px', borderBottom: '0.5px solid #1F1F1F' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '32px', height: '32px', background: '#10B981', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '14px', color: '#000' }}>P</div>
-          <span style={{ fontSize: '16px', fontWeight: '700' }}>PayLink <span style={{ color: '#10B981' }}>Africa</span></span>
-        </div>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Logo size="sm" />
+        </Link>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <Link href="/pricing" style={{ textDecoration: 'none', color: '#9CA3AF', fontSize: '14px' }}>Tarifs</Link>
           <Link href="/auth" style={{ textDecoration: 'none' }}>
@@ -233,9 +233,8 @@ export default function LandingPage() {
       <footer style={{ padding: '48px 40px 32px', borderTop: '0.5px solid #1F1F1F' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '40px', maxWidth: '860px', margin: '0 auto 40px' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-              <div style={{ width: '28px', height: '28px', background: '#10B981', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '12px', color: '#000' }}>P</div>
-              <span style={{ fontSize: '15px', fontWeight: '700' }}>PayLink <span style={{ color: '#10B981' }}>Africa</span></span>
+            <div style={{ marginBottom: '12px' }}>
+              <Logo size="sm" />
             </div>
             <p style={{ fontSize: '13px', color: '#6B7280', margin: 0, lineHeight: '1.6', maxWidth: '260px' }}>La plateforme de paiement Mobile Money pensée pour les entrepreneurs africains.</p>
           </div>
