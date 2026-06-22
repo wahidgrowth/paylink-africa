@@ -18,11 +18,83 @@ type Product = {
   user_id: string
 }
 
-const OPERATORS = [
-  { name: 'MTN', color: '#FCD34D', bg: '#FCD34D20', prefixes: ['96', '97', '67', '61', '62'] },
-  { name: 'Moov', color: '#60A5FA', bg: '#60A5FA20', prefixes: ['99', '98', '69', '65'] },
-  { name: 'Orange', color: '#FB923C', bg: '#FB923C20', prefixes: ['07', '06', '08'] },
-  { name: 'Wave', color: '#A78BFA', bg: '#A78BFA20', prefixes: ['70', '75', '76', '77', '78'] },
+const COUNTRIES = [
+  {
+    code: 'BJ', name: 'Bénin', flag: '🇧🇯',
+    operators: [
+      { name: 'MTN MoMo', color: '#FCD34D', bg: '#FCD34D20' },
+      { name: 'Moov Money', color: '#60A5FA', bg: '#60A5FA20' },
+      { name: 'Celtiis', color: '#A78BFA', bg: '#A78BFA20' },
+    ]
+  },
+  {
+    code: 'CI', name: "Côte d'Ivoire", flag: '🇨🇮',
+    operators: [
+      { name: 'MTN MoMo', color: '#FCD34D', bg: '#FCD34D20' },
+      { name: 'Moov Money', color: '#60A5FA', bg: '#60A5FA20' },
+      { name: 'Orange Money', color: '#FB923C', bg: '#FB923C20' },
+      { name: 'Wave', color: '#A78BFA', bg: '#A78BFA20' },
+    ]
+  },
+  {
+    code: 'SN', name: 'Sénégal', flag: '🇸🇳',
+    operators: [
+      { name: 'Orange Money', color: '#FB923C', bg: '#FB923C20' },
+      { name: 'Free Money', color: '#10B981', bg: '#10B98120' },
+      { name: 'Wave', color: '#A78BFA', bg: '#A78BFA20' },
+    ]
+  },
+  {
+    code: 'TG', name: 'Togo', flag: '🇹🇬',
+    operators: [
+      { name: 'T-Money (Togocel)', color: '#EF4444', bg: '#EF444420' },
+      { name: 'Moov Money', color: '#60A5FA', bg: '#60A5FA20' },
+    ]
+  },
+  {
+    code: 'CM', name: 'Cameroun', flag: '🇨🇲',
+    operators: [
+      { name: 'MTN MoMo', color: '#FCD34D', bg: '#FCD34D20' },
+      { name: 'Orange Money', color: '#FB923C', bg: '#FB923C20' },
+    ]
+  },
+  {
+    code: 'ML', name: 'Mali', flag: '🇲🇱',
+    operators: [
+      { name: 'Orange Money', color: '#FB923C', bg: '#FB923C20' },
+      { name: 'Moov (Malitel)', color: '#60A5FA', bg: '#60A5FA20' },
+    ]
+  },
+  {
+    code: 'BF', name: 'Burkina Faso', flag: '🇧🇫',
+    operators: [
+      { name: 'Orange Money', color: '#FB923C', bg: '#FB923C20' },
+      { name: 'Moov Money', color: '#60A5FA', bg: '#60A5FA20' },
+      { name: 'Coris Money', color: '#10B981', bg: '#10B98120' },
+    ]
+  },
+  {
+    code: 'GN', name: 'Guinée', flag: '🇬🇳',
+    operators: [
+      { name: 'MTN MoMo', color: '#FCD34D', bg: '#FCD34D20' },
+      { name: 'Orange Money', color: '#FB923C', bg: '#FB923C20' },
+    ]
+  },
+  {
+    code: 'CD', name: 'RD Congo', flag: '🇨🇩',
+    operators: [
+      { name: 'Airtel Money', color: '#EF4444', bg: '#EF444420' },
+      { name: 'Orange Money', color: '#FB923C', bg: '#FB923C20' },
+      { name: 'M-Pesa', color: '#10B981', bg: '#10B98120' },
+    ]
+  },
+  {
+    code: 'NE', name: 'Niger', flag: '🇳🇪',
+    operators: [
+      { name: 'Airtel Money', color: '#EF4444', bg: '#EF444420' },
+      { name: 'Orange Money', color: '#FB923C', bg: '#FB923C20' },
+    ]
+  },
 ]
 
 const LockIcon = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -40,8 +112,9 @@ export default function PaymentPage() {
   const [pixelId, setPixelId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [phone, setPhone] = useState('')
-  const [operator, setOperator] = useState<typeof OPERATORS[0] | null>(null)
   const [buyerName, setBuyerName] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0])
+  const [selectedOperator, setSelectedOperator] = useState(COUNTRIES[0].operators[0])
   const [success, setSuccess] = useState(false)
   const params = useParams()
   const supabase = createClient()
@@ -88,18 +161,16 @@ export default function PaymentPage() {
     document.head.appendChild(script)
   }, [pixelId])
 
-  const detectOperator = (phone: string) => {
-    const prefix = phone.replace(/\s/g, '').slice(0, 2)
-    return OPERATORS.find(op => op.prefixes.includes(prefix)) || null
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const country = COUNTRIES.find(c => c.code === e.target.value) || COUNTRIES[0]
+    setSelectedCountry(country)
+    setSelectedOperator(country.operators[0])
+    setPhone('')
   }
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value
-    setPhone(val)
-    setOperator(detectOperator(val))
-    if (pixelId && window.fbq) {
-      window.fbq('track', 'InitiateCheckout', { value: product?.price, currency: 'XOF' })
-    }
+  const handleOperatorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const op = selectedCountry.operators.find(o => o.name === e.target.value) || selectedCountry.operators[0]
+    setSelectedOperator(op)
   }
 
   const handlePay = () => {
@@ -110,9 +181,30 @@ export default function PaymentPage() {
     setSuccess(true)
   }
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(e.target.value)
+    if (pixelId && window.fbq) {
+      window.fbq('track', 'InitiateCheckout', { value: product?.price, currency: 'XOF' })
+    }
+  }
+
   const fee = product ? Math.round(product.price * 0.01) : 0
   const total = product ? product.price + fee : 0
   const discount = product?.original_price ? Math.round((1 - product.price / product.original_price) * 100) : 0
+
+  const selectStyle = {
+    width: '100%',
+    background: '#1A1A1A',
+    color: '#fff',
+    borderRadius: '8px',
+    padding: '12px 16px',
+    border: '0.5px solid #2a2a2a',
+    outline: 'none',
+    fontSize: '14px',
+    boxSizing: 'border-box' as const,
+    cursor: 'pointer',
+    appearance: 'none' as const,
+  }
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -142,12 +234,12 @@ export default function PaymentPage() {
         </p>
         {product.file_url && (
           <a href={product.file_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-            <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px 24px', borderRadius: '10px', cursor: 'pointer', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto 16px' }}>
-              <DownloadIcon /> Télécharger mon fichier →
+            <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px 24px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto 16px' }}>
+              <DownloadIcon /> Télécharger mon fichier
             </button>
           </a>
         )}
-        <p style={{ color: '#444', fontSize: '12px', margin: 0 }}>Tu recevras une confirmation via {operator?.name || 'Mobile Money'}.</p>
+        <p style={{ color: '#444', fontSize: '12px', margin: 0 }}>Tu recevras une confirmation via {selectedOperator.name}.</p>
       </div>
     </div>
   )
@@ -167,7 +259,6 @@ export default function PaymentPage() {
 
         {/* COLONNE GAUCHE */}
         <div style={{ paddingRight: '48px' }}>
-
           {product.image_url ? (
             <img src={product.image_url} alt={product.title} style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '16px', marginBottom: '32px', border: '0.5px solid #1F1F1F' }} />
           ) : (
@@ -204,24 +295,24 @@ export default function PaymentPage() {
             </div>
           )}
 
+          {/* OPÉRATEURS ACCEPTÉS */}
           <div style={{ borderTop: '0.5px solid #1F1F1F', paddingTop: '24px' }}>
-            <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>Paiement accepté via</p>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              {OPERATORS.map(op => (
-                <div key={op.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: op.bg, border: `0.5px solid ${op.color}30`, borderRadius: '8px', padding: '8px 14px' }}>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: op.color }} />
-                  <span style={{ fontSize: '13px', fontWeight: '600', color: op.color }}>{op.name}</span>
+            <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>Paiement accepté dans 10 pays</p>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {COUNTRIES.map(c => (
+                <div key={c.code} style={{ background: '#111111', border: '0.5px solid #1F1F1F', borderRadius: '8px', padding: '6px 12px', fontSize: '13px', color: '#9CA3AF' }}>
+                  {c.flag} {c.name}
                 </div>
               ))}
             </div>
           </div>
-
         </div>
 
-        {/* COLONNE DROITE — Checkout sticky */}
+        {/* COLONNE DROITE — Checkout */}
         <div style={{ position: 'sticky', top: '24px' }}>
           <div style={{ background: '#111111', borderRadius: '16px', border: '0.5px solid #1F1F1F', overflow: 'hidden' }}>
 
+            {/* PRIX */}
             <div style={{ padding: '20px 24px', borderBottom: '0.5px solid #1F1F1F', background: '#0D0D0D' }}>
               {product.original_price && product.original_price > product.price && (
                 <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#6B7280', textDecoration: 'line-through' }}>
@@ -241,6 +332,7 @@ export default function PaymentPage() {
 
             <div style={{ padding: '24px' }}>
 
+              {/* NOM */}
               <div style={{ marginBottom: '12px' }}>
                 <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Votre nom</label>
                 <input
@@ -252,27 +344,43 @@ export default function PaymentPage() {
                 />
               </div>
 
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Numéro Mobile Money</label>
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type="tel"
-                    placeholder="Ex: 97 00 00 00"
-                    value={phone}
-                    onChange={handlePhoneChange}
-                    style={{ width: '100%', background: '#1A1A1A', color: '#fff', borderRadius: '8px', padding: '12px 16px', border: `0.5px solid ${operator ? operator.color + '60' : '#2a2a2a'}`, outline: 'none', fontSize: '14px', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
-                  />
-                  {operator && (
-                    <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: operator.bg, border: `0.5px solid ${operator.color}40`, borderRadius: '6px', padding: '3px 10px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: '700', color: operator.color }}>{operator.name}</span>
-                    </div>
-                  )}
-                </div>
-                {!operator && phone.length >= 2 && (
-                  <p style={{ fontSize: '11px', color: '#F59E0B', margin: '4px 0 0' }}>Opérateur non reconnu</p>
-                )}
+              {/* PAYS */}
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Pays</label>
+                <select value={selectedCountry.code} onChange={handleCountryChange} style={selectStyle}>
+                  {COUNTRIES.map(c => (
+                    <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                  ))}
+                </select>
               </div>
 
+              {/* OPÉRATEUR */}
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Opérateur Mobile Money</label>
+                <select value={selectedOperator.name} onChange={handleOperatorChange} style={{ ...selectStyle, border: `0.5px solid ${selectedOperator.color}60`, color: selectedOperator.color }}>
+                  {selectedCountry.operators.map(op => (
+                    <option key={op.name} value={op.name} style={{ color: '#fff' }}>{op.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* NUMÉRO */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Numéro Mobile Money</label>
+                <input
+                  type="tel"
+                  placeholder="Ex: 97 00 00 00"
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  style={{ width: '100%', background: '#1A1A1A', color: '#fff', borderRadius: '8px', padding: '12px 16px', border: `0.5px solid ${selectedOperator.color}60`, outline: 'none', fontSize: '14px', boxSizing: 'border-box', transition: 'border-color 0.2s' }}
+                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: selectedOperator.color }} />
+                  <span style={{ fontSize: '11px', color: selectedOperator.color, fontWeight: '600' }}>{selectedOperator.name} détecté</span>
+                </div>
+              </div>
+
+              {/* RÉCAP PRIX */}
               <div style={{ background: '#0D0D0D', borderRadius: '8px', padding: '14px', marginBottom: '16px', border: '0.5px solid #1F1F1F' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontSize: '13px', color: '#6B7280' }}>Prix produit</span>
@@ -288,12 +396,13 @@ export default function PaymentPage() {
                 </div>
               </div>
 
+              {/* BOUTON PAYER */}
               <button
                 onClick={handlePay}
                 disabled={!buyerName || !phone}
                 style={{ width: '100%', background: buyerName && phone ? '#10B981' : '#1A1A1A', border: 'none', color: buyerName && phone ? '#000' : '#444', fontSize: '15px', fontWeight: '700', padding: '16px', borderRadius: '10px', cursor: buyerName && phone ? 'pointer' : 'not-allowed', transition: 'all 0.2s', marginBottom: '12px' }}
               >
-                {operator ? `Payer via ${operator.name} →` : 'Payer maintenant →'}
+                {`Payer via ${selectedOperator.name} →`}
               </button>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
