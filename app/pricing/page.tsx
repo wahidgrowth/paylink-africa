@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 
 const freeFeatures = [
   { text: '1% de commission par vente', included: true },
@@ -27,15 +28,16 @@ const proFeatures = [
   { text: 'Support prioritaire', included: true },
 ]
 
+const ShieldIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+
 export default function PricingPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif' }}>
 
       {/* NAV */}
       <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 40px', borderBottom: '0.5px solid #1F1F1F' }}>
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '32px', height: '32px', background: '#10B981', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '14px', color: '#000' }}>P</div>
-          <span style={{ fontSize: '16px', fontWeight: '700', color: '#fff' }}>PayLink <span style={{ color: '#10B981' }}>Africa</span></span>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Logo size="sm" />
         </Link>
         <div style={{ display: 'flex', gap: '12px' }}>
           <Link href="/auth" style={{ textDecoration: 'none' }}>
@@ -97,7 +99,7 @@ export default function PricingPage() {
           {/* PRO */}
           <div style={{ background: '#111111', borderRadius: '16px', padding: '32px', border: '1.5px solid #10B981', position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div style={{ position: 'absolute', top: '-14px', left: '50%', transform: 'translateX(-50%)', background: '#10B981', color: '#000', fontSize: '11px', fontWeight: '800', padding: '5px 16px', borderRadius: '20px', whiteSpace: 'nowrap', letterSpacing: '1px' }}>
-              ⭐ RECOMMANDÉ
+              RECOMMANDÉ
             </div>
 
             <div style={{ marginBottom: '24px' }}>
@@ -127,7 +129,7 @@ export default function PricingPage() {
 
         </div>
 
-        {/* COMPARAISON COMMISSION */}
+        {/* CALCULATEUR */}
         <div style={{ background: '#111111', borderRadius: '16px', padding: '32px', border: '0.5px solid #1F1F1F', marginBottom: '32px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#fff', margin: '0 0 8px' }}>Calculateur de commission</h2>
           <p style={{ fontSize: '14px', color: '#6B7280', margin: '0 0 24px' }}>Sur 100 000 FCFA de ventes, voici ce que tu gardes :</p>
@@ -149,7 +151,9 @@ export default function PricingPage() {
 
         {/* GARANTIE */}
         <div style={{ textAlign: 'center', padding: '32px', background: '#10B98110', borderRadius: '16px', border: '0.5px solid #10B98130', marginBottom: '32px' }}>
-          <p style={{ fontSize: '24px', margin: '0 0 8px' }}>🛡️</p>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px', color: '#10B981' }}>
+            <ShieldIcon />
+          </div>
           <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#fff', margin: '0 0 8px' }}>Aucun engagement. Annule quand tu veux.</h3>
           <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>Pas de frais cachés. Pas de contrat. Tu peux revenir au plan Free à tout moment.</p>
         </div>
