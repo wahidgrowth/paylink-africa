@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -39,16 +39,8 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
   const supabase = createClient()
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
 
   const strength = getPasswordStrength(password)
 
@@ -97,20 +89,62 @@ export default function AuthPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif' }}>
 
-      {isMobile ? (
-        /* ===== MOBILE — 1 COLONNE ===== */
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <style>{`
+        .auth-left { display: flex; }
+        .auth-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+        .auth-container { display: flex; min-height: 100vh; }
+        .auth-mobile-header { display: none; }
+        .auth-mobile-avantages { display: none; }
 
-          {/* HEADER MOBILE */}
-          <div style={{ padding: '20px 16px', borderBottom: '0.5px solid #1F1F1F', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Link href="/" style={{ textDecoration: 'none' }}>
-              <Logo size="sm" />
-            </Link>
-            <Link href="/" style={{ fontSize: '12px', color: '#444', textDecoration: 'none' }}>← Retour</Link>
+        @media (max-width: 767px) {
+          .auth-container { flex-direction: column; }
+          .auth-left { display: none !important; }
+          .auth-right { padding: 24px 16px 40px; align-items: flex-start; }
+          .auth-mobile-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 0.5px solid #1F1F1F; }
+          .auth-mobile-avantages { display: block; margin-top: 32px; }
+        }
+      `}</style>
+
+      {/* HEADER MOBILE */}
+      <div className="auth-mobile-header">
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Logo size="sm" />
+        </Link>
+        <Link href="/" style={{ fontSize: '12px', color: '#444', textDecoration: 'none' }}>← Retour</Link>
+      </div>
+
+      <div className="auth-container">
+
+        {/* PANNEAU GAUCHE — Desktop only */}
+        <div className="auth-left" style={{ flex: 1, background: '#111111', borderRight: '0.5px solid #1F1F1F', flexDirection: 'column', justifyContent: 'center', padding: '60px 48px' }}>
+          <Link href="/" style={{ textDecoration: 'none', marginBottom: '48px', display: 'inline-block' }}>
+            <Logo size="md" />
+          </Link>
+          <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 12px', lineHeight: '1.3' }}>
+            Vends partout en Afrique.<br /><span style={{ color: '#10B981' }}>Garde presque tout.</span>
+          </h2>
+          <p style={{ fontSize: '14px', color: '#6B7280', margin: '0 0 48px', lineHeight: '1.7' }}>
+            Crée ta page de vente, partage ton lien Mobile Money et encaisse en quelques secondes.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {avantages.map((item, i) => (
+              <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                <div style={{ width: '40px', height: '40px', background: '#10B98115', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
+                  {item.icon}
+                </div>
+                <div>
+                  <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: '600', color: '#fff' }}>{item.title}</p>
+                  <p style={{ margin: 0, fontSize: '12px', color: '#6B7280' }}>{item.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* FORMULAIRE MOBILE */}
-          <div style={{ flex: 1, padding: '32px 16px 40px', display: 'flex', flexDirection: 'column' }}>
+        {/* PANNEAU DROIT — Formulaire */}
+        <div className="auth-right">
+          <div style={{ width: '100%', maxWidth: '400px' }}>
+
             <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: '800', margin: '0 0 4px' }}>
               {isLogin ? 'Connexion' : 'Créer un compte'}
             </h1>
@@ -166,7 +200,7 @@ export default function AuthPage() {
             )}
 
             <button onClick={handleAuth} disabled={loading}
-              style={{ width: '100%', background: loading ? '#059669' : '#10B981', border: 'none', color: '#000', fontWeight: '700', fontSize: '15px', padding: '14px', borderRadius: '10px', cursor: loading ? 'not-allowed' : 'pointer' }}>
+              style={{ width: '100%', background: loading ? '#059669' : '#10B981', border: 'none', color: '#000', fontWeight: '700', fontSize: '14px', padding: '14px', borderRadius: '10px', cursor: loading ? 'not-allowed' : 'pointer' }}>
               {loading ? 'Chargement...' : isLogin ? 'Se connecter →' : 'Créer mon compte gratuitement →'}
             </button>
 
@@ -183,138 +217,33 @@ export default function AuthPage() {
               </span>
             </p>
 
-            {/* AVANTAGES MOBILE */}
-            <div style={{ marginTop: '40px', padding: '20px', background: '#111111', borderRadius: '12px', border: '0.5px solid #1F1F1F' }}>
-              <p style={{ fontSize: '12px', color: '#6B7280', margin: '0 0 16px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>Pourquoi PayLink Africa ?</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {avantages.map((item, i) => (
-                  <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                    <div style={{ width: '32px', height: '32px', background: '#10B98115', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
-                      {item.icon}
-                    </div>
-                    <div>
-                      <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: '600', color: '#fff' }}>{item.title}</p>
-                      <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-      ) : (
-        /* ===== DESKTOP — 2 COLONNES ===== */
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
-
-          {/* PANNEAU GAUCHE */}
-          <div style={{ flex: 1, background: '#111111', borderRight: '0.5px solid #1F1F1F', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '60px 48px' }}>
-            <Link href="/" style={{ textDecoration: 'none', marginBottom: '48px', display: 'inline-block' }}>
-              <Logo size="md" />
-            </Link>
-            <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 12px', lineHeight: '1.3' }}>
-              Vends partout en Afrique.<br /><span style={{ color: '#10B981' }}>Garde presque tout.</span>
-            </h2>
-            <p style={{ fontSize: '14px', color: '#6B7280', margin: '0 0 48px', lineHeight: '1.7' }}>
-              Crée ta page de vente, partage ton lien Mobile Money et encaisse en quelques secondes.
+            <p style={{ textAlign: 'center', marginTop: '24px' }}>
+              <Link href="/" style={{ fontSize: '12px', color: '#444', textDecoration: 'none' }}>← Retour à l'accueil</Link>
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {avantages.map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '40px', height: '40px', background: '#10B98115', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
-                    {item.icon}
-                  </div>
-                  <div>
-                    <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: '600', color: '#fff' }}>{item.title}</p>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#6B7280' }}>{item.desc}</p>
-                  </div>
+
+            {/* AVANTAGES MOBILE */}
+            <div className="auth-mobile-avantages">
+              <div style={{ background: '#111111', borderRadius: '12px', padding: '20px', border: '0.5px solid #1F1F1F' }}>
+                <p style={{ fontSize: '11px', color: '#6B7280', margin: '0 0 16px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>Pourquoi PayLink Africa ?</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {avantages.map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                      <div style={{ width: '32px', height: '32px', background: '#10B98115', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
+                        {item.icon}
+                      </div>
+                      <div>
+                        <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: '600', color: '#fff' }}>{item.title}</p>
+                        <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* PANNEAU DROIT */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 24px' }}>
-            <div style={{ width: '100%', maxWidth: '400px' }}>
-              <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: '800', margin: '0 0 4px' }}>
-                {isLogin ? 'Connexion' : 'Créer un compte'}
-              </h1>
-              <p style={{ color: '#6B7280', fontSize: '14px', margin: '0 0 32px' }}>
-                {isLogin ? 'Content de te revoir' : 'Gratuit. Sans carte bancaire.'}
-              </p>
-
-              {!isLogin && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                  <input type="text" placeholder="Prénom" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={inputStyle} />
-                  <input type="text" placeholder="Nom" value={lastName} onChange={(e) => setLastName(e.target.value)} style={inputStyle} />
-                </div>
-              )}
-
-              <input type="email" placeholder="Adresse email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ ...inputStyle, marginBottom: '12px' }} />
-
-              <div style={{ position: 'relative', marginBottom: !isLogin && password ? '8px' : '20px' }}>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Mot de passe"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  style={{ ...inputStyle, paddingRight: '44px' }}
-                />
-                <span onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#6B7280', display: 'flex' }}>
-                  {showPassword ? <EyeOffIcon /> : <EyeOnIcon />}
-                </span>
               </div>
-
-              {!isLogin && password && (
-                <div style={{ marginBottom: '20px' }}>
-                  <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
-                    {[1, 2, 3, 4].map((level) => (
-                      <div key={level} style={{ flex: 1, height: '3px', borderRadius: '2px', background: strength.score >= level ? strength.color : '#1F1F1F' }} />
-                    ))}
-                  </div>
-                  {strength.label && <p style={{ margin: 0, fontSize: '11px', color: strength.color }}>{strength.label}</p>}
-                </div>
-              )}
-
-              {!isLogin && (
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '20px' }}>
-                  <div onClick={() => setAcceptedTerms(!acceptedTerms)} style={{ width: '18px', height: '18px', borderRadius: '4px', border: `1.5px solid ${acceptedTerms ? '#10B981' : '#2a2a2a'}`, background: acceptedTerms ? '#10B981' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, marginTop: '1px' }}>
-                    {acceptedTerms && <span style={{ color: '#000', fontSize: '11px', fontWeight: '700' }}>✓</span>}
-                  </div>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#6B7280', lineHeight: '1.6' }}>
-                    J'accepte les{' '}
-                    <Link href="/legal/cgu" style={{ color: '#10B981', textDecoration: 'none' }} target="_blank">Conditions Générales d'Utilisation</Link>
-                    {' '}et la{' '}
-                    <Link href="/legal/confidentialite" style={{ color: '#10B981', textDecoration: 'none' }} target="_blank">Politique de Confidentialité</Link>
-                  </p>
-                </div>
-              )}
-
-              <button onClick={handleAuth} disabled={loading}
-                style={{ width: '100%', background: loading ? '#059669' : '#10B981', border: 'none', color: '#000', fontWeight: '700', fontSize: '14px', padding: '14px', borderRadius: '10px', cursor: loading ? 'not-allowed' : 'pointer' }}>
-                {loading ? 'Chargement...' : isLogin ? 'Se connecter →' : 'Créer mon compte gratuitement →'}
-              </button>
-
-              {message && (
-                <div style={{ marginTop: '16px', background: '#EF444415', border: '0.5px solid #EF444440', borderRadius: '8px', padding: '12px 16px' }}>
-                  <p style={{ color: '#EF4444', fontSize: '13px', margin: 0 }}>{message}</p>
-                </div>
-              )}
-
-              <p style={{ color: '#6B7280', marginTop: '20px', fontSize: '13px', textAlign: 'center' }}>
-                {isLogin ? 'Pas encore de compte ?' : 'Déjà un compte ?'}{' '}
-                <span onClick={() => { setIsLogin(!isLogin); setMessage('') }} style={{ color: '#10B981', cursor: 'pointer', fontWeight: '600' }}>
-                  {isLogin ? "S'inscrire gratuitement" : 'Se connecter'}
-                </span>
-              </p>
-
-              <p style={{ textAlign: 'center', marginTop: '32px' }}>
-                <Link href="/" style={{ fontSize: '12px', color: '#444', textDecoration: 'none' }}>← Retour à l'accueil</Link>
-              </p>
             </div>
+
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
