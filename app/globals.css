@@ -24,7 +24,152 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-/* Tiptap Editor Styles */
+
+/* ===================== */
+/* RESPONSIVE UTILITAIRES */
+/* ===================== */
+
+/* Masquer sur mobile */
+.hide-mobile {
+  display: block;
+}
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Masquer sur desktop */
+.hide-desktop {
+  display: none;
+}
+@media (max-width: 767px) {
+  .hide-desktop {
+    display: block !important;
+  }
+}
+
+/* Grille responsive */
+.grid-responsive-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+@media (max-width: 767px) {
+  .grid-responsive-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.grid-responsive-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+@media (max-width: 767px) {
+  .grid-responsive-3 {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+/* Padding responsive */
+.px-responsive {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+@media (max-width: 767px) {
+  .px-responsive {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.py-responsive {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+@media (max-width: 767px) {
+  .py-responsive {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+}
+
+/* Texte responsive */
+.text-hero {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+@media (max-width: 767px) {
+  .text-hero {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+}
+
+.text-h2 {
+  font-size: 32px;
+  font-weight: 700;
+}
+@media (max-width: 767px) {
+  .text-h2 {
+    font-size: 22px;
+  }
+}
+
+.text-h3 {
+  font-size: 28px;
+  font-weight: 700;
+}
+@media (max-width: 767px) {
+  .text-h3 {
+    font-size: 20px;
+  }
+}
+
+/* Layout 2 colonnes → 1 colonne */
+.layout-split {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 0;
+  align-items: start;
+}
+@media (max-width: 767px) {
+  .layout-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sidebar dashboard */
+.dashboard-sidebar {
+  width: 220px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+}
+@media (max-width: 767px) {
+  .dashboard-sidebar {
+    display: none;
+  }
+}
+
+.dashboard-main {
+  margin-left: 220px;
+}
+@media (max-width: 767px) {
+  .dashboard-main {
+    margin-left: 0;
+  }
+}
+
+/* ===================== */
+/* TIPTAP EDITOR STYLES  */
+/* ===================== */
+
 .ProseMirror:focus {
   outline: none;
 }
@@ -96,7 +241,10 @@ body {
   margin: 20px 0;
 }
 
-/* Page de vente publique */
+/* ======================== */
+/* PAGE DE VENTE PUBLIQUE   */
+/* ======================== */
+
 .rich-content h1 {
   font-size: 24px;
   font-weight: 700;
