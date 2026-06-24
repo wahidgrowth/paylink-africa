@@ -67,10 +67,7 @@ export default function ProductsPage() {
   const toggleActive = async (product: Product) => {
     setTogglingId(product.id)
     const newStatus = !product.is_active
-    await supabase
-      .from('payment_links')
-      .update({ is_active: newStatus })
-      .eq('id', product.id)
+    await supabase.from('payment_links').update({ is_active: newStatus }).eq('id', product.id)
     setProducts(prev => prev.map(p => p.id === product.id ? { ...p, is_active: newStatus } : p))
     setTogglingId(null)
   }
@@ -84,10 +81,18 @@ export default function ProductsPage() {
   }
 
   return (
-    <div>
+    <div style={{ padding: '32px' }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .products-wrap { padding: 16px !important; }
+          .products-header { flex-direction: column !important; gap: 12px !important; }
+          .products-search input { max-width: 100% !important; width: 100% !important; }
+          .products-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
 
       {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
+      <div className="products-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
         <div>
           <h1 style={{ fontSize: '22px', fontWeight: '700', color: '#fff', margin: '0 0 4px' }}>Mes produits</h1>
           <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>
@@ -95,14 +100,14 @@ export default function ProductsPage() {
           </p>
         </div>
         <Link href="/dashboard/products/new" style={{ textDecoration: 'none' }}>
-          <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '13px', fontWeight: '700', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>
+          <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '13px', fontWeight: '700', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
             + Nouveau produit
           </button>
         </Link>
       </div>
 
       {/* SEARCH */}
-      <div style={{ marginBottom: '24px' }}>
+      <div className="products-search" style={{ marginBottom: '24px' }}>
         <input
           type="text"
           placeholder="Rechercher un produit..."
@@ -142,7 +147,7 @@ export default function ProductsPage() {
 
       {/* GRILLE */}
       {!loading && filtered.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+        <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
           {filtered.map((product) => (
             <div key={product.id} style={{ background: '#111111', borderRadius: '14px', border: `0.5px solid ${product.is_active ? '#1F1F1F' : '#2a2a2a'}`, overflow: 'hidden', opacity: product.is_active ? 1 : 0.6, transition: 'opacity 0.2s' }}>
 
@@ -182,8 +187,6 @@ export default function ProductsPage() {
                 >
                   {copiedSlug === product.slug ? <><CheckIcon /> Copié</> : <><LinkIcon /> Copier</>}
                 </button>
-
-                {/* TOGGLE ACTIF/INACTIF */}
                 <button
                   onClick={() => toggleActive(product)}
                   disabled={togglingId === product.id}
@@ -192,7 +195,6 @@ export default function ProductsPage() {
                 >
                   {togglingId === product.id ? '...' : product.is_active ? <PauseIcon /> : <PlayIcon />}
                 </button>
-
                 <Link href={`/dashboard/products/${product.id}/edit`} style={{ textDecoration: 'none' }}>
                   <button style={{ background: '#1A1A1A', border: '0.5px solid #2a2a2a', color: '#9CA3AF', fontSize: '12px', fontWeight: '600', padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                     <EditIcon />
