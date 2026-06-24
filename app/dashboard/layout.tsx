@@ -3,80 +3,34 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Logo from '@/components/Logo'
 
-const navItems = [
-  {
-    href: '/dashboard',
-    label: 'Accueil',
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/>
-        <path d="M9 21V12h6v9"/>
-      </svg>
-    )
-  },
-  {
-    href: '/dashboard/products',
-    label: 'Produits',
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <rect x="2" y="3" width="20" height="14" rx="2"/>
-        <path d="M8 21h8M12 17v4"/>
-      </svg>
-    )
-  },
-  {
-    href: '/dashboard/transactions',
-    label: 'Transactions',
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path d="M12 2v20M2 12h20"/>
-        <circle cx="12" cy="12" r="9"/>
-      </svg>
-    )
-  },
-  {
-    href: '/dashboard/withdrawals',
-    label: 'Retraits',
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path d="M12 19V5M5 12l7-7 7 7"/>
-      </svg>
-    )
-  },
-  {
-    href: '/dashboard/account',
-    label: 'Compte',
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <circle cx="12" cy="8" r="4"/>
-        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-      </svg>
-    )
-  },
+const HomeIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+const ProductIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+const AuditIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+const CartIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+const TransactionIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+const WithdrawIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+const AccountIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+const KycIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+const SupportIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+
+const sidebarItems = [
+  { href: '/dashboard', label: 'Accueil', icon: <HomeIcon /> },
+  { href: '/dashboard/products', label: 'Mes produits', icon: <ProductIcon /> },
+  { href: '/dashboard/audit', label: 'Audit IA', icon: <AuditIcon /> },
+  { href: '/dashboard/cart', label: 'Panier', icon: <CartIcon /> },
+  { href: '/dashboard/transactions', label: 'Transactions', icon: <TransactionIcon /> },
+  { href: '/dashboard/withdrawals', label: 'Retraits', icon: <WithdrawIcon /> },
+  { href: '/dashboard/account', label: 'Mon compte', icon: <AccountIcon /> },
+  { href: '/dashboard/kyc', label: 'Vérification KYC', icon: <KycIcon /> },
+  { href: '/support', label: 'Support', icon: <SupportIcon /> },
 ]
 
-const sidebarOnlyItems = [
-  {
-    href: '/dashboard/audit',
-    label: 'Audit IA',
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"/>
-        <path d="M21 21l-4.35-4.35"/>
-      </svg>
-    )
-  },
-  {
-    href: '/dashboard/cart',
-    label: 'Panier',
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-        <line x1="3" y1="6" x2="21" y2="6"/>
-        <path d="M16 10a4 4 0 01-8 0"/>
-      </svg>
-    )
-  },
+const bottomNavItems = [
+  { href: '/dashboard', label: 'Accueil', icon: <HomeIcon /> },
+  { href: '/dashboard/products', label: 'Produits', icon: <ProductIcon /> },
+  { href: '/dashboard/transactions', label: 'Transactions', icon: <TransactionIcon /> },
+  { href: '/dashboard/withdrawals', label: 'Retraits', icon: <WithdrawIcon /> },
+  { href: '/dashboard/account', label: 'Compte', icon: <AccountIcon /> },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -96,7 +50,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Logo size="sm" showText />
         </div>
         <nav style={{ padding: '8px 12px' }}>
-          {[...navItems, ...sidebarOnlyItems].map((item) => (
+          {sidebarItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -132,7 +86,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         className="dashboard-bottom-nav"
         style={{ justifyContent: 'space-around', alignItems: 'center' }}
       >
-        {navItems.map((item) => (
+        {bottomNavItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
