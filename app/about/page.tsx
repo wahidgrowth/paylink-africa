@@ -3,7 +3,7 @@ import Logo from '@/components/Logo'
 
 export default function AboutPage() {
   return (
-    <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
+    <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif', color: '#fff', overflowX: 'hidden' }}>
 
       <style>{`
         .about-nav { padding: 16px 40px; }
@@ -13,8 +13,9 @@ export default function AboutPage() {
         .about-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .about-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
         .about-founder { display: grid; grid-template-columns: 200px 1fr; gap: 40px; align-items: start; }
-        .about-founder-img { width: 200px; height: 260px; border-radius: 16px; object-fit: cover; object-position: center top; border: 0.5px solid #1F1F1F; }
+        .about-founder-img { width: 200px; height: 260px; border-radius: 16px; object-fit: contain; background: #111; border: 0.5px solid #1F1F1F; }
         .about-footer { display: flex; justify-content: space-between; align-items: center; }
+        * { box-sizing: border-box; }
 
         @media (max-width: 767px) {
           .about-nav { padding: 16px; }
@@ -24,8 +25,9 @@ export default function AboutPage() {
           .about-grid-2 { grid-template-columns: 1fr; gap: 16px; }
           .about-grid-3 { grid-template-columns: 1fr 1fr; gap: 16px; }
           .about-founder { grid-template-columns: 1fr; gap: 20px; }
-          .about-founder-img { width: 100%; height: 280px; }
+          .about-founder-img { width: 100%; height: 280px; object-fit: contain; background: #111; }
           .about-footer { flex-direction: column; gap: 20px; text-align: center; }
+          img { max-width: 100%; }
         }
       `}</style>
 
@@ -45,15 +47,15 @@ export default function AboutPage() {
         </div>
       </nav>
 
-      <div className="about-pad" style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <div className="about-pad" style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
 
         {/* HEADER */}
         <div style={{ marginBottom: '56px' }}>
           <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 16px' }}>À propos</p>
           <h1 className="about-h1" style={{ fontWeight: '800', color: '#fff', margin: '0 0 20px' }}>
-            Nous croyons que chaque<br />entrepreneur africain mérite<br /><span style={{ color: '#10B981' }}>de garder ce qu'il gagne.</span>
+            Nous croyons que chaque entrepreneur africain mérite <span style={{ color: '#10B981' }}>de garder ce qu'il gagne.</span>
           </h1>
-          <p style={{ fontSize: '16px', color: '#6B7280', lineHeight: '1.7', margin: 0, maxWidth: '600px' }}>
+          <p style={{ fontSize: '16px', color: '#6B7280', lineHeight: '1.7', margin: 0 }}>
             PayLink Africa est né d'un constat simple : les plateformes existantes prennent trop. Entre 5% et 15% de commission, des abonnements mensuels, des interfaces complexes. L'entrepreneur africain mérite mieux.
           </p>
         </div>
