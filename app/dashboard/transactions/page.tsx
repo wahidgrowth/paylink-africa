@@ -57,7 +57,19 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div>
+    <div style={{ padding: '32px' }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .tx-wrap { padding: 16px !important; }
+          .tx-stats { grid-template-columns: 1fr 1fr !important; }
+          .tx-filters { flex-wrap: wrap !important; }
+          .tx-filters button { font-size: 12px !important; padding: 7px 12px !important; }
+          .tx-header-row { display: none !important; }
+          .tx-row { grid-template-columns: 1fr !important; gap: 8px !important; padding: 16px !important; }
+          .tx-row-date { font-size: 11px !important; color: #6B7280 !important; }
+          .tx-row-amount { font-size: 15px !important; font-weight: 700 !important; }
+        }
+      `}</style>
 
       {/* HEADER */}
       <div style={{ marginBottom: '28px' }}>
@@ -66,7 +78,7 @@ export default function TransactionsPage() {
       </div>
 
       {/* STATS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
+      <div className="tx-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
           { label: 'Total encaissé', value: totalRevenue.toLocaleString('fr-FR') + ' FCFA', color: '#10B981', icon: <RevenueIcon /> },
           { label: 'Transactions réussies', value: transactions.filter(t => t.status === 'success').length.toString(), color: '#10B981', icon: <CheckIcon /> },
@@ -83,7 +95,7 @@ export default function TransactionsPage() {
       </div>
 
       {/* FILTRES */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+      <div className="tx-filters" style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {[
           { key: 'all', label: 'Toutes' },
           { key: 'success', label: 'Réussies' },
@@ -93,7 +105,7 @@ export default function TransactionsPage() {
           <button
             key={f.key}
             onClick={() => setFilter(f.key as typeof filter)}
-            style={{ background: filter === f.key ? '#10B981' : '#111111', border: `0.5px solid ${filter === f.key ? '#10B981' : '#2a2a2a'}`, color: filter === f.key ? '#000' : '#9CA3AF', fontSize: '13px', fontWeight: filter === f.key ? '700' : '400', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}
+            style={{ background: filter === f.key ? '#10B981' : '#111111', border: `0.5px solid ${filter === f.key ? '#10B981' : '#2a2a2a'}`, color: filter === f.key ? '#000' : '#9CA3AF', fontSize: '13px', fontWeight: filter === f.key ? '700' : '400', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >
             {f.label}
           </button>
@@ -103,7 +115,8 @@ export default function TransactionsPage() {
       {/* LISTE */}
       <div style={{ background: '#111111', borderRadius: '12px', border: '0.5px solid #1F1F1F', overflow: 'hidden' }}>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', padding: '14px 24px', borderBottom: '0.5px solid #1F1F1F' }}>
+        {/* EN-TÊTE TABLEAU — caché sur mobile */}
+        <div className="tx-header-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', padding: '14px 24px', borderBottom: '0.5px solid #1F1F1F' }}>
           {['Client', 'Date', 'Montant', 'Statut'].map((h, i) => (
             <p key={i} style={{ margin: 0, fontSize: '11px', color: '#444', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '1px' }}>{h}</p>
           ))}
@@ -126,8 +139,10 @@ export default function TransactionsPage() {
             return (
               <div
                 key={tx.id}
+                className="tx-row"
                 style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', padding: '16px 24px', borderBottom: i < filtered.length - 1 ? '0.5px solid #1F1F1F' : 'none', alignItems: 'center' }}
               >
+                {/* CLIENT */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <div style={{ width: '36px', height: '36px', background: '#10B98115', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
                     <UserIcon />
@@ -137,12 +152,18 @@ export default function TransactionsPage() {
                     {tx.buyer_phone && <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{tx.buyer_phone}</p>}
                   </div>
                 </div>
-                <p style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>
+
+                {/* DATE */}
+                <p className="tx-row-date" style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>
                   {new Date(tx.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </p>
-                <p style={{ margin: 0, fontSize: '14px', color: '#10B981', fontWeight: '700' }}>
+
+                {/* MONTANT */}
+                <p className="tx-row-amount" style={{ margin: 0, fontSize: '14px', color: '#10B981', fontWeight: '700' }}>
                   +{tx.seller_receives.toLocaleString('fr-FR')} FCFA
                 </p>
+
+                {/* STATUT */}
                 <div>
                   <span style={{ background: status.bg, color: status.color, fontSize: '11px', fontWeight: '600', padding: '4px 10px', borderRadius: '20px' }}>
                     {status.label}
@@ -153,7 +174,6 @@ export default function TransactionsPage() {
           })
         )}
       </div>
-
     </div>
   )
 }
