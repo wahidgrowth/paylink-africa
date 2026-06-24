@@ -70,10 +70,19 @@ export default function Dashboard() {
   )
 
   return (
-    <div style={{ padding: '32px 32px 32px' }}>
+    <div style={{ padding: '32px' }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .dash-wrap { padding: 16px !important; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .actions-grid { grid-template-columns: 1fr !important; }
+          .bottom-grid { grid-template-columns: 1fr !important; }
+          .dash-header { flex-direction: column !important; gap: 12px !important; }
+        }
+      `}</style>
 
       {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+      <div className="dash-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
         <div>
           <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#fff', margin: '0 0 4px' }}>
             {getHour()}{firstName ? ', ' + firstName : ''}
@@ -83,47 +92,39 @@ export default function Dashboard() {
           </p>
         </div>
         <Link href="/dashboard/products/new" style={{ textDecoration: 'none' }}>
-          <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '13px', fontWeight: '700', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>
+          <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '13px', fontWeight: '700', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
             + Nouveau produit
           </button>
         </Link>
       </div>
 
       {/* STATS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        <style>{`
-          @media (max-width: 767px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-            .actions-grid { grid-template-columns: 1fr !important; }
-            .bottom-grid { grid-template-columns: 1fr !important; }
-            .dashboard-padding { padding: 16px !important; }
-          }
-        `}</style>
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
         {[
           { label: 'Revenus totaux', value: stats.revenue.toLocaleString('fr-FR') + ' FCFA', icon: <RevenueIcon />, color: '#10B981' },
           { label: 'Ventes réussies', value: stats.sales.toString(), icon: <SalesIcon />, color: '#10B981' },
           { label: 'Vues totales', value: stats.views.toString(), icon: <ViewsIcon />, color: '#6B7280' },
           { label: 'Taux de conversion', value: conversionRate + '%', icon: <ConversionIcon />, color: conversionRate >= '5' ? '#10B981' : '#F59E0B' },
         ].map((stat) => (
-          <div key={stat.label} style={{ background: '#111111', borderRadius: '12px', padding: '20px 24px', border: '0.5px solid #1F1F1F' }}>
+          <div key={stat.label} style={{ background: '#111111', borderRadius: '12px', padding: '20px 16px', border: '0.5px solid #1F1F1F' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <p style={{ fontSize: '12px', color: '#6B7280', margin: 0 }}>{stat.label}</p>
               <span style={{ color: stat.color, display: 'flex' }}>{stat.icon}</span>
             </div>
-            <p style={{ fontSize: '24px', fontWeight: '700', color: stat.color, margin: 0 }}>{stat.value}</p>
+            <p style={{ fontSize: '22px', fontWeight: '700', color: stat.color, margin: 0 }}>{stat.value}</p>
           </div>
         ))}
       </div>
 
       {/* ACTIONS RAPIDES */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
+      <div className="actions-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
         {[
           { label: 'Créer un produit', desc: 'Nouvelle page de vente', href: '/dashboard/products/new', icon: <PlusIcon />, primary: true },
           { label: 'Voir mes produits', desc: stats.products + ' produit(s) actif(s)', href: '/dashboard/products', icon: <LinkIcon />, primary: false },
           { label: 'Audit IA', desc: 'Optimiser mes conversions', href: '/dashboard/audit', icon: <AuditIcon />, primary: false },
         ].map((action) => (
           <Link key={action.label} href={action.href} style={{ textDecoration: 'none' }}>
-            <div style={{ background: action.primary ? '#10B98115' : '#111111', borderRadius: '12px', padding: '16px 20px', border: `0.5px solid ${action.primary ? '#10B98140' : '#1F1F1F'}`, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ background: action.primary ? '#10B98115' : '#111111', borderRadius: '12px', padding: '16px', border: `0.5px solid ${action.primary ? '#10B98140' : '#1F1F1F'}`, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ color: action.primary ? '#10B981' : '#6B7280', display: 'flex', alignItems: 'center', width: '32px', height: '32px', background: action.primary ? '#10B98125' : '#1A1A1A', borderRadius: '8px', justifyContent: 'center', flexShrink: 0 }}>{action.icon}</span>
               <div>
                 <p style={{ margin: '0 0 2px', fontSize: '13px', fontWeight: '600', color: action.primary ? '#10B981' : '#fff' }}>{action.label}</p>
@@ -135,7 +136,7 @@ export default function Dashboard() {
       </div>
 
       {/* DERNIÈRES TRANSACTIONS + PRODUITS */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div className="bottom-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
 
         <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
