@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 import Logo from '@/components/Logo'
 
 const HomeIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -12,6 +13,7 @@ const WithdrawIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill=
 const AccountIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
 const KycIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
 const SupportIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+const MoreIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
 
 const sidebarItems = [
   { href: '/dashboard', label: 'Accueil', icon: <HomeIcon /> },
@@ -33,13 +35,23 @@ const bottomNavItems = [
   { href: '/dashboard/account', label: 'Compte', icon: <AccountIcon /> },
 ]
 
+const moreItems = [
+  { href: '/dashboard/audit', label: 'Audit IA', icon: <AuditIcon /> },
+  { href: '/dashboard/cart', label: 'Panier', icon: <CartIcon /> },
+  { href: '/dashboard/kyc', label: 'KYC', icon: <KycIcon /> },
+  { href: '/support', label: 'Support', icon: <SupportIcon /> },
+]
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const [showMore, setShowMore] = useState(false)
 
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard'
     return pathname.startsWith(href)
   }
+
+  const isMoreActive = moreItems.some(item => isActive(item.href))
 
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A' }}>
@@ -81,6 +93,42 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {children}
       </div>
 
+      {/* MENU "PLUS" — mobile uniquement */}
+      {showMore && (
+        <div
+          onClick={() => setShowMore(false)}
+          style={{ position: 'fixed', inset: 0, zIndex: 40, background: 'rgba(0,0,0,0.5)' }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ position: 'fixed', bottom: '64px', left: '16px', right: '16px', background: '#111111', borderRadius: '16px', border: '0.5px solid #1F1F1F', padding: '8px', zIndex: 41 }}
+          >
+            {moreItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setShowMore(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  color: isActive(item.href) ? '#10B981' : '#fff',
+                  background: isActive(item.href) ? 'rgba(16,185,129,0.08)' : 'transparent',
+                }}
+              >
+                {item.icon}
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* BOTTOM NAV — mobile uniquement */}
       <nav
         className="dashboard-bottom-nav"
@@ -107,6 +155,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {item.label}
           </Link>
         ))}
+
+        {/* BOUTON PLUS */}
+        <button
+          onClick={() => setShowMore(!showMore)}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '4px',
+            background: 'none',
+            border: 'none',
+            color: isMoreActive || showMore ? '#10B981' : '#6B7280',
+            fontSize: '10px',
+            fontWeight: '500',
+            flex: 1,
+            padding: '8px 0',
+            cursor: 'pointer',
+          }}
+        >
+          <MoreIcon />
+          Plus
+        </button>
       </nav>
 
     </div>
