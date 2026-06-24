@@ -70,7 +70,7 @@ export default function Dashboard() {
   )
 
   return (
-    <div>
+    <div style={{ padding: '32px 32px 32px' }}>
 
       {/* HEADER */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
@@ -91,6 +91,14 @@ export default function Dashboard() {
 
       {/* STATS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        <style>{`
+          @media (max-width: 767px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .actions-grid { grid-template-columns: 1fr !important; }
+            .bottom-grid { grid-template-columns: 1fr !important; }
+            .dashboard-padding { padding: 16px !important; }
+          }
+        `}</style>
         {[
           { label: 'Revenus totaux', value: stats.revenue.toLocaleString('fr-FR') + ' FCFA', icon: <RevenueIcon />, color: '#10B981' },
           { label: 'Ventes réussies', value: stats.sales.toString(), icon: <SalesIcon />, color: '#10B981' },
@@ -129,7 +137,6 @@ export default function Dashboard() {
       {/* DERNIÈRES TRANSACTIONS + PRODUITS */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
 
-        {/* Dernières transactions */}
         <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#fff', margin: 0 }}>Dernières ventes</h2>
@@ -160,7 +167,6 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Mes produits */}
         <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#fff', margin: 0 }}>Mes produits</h2>
@@ -169,7 +175,7 @@ export default function Dashboard() {
           {products.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}><ProductEmptyIcon /></div>
-              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>Aucun produit créé pour l'instant</p>
+              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>Aucun produit créé pour le moment</p>
               <Link href="/dashboard/products/new" style={{ textDecoration: 'none' }}>
                 <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '12px', fontWeight: '700', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Créer mon premier produit</button>
               </Link>
