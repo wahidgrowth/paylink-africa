@@ -117,7 +117,7 @@ export default function PricingPage() {
             <div style={{ marginBottom: '20px' }}>
               <span style={{ fontSize: '11px', color: '#6B7280', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase' }}>FREE</span>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', margin: '10px 0 4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: '800', color: '#fff', lineHeight: 1 }}>0</span>
+                <span style={{ fontSize: '40px', fontWeight: '800', color: '#fff', lineHeight: 1 }}>0</span>
                 <span style={{ fontSize: '13px', color: '#6B7280' }}>FCFA/mois</span>
               </div>
               <div style={{ display: 'inline-block', background: '#1A1A1A', borderRadius: '6px', padding: '4px 10px', marginTop: '4px' }}>
@@ -145,7 +145,7 @@ export default function PricingPage() {
             <div style={{ marginBottom: '20px' }}>
               <span style={{ fontSize: '11px', color: '#6B7280', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase' }}>STARTER</span>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', margin: '10px 0 4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: '800', color: '#fff', lineHeight: 1 }}>4 900</span>
+                <span style={{ fontSize: '28px', fontWeight: '800', color: '#fff', lineHeight: 1 }}>4 900</span>
                 <span style={{ fontSize: '13px', color: '#6B7280' }}>FCFA/mois</span>
               </div>
               <div style={{ display: 'inline-block', background: '#1A1A1A', borderRadius: '6px', padding: '4px 10px', marginTop: '4px' }}>
@@ -176,7 +176,7 @@ export default function PricingPage() {
             <div style={{ marginBottom: '20px' }}>
               <span style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase' }}>PRO</span>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', margin: '10px 0 4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: '800', color: '#fff', lineHeight: 1 }}>14 900</span>
+                <span style={{ fontSize: '28px', fontWeight: '800', color: '#fff', lineHeight: 1 }}>14 900</span>
                 <span style={{ fontSize: '13px', color: '#6B7280' }}>FCFA/mois</span>
               </div>
               <div style={{ display: 'inline-block', background: '#10B98120', borderRadius: '6px', padding: '4px 10px', marginTop: '4px' }}>
@@ -204,7 +204,7 @@ export default function PricingPage() {
             <div style={{ marginBottom: '20px' }}>
               <span style={{ fontSize: '11px', color: '#6B7280', fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase' }}>SCALE</span>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', margin: '10px 0 4px' }}>
-                <span style={{ fontSize: '36px', fontWeight: '800', color: '#fff', lineHeight: 1 }}>29 900</span>
+                <span style={{ fontSize: '28px', fontWeight: '800', color: '#fff', lineHeight: 1 }}>29 900</span>
                 <span style={{ fontSize: '13px', color: '#6B7280' }}>FCFA/mois</span>
               </div>
               <div style={{ display: 'inline-block', background: '#1A1A1A', borderRadius: '6px', padding: '4px 10px', marginTop: '4px' }}>
