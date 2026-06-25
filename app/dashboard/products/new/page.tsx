@@ -6,6 +6,18 @@ import dynamic from 'next/dynamic'
 
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
 
+type PageContent = {
+  headline: string
+  subheadline: string
+  problem: string
+  solution: string
+  benefits: string[]
+  testimonial: { name: string; text: string; location: string }
+  guarantee: string
+  cta_urgency: string
+  whatsapp_text: string
+}
+
 export default function NewProductPage() {
   const [pageType, setPageType] = useState<'link' | 'sales_page'>('link')
   const [title, setTitle] = useState('')
@@ -22,7 +34,8 @@ export default function NewProductPage() {
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [message, setMessage] = useState('')
-  const [pageGenerated, setPageGenerated] = useState(false)
+  const [pageContent, setPageContent] = useState<PageContent | null>(null)
+  const [showPreview, setShowPreview] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -61,6 +74,7 @@ export default function NewProductPage() {
     }
     setGenerating(true)
     setMessage('')
+    setShowPreview(false)
     try {
       const res = await fetch('/api/generate-page', {
         method: 'POST',
@@ -71,7 +85,8 @@ export default function NewProductPage() {
       if (data.error) {
         setMessage('Erreur lors de la génération. Réessaie.')
       } else {
-        setPageGenerated(true)
+        setPageContent(data.pageContent)
+        setShowPreview(true)
         setMessage('')
       }
     } catch {
@@ -85,7 +100,7 @@ export default function NewProductPage() {
       setMessage('Titre, prix et slug sont obligatoires')
       return
     }
-    if (pageType === 'sales_page' && !pageGenerated) {
+    if (pageType === 'sales_page' && !pageContent) {
       setMessage('Génère ta page de vente avant de publier.')
       return
     }
@@ -100,14 +115,8 @@ export default function NewProductPage() {
     if (imageFile) {
       const ext = imageFile.name.split('.').pop()
       const path = `${user.id}/${slug}-${Date.now()}.${ext}`
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(path, imageFile, { upsert: true })
-      if (uploadError) {
-        setMessage('Erreur upload image : ' + uploadError.message)
-        setLoading(false)
-        return
-      }
+      const { error: uploadError } = await supabase.storage.from('product-images').upload(path, imageFile, { upsert: true })
+      if (uploadError) { setMessage('Erreur upload image : ' + uploadError.message); setLoading(false); return }
       const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(path)
       image_url = urlData.publicUrl
     }
@@ -115,14 +124,8 @@ export default function NewProductPage() {
     if (fileUpload) {
       const ext = fileUpload.name.split('.').pop()
       const path = `${user.id}/${slug}-file-${Date.now()}.${ext}`
-      const { error: fileError } = await supabase.storage
-        .from('product-images')
-        .upload(path, fileUpload, { upsert: true })
-      if (fileError) {
-        setMessage('Erreur upload fichier : ' + fileError.message)
-        setLoading(false)
-        return
-      }
+      const { error: fileError } = await supabase.storage.from('product-images').upload(path, fileUpload, { upsert: true })
+      if (fileError) { setMessage('Erreur upload fichier : ' + fileError.message); setLoading(false); return }
       const { data: fileUrlData } = supabase.storage.from('product-images').getPublicUrl(path)
       file_url = fileUrlData.publicUrl
     }
@@ -140,6 +143,7 @@ export default function NewProductPage() {
       page_type: pageType,
       page_market: market,
       page_raw_content: rawContent,
+      page_content: pageContent,
     })
 
     if (error) {
@@ -162,6 +166,8 @@ export default function NewProductPage() {
     boxSizing: 'border-box' as const,
   }
 
+  const CheckSmall = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+
   return (
     <div style={{ padding: '32px' }}>
       <style>{`
@@ -172,6 +178,7 @@ export default function NewProductPage() {
           .np-price-grid { grid-template-columns: 1fr !important; }
           .np-market-grid { grid-template-columns: 1fr !important; }
           .np-btn-row { flex-direction: column !important; }
+          .np-preview-benefits { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
@@ -188,17 +195,11 @@ export default function NewProductPage() {
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 16px' }}>Type de produit</p>
             <div className="np-type-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div
-                onClick={() => setPageType('link')}
-                style={{ padding: '16px', borderRadius: '10px', border: `1.5px solid ${pageType === 'link' ? '#10B981' : '#2a2a2a'}`, background: pageType === 'link' ? '#10B98110' : '#1A1A1A', cursor: 'pointer' }}
-              >
+              <div onClick={() => setPageType('link')} style={{ padding: '16px', borderRadius: '10px', border: `1.5px solid ${pageType === 'link' ? '#10B981' : '#2a2a2a'}`, background: pageType === 'link' ? '#10B98110' : '#1A1A1A', cursor: 'pointer' }}>
                 <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: '700', color: pageType === 'link' ? '#10B981' : '#fff' }}>Lien de paiement</p>
                 <p style={{ margin: 0, fontSize: '12px', color: '#6B7280', lineHeight: '1.5' }}>Simple et rapide. Formulaire de paiement direct.</p>
               </div>
-              <div
-                onClick={() => setPageType('sales_page')}
-                style={{ padding: '16px', borderRadius: '10px', border: `1.5px solid ${pageType === 'sales_page' ? '#10B981' : '#2a2a2a'}`, background: pageType === 'sales_page' ? '#10B98110' : '#1A1A1A', cursor: 'pointer' }}
-              >
+              <div onClick={() => setPageType('sales_page')} style={{ padding: '16px', borderRadius: '10px', border: `1.5px solid ${pageType === 'sales_page' ? '#10B981' : '#2a2a2a'}`, background: pageType === 'sales_page' ? '#10B98110' : '#1A1A1A', cursor: 'pointer' }}>
                 <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: '700', color: pageType === 'sales_page' ? '#10B981' : '#fff' }}>Page de vente IA ✨</p>
                 <p style={{ margin: 0, fontSize: '12px', color: '#6B7280', lineHeight: '1.5' }}>Notre IA génère ta page de vente complète.</p>
               </div>
@@ -209,13 +210,9 @@ export default function NewProductPage() {
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 20px' }}>Informations de base</p>
 
-            {/* IMAGE */}
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Image de couverture</label>
-              <div
-                onClick={() => document.getElementById('image-input')?.click()}
-                style={{ width: '100%', height: '180px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', position: 'relative' }}
-              >
+              <div onClick={() => document.getElementById('image-input')?.click()} style={{ width: '100%', height: '180px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
                 {imagePreview ? (
                   <img src={imagePreview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
@@ -224,28 +221,21 @@ export default function NewProductPage() {
                     <p style={{ fontSize: '11px', color: '#444', margin: 0 }}>JPG, PNG — max 5MB</p>
                   </div>
                 )}
-                {imagePreview && (
-                  <div style={{ position: 'absolute', bottom: '8px', right: '8px', background: '#000000AA', borderRadius: '6px', padding: '4px 10px' }}>
-                    <p style={{ margin: 0, fontSize: '11px', color: '#fff' }}>Changer</p>
-                  </div>
-                )}
+                {imagePreview && <div style={{ position: 'absolute', bottom: '8px', right: '8px', background: '#000000AA', borderRadius: '6px', padding: '4px 10px' }}><p style={{ margin: 0, fontSize: '11px', color: '#fff' }}>Changer</p></div>}
               </div>
               <input id="image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
             </div>
 
-            {/* TITRE */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Titre du produit *</label>
               <input type="text" value={title} onChange={handleTitleChange} placeholder="Ex: Formation Marketing Digital" style={inputStyle} />
             </div>
 
-            {/* DESCRIPTION */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Description courte</label>
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Une phrase qui résume ton produit..." rows={2} style={{ ...inputStyle, resize: 'none' }} />
             </div>
 
-            {/* SLUG */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Lien personnalisé *</label>
               <div style={{ display: 'flex', alignItems: 'center', background: '#1A1A1A', borderRadius: '8px', border: '0.5px solid #2a2a2a', padding: '12px 16px', flexWrap: 'wrap', gap: '4px' }}>
@@ -255,7 +245,7 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* PAGE DE VENTE — selon le type choisi */}
+          {/* CONTENU */}
           {pageType === 'link' ? (
             <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
               <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente</p>
@@ -269,51 +259,81 @@ export default function NewProductPage() {
                 Colle tout ton contenu en vrac — description, bénéfices, témoignages, arguments. Notre IA structure tout automatiquement.
               </p>
 
-              {/* MARCHÉ */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Tes clients sont principalement où ? *</label>
                 <div className="np-market-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                  {[
-                    { key: 'afrique', label: '🌍 Afrique' },
-                    { key: 'europe', label: '🇪🇺 Europe' },
-                    { key: 'usa', label: '🇺🇸 USA' },
-                  ].map((m) => (
-                    <div
-                      key={m.key}
-                      onClick={() => setMarket(m.key as typeof market)}
-                      style={{ padding: '10px', borderRadius: '8px', border: `1.5px solid ${market === m.key ? '#10B981' : '#2a2a2a'}`, background: market === m.key ? '#10B98110' : '#1A1A1A', cursor: 'pointer', textAlign: 'center', fontSize: '13px', fontWeight: market === m.key ? '700' : '400', color: market === m.key ? '#10B981' : '#9CA3AF' }}
-                    >
+                  {[{ key: 'afrique', label: '🌍 Afrique' }, { key: 'europe', label: '🇪🇺 Europe' }, { key: 'usa', label: '🇺🇸 USA' }].map((m) => (
+                    <div key={m.key} onClick={() => setMarket(m.key as typeof market)} style={{ padding: '10px', borderRadius: '8px', border: `1.5px solid ${market === m.key ? '#10B981' : '#2a2a2a'}`, background: market === m.key ? '#10B98110' : '#1A1A1A', cursor: 'pointer', textAlign: 'center', fontSize: '13px', fontWeight: market === m.key ? '700' : '400', color: market === m.key ? '#10B981' : '#9CA3AF' }}>
                       {m.label}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* CONTENU BRUT */}
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Ton contenu brut *</label>
-                <textarea
-                  value={rawContent}
-                  onChange={(e) => setRawContent(e.target.value)}
-                  placeholder="Colle ici tout ce que tu veux dire sur ton produit — description, bénéfices, témoignages, prix, garantie, tout en vrac. L'IA s'occupe du reste."
-                  rows={8}
-                  style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.6' }}
-                />
-                <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>{rawContent.length} caractères — minimum 20 recommandés</p>
+                <textarea value={rawContent} onChange={(e) => setRawContent(e.target.value)} placeholder="Colle ici tout ce que tu veux dire sur ton produit — description, bénéfices, témoignages, prix, garantie, tout en vrac. L'IA s'occupe du reste." rows={8} style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.6' }} />
+                <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>{rawContent.length} caractères</p>
               </div>
 
-              {/* BOUTON GÉNÉRER */}
-              <button
-                onClick={handleGenerate}
-                disabled={generating}
-                style={{ width: '100%', background: generating ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating ? '#2a2a2a' : '#10B98140'}`, color: generating ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating ? 'not-allowed' : 'pointer' }}
-              >
-                {generating ? '✨ Génération en cours...' : pageGenerated ? '✓ Page générée — Régénérer' : '✨ Générer ma page de vente'}
+              <button onClick={handleGenerate} disabled={generating} style={{ width: '100%', background: generating ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating ? '#2a2a2a' : '#10B98140'}`, color: generating ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating ? 'not-allowed' : 'pointer' }}>
+                {generating ? '✨ Génération en cours...' : pageContent ? '✓ Page générée — Régénérer' : '✨ Générer ma page de vente'}
               </button>
 
-              {pageGenerated && (
-                <div style={{ background: '#10B98115', border: '0.5px solid #10B98140', borderRadius: '8px', padding: '12px 16px', marginTop: '12px' }}>
-                  <p style={{ color: '#10B981', fontSize: '13px', margin: 0 }}>✓ Ta page de vente a été générée avec succès. Elle sera visible sur ton lien public.</p>
+              {/* PREVIEW */}
+              {showPreview && pageContent && (
+                <div style={{ marginTop: '20px', background: '#0D0D0D', borderRadius: '12px', border: '0.5px solid #10B98140', overflow: 'hidden' }}>
+                  <div style={{ padding: '16px 20px', borderBottom: '0.5px solid #1F1F1F', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '700' }}>✓ Aperçu de ta page de vente</p>
+                    <button onClick={() => setShowPreview(!showPreview)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '12px', cursor: 'pointer' }}>Masquer</button>
+                  </div>
+                  <div style={{ padding: '20px' }}>
+
+                    {/* HEADLINE */}
+                    <div style={{ marginBottom: '20px', textAlign: 'center', padding: '20px', background: '#111', borderRadius: '10px' }}>
+                      <p style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: '0 0 8px', lineHeight: '1.3' }}>{pageContent.headline}</p>
+                      <p style={{ fontSize: '14px', color: '#9CA3AF', margin: 0 }}>{pageContent.subheadline}</p>
+                    </div>
+
+                    {/* PROBLÈME + SOLUTION */}
+                    <div style={{ display: 'grid', gap: '12px', marginBottom: '20px' }}>
+                      <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
+                        <p style={{ fontSize: '11px', color: '#EF4444', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Le problème</p>
+                        <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.6' }}>{pageContent.problem}</p>
+                      </div>
+                      <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
+                        <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>La solution</p>
+                        <p style={{ fontSize: '13px', color: '#fff', margin: 0, lineHeight: '1.6' }}>{pageContent.solution}</p>
+                      </div>
+                    </div>
+
+                    {/* BÉNÉFICES */}
+                    <div style={{ marginBottom: '20px' }}>
+                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 12px' }}>Bénéfices</p>
+                      <div className="np-preview-benefits" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        {pageContent.benefits.map((b, i) => (
+                          <div key={i} style={{ background: '#111', borderRadius: '8px', padding: '12px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                            <div style={{ flexShrink: 0, marginTop: '2px' }}><CheckSmall /></div>
+                            <p style={{ margin: 0, fontSize: '13px', color: '#fff', lineHeight: '1.4' }}>{b}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* TÉMOIGNAGE */}
+                    <div style={{ background: '#111', borderRadius: '10px', padding: '16px', marginBottom: '12px' }}>
+                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 10px' }}>Témoignage</p>
+                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: '0 0 8px', fontStyle: 'italic', lineHeight: '1.6' }}>"{pageContent.testimonial.text}"</p>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#10B981', fontWeight: '600' }}>{pageContent.testimonial.name} — {pageContent.testimonial.location}</p>
+                    </div>
+
+                    {/* GARANTIE */}
+                    <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
+                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Garantie</p>
+                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.6' }}>{pageContent.guarantee}</p>
+                    </div>
+
+                  </div>
                 </div>
               )}
             </div>
@@ -334,12 +354,6 @@ export default function NewProductPage() {
             </div>
             {price && parseInt(price) > 0 && (
               <div style={{ background: '#0D0D0D', borderRadius: '8px', padding: '14px', border: '0.5px solid #1F1F1F' }}>
-                {originalPrice && parseInt(originalPrice) > parseInt(price) && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '13px', color: '#6B7280' }}>Prix barré</span>
-                    <span style={{ fontSize: '13px', color: '#6B7280', textDecoration: 'line-through' }}>{parseInt(originalPrice).toLocaleString('fr-FR')} FCFA</span>
-                  </div>
-                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontSize: '13px', color: '#6B7280' }}>Prix de vente</span>
                   <span style={{ fontSize: '13px', color: '#fff' }}>{parseInt(price).toLocaleString('fr-FR')} FCFA</span>
@@ -360,10 +374,7 @@ export default function NewProductPage() {
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Fichier digital <span style={{ color: '#444', fontSize: '11px', fontWeight: '400', textTransform: 'none', letterSpacing: '0' }}>optionnel</span></p>
             <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>PDF, ebook, template... Partagé après paiement.</p>
-            <div
-              onClick={() => document.getElementById('file-input')?.click()}
-              style={{ width: '100%', padding: '20px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '12px' }}
-            >
+            <div onClick={() => document.getElementById('file-input')?.click()} style={{ width: '100%', padding: '20px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '12px' }}>
               {fileUpload ? (
                 <div>
                   <p style={{ margin: 0, fontSize: '13px', color: '#fff', fontWeight: '500' }}>{fileUpload.name}</p>
