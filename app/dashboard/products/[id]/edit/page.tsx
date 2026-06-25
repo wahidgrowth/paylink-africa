@@ -35,6 +35,8 @@ export default function EditProductPage() {
   const [fetching, setFetching] = useState(true)
   const [message, setMessage] = useState('')
   const [pageContent, setPageContent] = useState<PageContent | null>(null)
+  const [isPublished, setIsPublished] = useState(false)
+  const [modificationRequest, setModificationRequest] = useState('')
   const [showPreview, setShowPreview] = useState(false)
   const router = useRouter()
   const params = useParams()
@@ -61,6 +63,7 @@ export default function EditProductPage() {
         setMarket(data.page_market || 'afrique')
         if (data.page_content) {
           setPageContent(data.page_content)
+          setIsPublished(true)
           setShowPreview(true)
         }
       }
@@ -80,22 +83,65 @@ export default function EditProductPage() {
   }
 
   const handleGenerate = async () => {
+    if (!title || !price) {
+      setMessage('Le titre et le prix sont obligatoires.')
+      return
+    }
+
+    // Mode modification
+    if (isPublished && pageContent) {
+      if (!modificationRequest.trim()) {
+        setMessage('Décris ce que tu veux modifier.')
+        return
+      }
+      setGenerating(true)
+      setMessage('')
+      try {
+        const res = await fetch('/api/generate-page', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productTitle: title,
+            price: parseInt(price),
+            market,
+            rawContent,
+            modificationRequest,
+            existingPageContent: pageContent,
+          }),
+        })
+        const data = await res.json()
+        if (data.error) {
+          setMessage('Erreur lors de la modification. Réessaie.')
+        } else {
+          setPageContent(data.pageContent)
+          setShowPreview(true)
+          setModificationRequest('')
+          setMessage('')
+        }
+      } catch {
+        setMessage('Erreur serveur. Réessaie.')
+      }
+      setGenerating(false)
+      return
+    }
+
+    // Mode génération initiale
     if (!rawContent || rawContent.length < 20) {
       setMessage('Ajoute plus de contenu pour générer ta page de vente.')
       return
     }
-    if (!title || !price) {
-      setMessage('Le titre et le prix sont obligatoires avant de générer.')
-      return
-    }
     setGenerating(true)
     setMessage('')
-    setShowPreview(false)
     try {
       const res = await fetch('/api/generate-page', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rawContent, productTitle: title, price: parseInt(price), market }),
+        body: JSON.stringify({
+          rawContent,
+          productTitle: title,
+          price: parseInt(price),
+          market,
+        }),
       })
       const data = await res.json()
       if (data.error) {
@@ -113,7 +159,7 @@ export default function EditProductPage() {
 
   const handleSubmit = async () => {
     if (!title || !price || !slug) {
-      setMessage('Titre, prix et slug sont obligatoires')
+      setMessage('Titre et prix sont obligatoires.')
       return
     }
     setLoading(true)
@@ -239,7 +285,7 @@ export default function EditProductPage() {
 
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Titre du produit *</label>
-              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Formation Marketing Digital" style={inputStyle} />
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} style={inputStyle} />
             </div>
 
             <div style={{ marginBottom: '16px' }}>
@@ -248,10 +294,10 @@ export default function EditProductPage() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Lien personnalisé</label>
-              <div style={{ display: 'flex', alignItems: 'center', background: '#1A1A1A', borderRadius: '8px', border: '0.5px solid #2a2a2a', padding: '12px 16px' }}>
-                <span style={{ color: '#6B7280', fontSize: '13px', flexShrink: 0 }}>paylinkafrica.com/p/</span>
-                <span style={{ color: '#6B7280', fontSize: '14px', marginLeft: '4px' }}>{slug}</span>
+              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Lien public</label>
+              <div style={{ background: '#0D0D0D', borderRadius: '8px', padding: '12px 16px', border: '0.5px solid #1F1F1F' }}>
+                <span style={{ color: '#6B7280', fontSize: '13px' }}>paylinkafrica.com/p/</span>
+                <span style={{ color: '#10B981', fontSize: '13px', fontWeight: '600' }}>{slug}</span>
               </div>
               <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>Le lien ne peut pas être modifié après création.</p>
             </div>
@@ -266,8 +312,8 @@ export default function EditProductPage() {
           ) : (
             <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
               <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente IA ✨</p>
-              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px', lineHeight: '1.6' }}>Modifie ton contenu brut et régénère ta page.</p>
 
+              {/* MARCHÉ */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Marché cible</label>
                 <div className="ep-market-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
@@ -279,56 +325,87 @@ export default function EditProductPage() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Contenu brut</label>
-                <textarea value={rawContent} onChange={(e) => setRawContent(e.target.value)} rows={8} style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.6' }} />
-              </div>
+              {/* PAGE PAS ENCORE GÉNÉRÉE */}
+              {!isPublished && (
+                <>
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Ton contenu brut *</label>
+                    <textarea value={rawContent} onChange={(e) => setRawContent(e.target.value)} placeholder="Colle ici tout ce que tu veux dire sur ton produit..." rows={8} style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.6' }} />
+                    <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>{rawContent.length} caractères</p>
+                  </div>
+                  <button onClick={handleGenerate} disabled={generating} style={{ width: '100%', background: generating ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating ? '#2a2a2a' : '#10B98140'}`, color: generating ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating ? 'not-allowed' : 'pointer' }}>
+                    {generating ? '✨ Génération en cours...' : '✨ Générer ma page de vente'}
+                  </button>
+                </>
+              )}
 
-              <button onClick={handleGenerate} disabled={generating} style={{ width: '100%', background: generating ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating ? '#2a2a2a' : '#10B98140'}`, color: generating ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating ? 'not-allowed' : 'pointer' }}>
-                {generating ? '✨ Génération en cours...' : pageContent ? '✓ Régénérer la page' : '✨ Générer ma page de vente'}
-              </button>
+              {/* PAGE DÉJÀ PUBLIÉE — champ modification uniquement */}
+              {isPublished && (
+                <>
+                  <div style={{ background: '#10B98110', borderRadius: '8px', padding: '12px 16px', marginBottom: '20px', border: '0.5px solid #10B98130' }}>
+                    <p style={{ fontSize: '13px', color: '#10B981', margin: 0 }}>✓ Ta page de vente est active. Dis à l'IA ce que tu veux modifier.</p>
+                  </div>
+
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Que veux-tu modifier ?</label>
+                    <textarea
+                      value={modificationRequest}
+                      onChange={(e) => setModificationRequest(e.target.value)}
+                      placeholder="Ex: Rends le titre plus accrocheur, le témoignage doit venir du Bénin, ajoute plus d'urgence dans le CTA..."
+                      rows={4}
+                      style={{ ...inputStyle, resize: 'none', lineHeight: '1.6' }}
+                    />
+                  </div>
+
+                  <button onClick={handleGenerate} disabled={generating} style={{ width: '100%', background: generating ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating ? '#2a2a2a' : '#10B98140'}`, color: generating ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating ? 'not-allowed' : 'pointer' }}>
+                    {generating ? '✨ Modification en cours...' : '✨ Appliquer les modifications'}
+                  </button>
+                </>
+              )}
 
               {/* PREVIEW */}
               {showPreview && pageContent && (
                 <div style={{ marginTop: '20px', background: '#0D0D0D', borderRadius: '12px', border: '0.5px solid #10B98140', overflow: 'hidden' }}>
                   <div style={{ padding: '16px 20px', borderBottom: '0.5px solid #1F1F1F', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '700' }}>✓ Aperçu de ta page de vente</p>
-                    <button onClick={() => setShowPreview(!showPreview)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '12px', cursor: 'pointer' }}>Masquer</button>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '700' }}>✓ Aperçu de ta page</p>
+                    <button onClick={() => setShowPreview(!showPreview)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '12px', cursor: 'pointer' }}>
+                      {showPreview ? 'Masquer' : 'Afficher'}
+                    </button>
                   </div>
                   <div style={{ padding: '20px' }}>
-                    <div style={{ marginBottom: '20px', textAlign: 'center', padding: '20px', background: '#111', borderRadius: '10px' }}>
-                      <p style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: '0 0 8px', lineHeight: '1.3' }}>{pageContent.headline}</p>
-                      <p style={{ fontSize: '14px', color: '#9CA3AF', margin: 0 }}>{pageContent.subheadline}</p>
+                    <div style={{ marginBottom: '16px', textAlign: 'center', padding: '20px', background: '#111', borderRadius: '10px' }}>
+                      <p style={{ fontSize: '18px', fontWeight: '800', color: '#fff', margin: '0 0 8px', lineHeight: '1.3' }}>{pageContent.headline}</p>
+                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0 }}>{pageContent.subheadline}</p>
                     </div>
-                    <div style={{ display: 'grid', gap: '12px', marginBottom: '20px' }}>
-                      <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
-                        <p style={{ fontSize: '11px', color: '#EF4444', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Le problème</p>
-                        <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.6' }}>{pageContent.problem}</p>
+                    <div style={{ display: 'grid', gap: '10px', marginBottom: '16px' }}>
+                      <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                        <p style={{ fontSize: '10px', color: '#EF4444', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Problème</p>
+                        <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.5' }}>{pageContent.problem}</p>
                       </div>
-                      <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
-                        <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>La solution</p>
-                        <p style={{ fontSize: '13px', color: '#fff', margin: 0, lineHeight: '1.6' }}>{pageContent.solution}</p>
+                      <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                        <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Solution</p>
+                        <p style={{ fontSize: '13px', color: '#fff', margin: 0, lineHeight: '1.5' }}>{pageContent.solution}</p>
                       </div>
                     </div>
-                    <div style={{ marginBottom: '20px' }}>
-                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 12px' }}>Bénéfices</p>
+                    <div style={{ marginBottom: '16px' }}>
+                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 10px' }}>Bénéfices</p>
                       <div className="ep-preview-benefits" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                         {pageContent.benefits.map((b, i) => (
-                          <div key={i} style={{ background: '#111', borderRadius: '8px', padding: '12px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                            <div style={{ flexShrink: 0, marginTop: '2px' }}><CheckSmall /></div>
-                            <p style={{ margin: 0, fontSize: '13px', color: '#fff', lineHeight: '1.4' }}>{b}</p>
+                          <div key={i} style={{ background: '#111', borderRadius: '8px', padding: '10px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                            <div style={{ flexShrink: 0 }}><CheckSmall /></div>
+                            <p style={{ margin: 0, fontSize: '12px', color: '#fff', lineHeight: '1.4' }}>{b}</p>
                           </div>
                         ))}
                       </div>
                     </div>
-                    <div style={{ background: '#111', borderRadius: '10px', padding: '16px', marginBottom: '12px' }}>
-                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 10px' }}>Témoignage</p>
-                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: '0 0 8px', fontStyle: 'italic', lineHeight: '1.6' }}>"{pageContent.testimonial.text}"</p>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#10B981', fontWeight: '600' }}>{pageContent.testimonial.name} — {pageContent.testimonial.location}</p>
+                    <div style={{ background: '#111', borderRadius: '8px', padding: '14px', marginBottom: '10px' }}>
+                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Témoignage</p>
+                      <p style={{ fontSize: '12px', color: '#9CA3AF', margin: '0 0 6px', fontStyle: 'italic', lineHeight: '1.5' }}>"{pageContent.testimonial.text}"</p>
+                      <p style={{ margin: 0, fontSize: '11px', color: '#10B981', fontWeight: '600' }}>{pageContent.testimonial.name} — {pageContent.testimonial.location}</p>
                     </div>
-                    <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
-                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Garantie</p>
-                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.6' }}>{pageContent.guarantee}</p>
+                    <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Garantie</p>
+                      <p style={{ fontSize: '12px', color: '#9CA3AF', margin: 0, lineHeight: '1.5' }}>{pageContent.guarantee}</p>
                     </div>
                   </div>
                 </div>
@@ -342,11 +419,11 @@ export default function EditProductPage() {
             <div className="ep-price-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Prix de vente (FCFA) *</label>
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Ex: 25000" style={inputStyle} />
+                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} style={inputStyle} />
               </div>
               <div>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Prix barré (FCFA)</label>
-                <input type="number" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="Ex: 50000" style={inputStyle} />
+                <input type="number" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} style={inputStyle} />
               </div>
             </div>
             {price && parseInt(price) > 0 && (
@@ -380,7 +457,7 @@ export default function EditProductPage() {
             Annuler
           </button>
           <button onClick={handleSubmit} disabled={loading} style={{ flex: 2, background: loading ? '#059669' : '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px', borderRadius: '8px', cursor: loading ? 'not-allowed' : 'pointer' }}>
-            {loading ? 'Sauvegarde...' : 'Sauvegarder les modifications →'}
+            {loading ? 'Sauvegarde...' : 'Sauvegarder →'}
           </button>
         </div>
 
