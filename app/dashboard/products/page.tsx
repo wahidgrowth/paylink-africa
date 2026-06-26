@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Toast, useToast } from '@/components/Toast'
 
 type Product = {
   id: string
@@ -33,6 +34,7 @@ export default function ProductsPage() {
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const { toast, showToast, hideToast } = useToast()
   const supabase = createClient()
   const router = useRouter()
 
@@ -61,6 +63,7 @@ export default function ProductsPage() {
     const url = `${window.location.origin}/p/${slug}`
     navigator.clipboard.writeText(url)
     setCopiedSlug(slug)
+    showToast('Lien copié ! Partage-le sur WhatsApp ou Instagram.', 'success')
     setTimeout(() => setCopiedSlug(null), 2000)
   }
 
@@ -69,6 +72,7 @@ export default function ProductsPage() {
     const newStatus = !product.is_active
     await supabase.from('payment_links').update({ is_active: newStatus }).eq('id', product.id)
     setProducts(prev => prev.map(p => p.id === product.id ? { ...p, is_active: newStatus } : p))
+    showToast(newStatus ? 'Produit activé avec succès.' : 'Produit désactivé.', newStatus ? 'success' : 'info')
     setTogglingId(null)
   }
 
@@ -77,6 +81,7 @@ export default function ProductsPage() {
     setDeletingId(id)
     await supabase.from('payment_links').delete().eq('id', id)
     setProducts(prev => prev.filter(p => p.id !== id))
+    showToast('Produit supprimé.', 'info')
     setDeletingId(null)
   }
 
@@ -90,6 +95,9 @@ export default function ProductsPage() {
           .products-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
+
+      {/* TOAST */}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
 
       {/* HEADER */}
       <div className="products-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
