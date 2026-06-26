@@ -16,7 +16,8 @@ const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const AuditIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 const ProductIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
 const SaleEmptyIcon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-const ProductEmptyIcon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+const RocketIcon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+const CheckCircleIcon = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
 
 export default function Dashboard() {
   const [firstName, setFirstName] = useState('')
@@ -24,6 +25,7 @@ export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [isNewUser, setIsNewUser] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -49,6 +51,7 @@ export default function Dashboard() {
       setProducts(productData || [])
       setTransactions(txData || [])
       setStats({ products: productData?.length || 0, revenue: totalRevenue, sales: txData?.length || 0, views: totalViews })
+      setIsNewUser(!productData || productData.length === 0)
       setLoading(false)
     }
     getData()
@@ -69,6 +72,98 @@ export default function Dashboard() {
     </div>
   )
 
+  // =====================
+  // ONBOARDING — nouvel utilisateur sans produit
+  // =====================
+  if (isNewUser) {
+    const steps = [
+      {
+        num: '1',
+        title: 'Crée ton premier produit',
+        desc: 'Ajoute un titre, un prix et une image. Notre IA peut même créer ta page de vente automatiquement.',
+        action: { label: 'Créer un produit →', href: '/dashboard/products/new', primary: true },
+      },
+      {
+        num: '2',
+        title: 'Copie ton lien de paiement',
+        desc: 'Une fois ton produit créé, copie ton lien unique et partage-le partout — WhatsApp, Instagram, TikTok, SMS.',
+        action: null,
+      },
+      {
+        num: '3',
+        title: 'Encaisse en Mobile Money',
+        desc: 'Tes clients paient directement via MTN, Moov, Orange ou Wave. Tu gardes jusqu\'à 98% de chaque vente.',
+        action: null,
+      },
+    ]
+
+    return (
+      <div style={{ padding: '32px' }}>
+        <style>{`
+          @media (max-width: 767px) {
+            .onboard-wrap { padding: 16px !important; }
+            .onboard-steps { grid-template-columns: 1fr !important; }
+          }
+        `}</style>
+
+        {/* HEADER BIENVENUE */}
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+            <RocketIcon />
+          </div>
+          <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#fff', margin: '0 0 8px' }}>
+            Bienvenue{firstName ? ', ' + firstName : ''} ! 🎉
+          </h1>
+          <p style={{ fontSize: '15px', color: '#6B7280', margin: 0, lineHeight: '1.6' }}>
+            Tu es à 2 minutes de ta première vente en Mobile Money.
+          </p>
+        </div>
+
+        {/* ÉTAPES */}
+        <div className="onboard-steps" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
+          {steps.map((step, i) => (
+            <div key={i} style={{ background: '#111111', borderRadius: '16px', padding: '24px', border: i === 0 ? '1.5px solid #10B981' : '0.5px solid #1F1F1F', position: 'relative' }}>
+              <div style={{ width: '36px', height: '36px', background: i === 0 ? '#10B981' : '#1A1A1A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                <span style={{ fontSize: '14px', fontWeight: '800', color: i === 0 ? '#000' : '#6B7280' }}>{step.num}</span>
+              </div>
+              <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#fff', margin: '0 0 8px' }}>{step.title}</h3>
+              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px', lineHeight: '1.6' }}>{step.desc}</p>
+              {step.action && (
+                <Link href={step.action.href} style={{ textDecoration: 'none' }}>
+                  <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '13px', fontWeight: '700', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', width: '100%' }}>
+                    {step.action.label}
+                  </button>
+                </Link>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* AVANTAGES RAPIDES */}
+        <div style={{ background: '#111111', borderRadius: '16px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
+          <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 16px' }}>Pourquoi PayLink Africa ?</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
+            {[
+              'Jusqu\'à 98% de chaque vente pour toi',
+              'Page de vente générée par IA en 10 secondes',
+              'MTN, Moov, Orange, Wave — 10 pays africains',
+              'Partage ton lien sur WhatsApp en 1 clic',
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                <div style={{ flexShrink: 0, marginTop: '2px' }}><CheckCircleIcon /></div>
+                <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF', lineHeight: '1.5' }}>{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    )
+  }
+
+  // =====================
+  // DASHBOARD NORMAL
+  // =====================
   return (
     <div style={{ padding: '32px' }}>
       <style>{`
@@ -175,7 +270,6 @@ export default function Dashboard() {
           </div>
           {products.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}><ProductEmptyIcon /></div>
               <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>Aucun produit créé pour le moment</p>
               <Link href="/dashboard/products/new" style={{ textDecoration: 'none' }}>
                 <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '12px', fontWeight: '700', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}>Créer mon premier produit</button>
