@@ -31,7 +31,8 @@ export default function NewProductPage() {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [fileUpload, setFileUpload] = useState<File | null>(null)
-  const [showFileUpload, setShowFileUpload] = useState(false)
+  const [redirectUrl, setRedirectUrl] = useState('')
+  const [deliveryType, setDeliveryType] = useState<null | 'file' | 'redirect'>(null)
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [message, setMessage] = useState('')
@@ -122,7 +123,7 @@ export default function NewProductPage() {
       image_url = urlData.publicUrl
     }
 
-    if (fileUpload) {
+    if (fileUpload && deliveryType === 'file') {
       const ext = fileUpload.name.split('.').pop()
       const path = `${user.id}/${slug}-file-${Date.now()}.${ext}`
       const { error: fileError } = await supabase.storage.from('product-images').upload(path, fileUpload, { upsert: true })
@@ -140,6 +141,7 @@ export default function NewProductPage() {
       slug,
       image_url,
       file_url,
+      redirect_url: deliveryType === 'redirect' ? redirectUrl : null,
       page_type: pageType,
       page_market: market,
       page_raw_content: rawContent,
@@ -179,6 +181,7 @@ export default function NewProductPage() {
           .np-market-grid { grid-template-columns: 1fr !important; }
           .np-btn-row { flex-direction: column !important; }
           .np-preview-benefits { grid-template-columns: 1fr !important; }
+          .np-delivery-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
@@ -344,7 +347,6 @@ export default function NewProductPage() {
               <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Ex: 25000" style={inputStyle} />
             </div>
 
-            {/* PRIX BARRÉ TOGGLE */}
             {!showOriginalPrice ? (
               <button onClick={() => setShowOriginalPrice(true)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '13px', cursor: 'pointer', padding: '0', marginBottom: '16px', textDecoration: 'underline' }}>
                 + Ajouter un prix barré
@@ -352,7 +354,8 @@ export default function NewProductPage() {
             ) : (
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>
-                  Prix barré (FCFA) <span onClick={() => { setShowOriginalPrice(false); setOriginalPrice('') }} style={{ color: '#444', cursor: 'pointer', fontSize: '11px', marginLeft: '8px' }}>Supprimer</span>
+                  Prix barré (FCFA)
+                  <span onClick={() => { setShowOriginalPrice(false); setOriginalPrice('') }} style={{ color: '#444', cursor: 'pointer', fontSize: '11px', marginLeft: '8px', textDecoration: 'underline' }}>Supprimer</span>
                 </label>
                 <input type="number" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="Ex: 50000" style={inputStyle} />
               </div>
@@ -376,33 +379,67 @@ export default function NewProductPage() {
             )}
           </div>
 
-          {/* FICHIER DIGITAL — masqué par défaut */}
-          {!showFileUpload ? (
-            <button onClick={() => setShowFileUpload(true)} style={{ background: 'transparent', border: '0.5px dashed #2a2a2a', color: '#6B7280', fontSize: '13px', cursor: 'pointer', padding: '14px', borderRadius: '10px', width: '100%', textAlign: 'center' }}>
-              + Ajouter un fichier digital (PDF, ebook, ZIP...)
-            </button>
-          ) : (
-            <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>Fichier digital</p>
-                <button onClick={() => { setShowFileUpload(false); setFileUpload(null) }} style={{ background: 'transparent', border: 'none', color: '#444', fontSize: '12px', cursor: 'pointer' }}>Supprimer</button>
+          {/* APRÈS PAIEMENT */}
+          <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
+            <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Après paiement <span style={{ color: '#444', fontSize: '11px', fontWeight: '400', textTransform: 'none', letterSpacing: '0' }}>— optionnel</span></p>
+            <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px', lineHeight: '1.5' }}>Que reçoit ton client après avoir payé ?</p>
+
+            {/* CHOIX */}
+            {!deliveryType && (
+              <div className="np-delivery-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div onClick={() => setDeliveryType('file')} style={{ padding: '16px', borderRadius: '10px', border: '0.5px dashed #2a2a2a', background: '#1A1A1A', cursor: 'pointer', textAlign: 'center' }}>
+                  <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: '600', color: '#fff' }}>📎 Fichier digital</p>
+                  <p style={{ margin: 0, fontSize: '12px', color: '#6B7280' }}>PDF, ebook, ZIP, MP4...</p>
+                </div>
+                <div onClick={() => setDeliveryType('redirect')} style={{ padding: '16px', borderRadius: '10px', border: '0.5px dashed #2a2a2a', background: '#1A1A1A', cursor: 'pointer', textAlign: 'center' }}>
+                  <p style={{ margin: '0 0 4px', fontSize: '13px', fontWeight: '600', color: '#fff' }}>🔗 Lien de redirection</p>
+                  <p style={{ margin: 0, fontSize: '12px', color: '#6B7280' }}>Groupe WhatsApp, cours en ligne...</p>
+                </div>
               </div>
-              <div onClick={() => document.getElementById('file-input')?.click()} style={{ width: '100%', padding: '20px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '12px' }}>
-                {fileUpload ? (
-                  <div>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#fff', fontWeight: '500' }}>{fileUpload.name}</p>
-                    <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{(fileUpload.size / 1024 / 1024).toFixed(2)} MB</p>
-                  </div>
-                ) : (
-                  <div style={{ textAlign: 'center' }}>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>Clique pour uploader ton fichier</p>
-                    <p style={{ margin: 0, fontSize: '11px', color: '#444' }}>PDF, ZIP, MP4 — max 50MB</p>
-                  </div>
-                )}
+            )}
+
+            {/* FICHIER DIGITAL */}
+            {deliveryType === 'file' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>Fichier digital</p>
+                  <button onClick={() => { setDeliveryType(null); setFileUpload(null) }} style={{ background: 'transparent', border: 'none', color: '#444', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}>Changer</button>
+                </div>
+                <div onClick={() => document.getElementById('file-input')?.click()} style={{ width: '100%', padding: '20px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '12px' }}>
+                  {fileUpload ? (
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '600' }}>✓ {fileUpload.name}</p>
+                      <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{(fileUpload.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </div>
+                  ) : (
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>Clique pour uploader ton fichier</p>
+                      <p style={{ margin: 0, fontSize: '11px', color: '#444' }}>PDF, ZIP, MP4 — max 50MB</p>
+                    </div>
+                  )}
+                </div>
+                <input id="file-input" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
               </div>
-              <input id="file-input" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
-            </div>
-          )}
+            )}
+
+            {/* LIEN DE REDIRECTION */}
+            {deliveryType === 'redirect' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>Lien de redirection</p>
+                  <button onClick={() => { setDeliveryType(null); setRedirectUrl('') }} style={{ background: 'transparent', border: 'none', color: '#444', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}>Changer</button>
+                </div>
+                <input
+                  type="url"
+                  value={redirectUrl}
+                  onChange={(e) => setRedirectUrl(e.target.value)}
+                  placeholder="https://chat.whatsapp.com/... ou https://ton-cours.com/..."
+                  style={inputStyle}
+                />
+                <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>Le client sera redirigé vers ce lien après paiement.</p>
+              </div>
+            )}
+          </div>
 
         </div>
 
