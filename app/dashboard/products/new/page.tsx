@@ -21,16 +21,17 @@ type PageContent = {
 export default function NewProductPage() {
   const [pageType, setPageType] = useState<'link' | 'sales_page'>('link')
   const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
   const [content, setContent] = useState('')
   const [rawContent, setRawContent] = useState('')
   const [market, setMarket] = useState<'afrique' | 'europe' | 'usa'>('afrique')
   const [price, setPrice] = useState('')
   const [originalPrice, setOriginalPrice] = useState('')
+  const [showOriginalPrice, setShowOriginalPrice] = useState(false)
   const [slug, setSlug] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [fileUpload, setFileUpload] = useState<File | null>(null)
+  const [showFileUpload, setShowFileUpload] = useState(false)
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [message, setMessage] = useState('')
@@ -97,7 +98,7 @@ export default function NewProductPage() {
 
   const handleSubmit = async () => {
     if (!title || !price || !slug) {
-      setMessage('Titre, prix et slug sont obligatoires')
+      setMessage('Titre et prix sont obligatoires.')
       return
     }
     if (pageType === 'sales_page' && !pageContent) {
@@ -133,7 +134,6 @@ export default function NewProductPage() {
     const { error } = await supabase.from('payment_links').insert({
       user_id: user.id,
       title,
-      description,
       content,
       price: parseInt(price),
       original_price: originalPrice ? parseInt(originalPrice) : null,
@@ -186,7 +186,7 @@ export default function NewProductPage() {
 
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{ fontSize: '22px', fontWeight: '700', color: '#fff', margin: '0 0 4px' }}>Créer un produit</h1>
-          <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>Configure ta page de vente</p>
+          <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>Configure ta page de vente en quelques secondes</p>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -210,57 +210,63 @@ export default function NewProductPage() {
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 20px' }}>Informations de base</p>
 
+            {/* IMAGE */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Image de couverture</label>
-              <div onClick={() => document.getElementById('image-input')?.click()} style={{ width: '100%', height: '180px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
+              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>
+                Image de couverture <span style={{ color: '#444' }}>— optionnel</span>
+              </label>
+              <div onClick={() => document.getElementById('image-input')?.click()} style={{ width: '100%', height: '160px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
                 {imagePreview ? (
                   <img src={imagePreview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ textAlign: 'center' }}>
-                    <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 4px' }}>Clique pour ajouter une image</p>
-                    <p style={{ fontSize: '11px', color: '#444', margin: 0 }}>JPG, PNG — max 5MB</p>
+                    <p style={{ fontSize: '13px', color: '#444', margin: '0 0 4px' }}>Clique pour ajouter une image</p>
+                    <p style={{ fontSize: '11px', color: '#333', margin: 0 }}>JPG, PNG — max 5MB</p>
                   </div>
                 )}
-                {imagePreview && <div style={{ position: 'absolute', bottom: '8px', right: '8px', background: '#000000AA', borderRadius: '6px', padding: '4px 10px' }}><p style={{ margin: 0, fontSize: '11px', color: '#fff' }}>Changer</p></div>}
+                {imagePreview && (
+                  <div style={{ position: 'absolute', bottom: '8px', right: '8px', background: '#000000AA', borderRadius: '6px', padding: '4px 10px' }}>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#fff' }}>Changer</p>
+                  </div>
+                )}
               </div>
               <input id="image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
             </div>
 
+            {/* TITRE */}
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Titre du produit *</label>
+              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Nom du produit *</label>
               <input type="text" value={title} onChange={handleTitleChange} placeholder="Ex: Formation Marketing Digital" style={inputStyle} />
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Description courte</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Une phrase qui résume ton produit..." rows={2} style={{ ...inputStyle, resize: 'none' }} />
-            </div>
-
+            {/* SLUG */}
             <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Lien personnalisé *</label>
+              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Lien de paiement *</label>
               <div style={{ display: 'flex', alignItems: 'center', background: '#1A1A1A', borderRadius: '8px', border: '0.5px solid #2a2a2a', padding: '12px 16px', flexWrap: 'wrap', gap: '4px' }}>
-                <span style={{ color: '#6B7280', fontSize: '13px', flexShrink: 0 }}>paylinkafrica.com/p/</span>
+                <span style={{ color: '#444', fontSize: '13px', flexShrink: 0 }}>paylinkafrica.com/p/</span>
                 <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} style={{ flex: 1, minWidth: '100px', background: 'transparent', color: '#fff', border: 'none', outline: 'none', fontSize: '14px' }} />
               </div>
+              <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>Généré automatiquement depuis le nom. Tu peux le modifier.</p>
             </div>
           </div>
 
           {/* CONTENU */}
           {pageType === 'link' ? (
             <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
-              <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente</p>
-              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>Écris ici tout ce qui va convaincre ton client d'acheter.</p>
+              <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Description</p>
+              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>Décris ton produit pour convaincre tes clients d'acheter.</p>
               <RichEditor content={content} onChange={setContent} />
             </div>
           ) : (
             <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
               <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente IA ✨</p>
               <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px', lineHeight: '1.6' }}>
-                Colle tout ton contenu en vrac — description, bénéfices, témoignages, arguments. Notre IA structure tout automatiquement.
+                Colle tout ton contenu en vrac. Notre IA structure tout automatiquement.
               </p>
 
+              {/* MARCHÉ */}
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Tes clients sont principalement où ? *</label>
+                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Tes clients sont principalement où ?</label>
                 <div className="np-market-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                   {[{ key: 'afrique', label: '🌍 Afrique' }, { key: 'europe', label: '🇪🇺 Europe' }, { key: 'usa', label: '🇺🇸 USA' }].map((m) => (
                     <div key={m.key} onClick={() => setMarket(m.key as typeof market)} style={{ padding: '10px', borderRadius: '8px', border: `1.5px solid ${market === m.key ? '#10B981' : '#2a2a2a'}`, background: market === m.key ? '#10B98110' : '#1A1A1A', cursor: 'pointer', textAlign: 'center', fontSize: '13px', fontWeight: market === m.key ? '700' : '400', color: market === m.key ? '#10B981' : '#9CA3AF' }}>
@@ -270,9 +276,10 @@ export default function NewProductPage() {
                 </div>
               </div>
 
+              {/* CONTENU BRUT */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Ton contenu brut *</label>
-                <textarea value={rawContent} onChange={(e) => setRawContent(e.target.value)} placeholder="Colle ici tout ce que tu veux dire sur ton produit — description, bénéfices, témoignages, prix, garantie, tout en vrac. L'IA s'occupe du reste." rows={8} style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.6' }} />
+                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Ton contenu *</label>
+                <textarea value={rawContent} onChange={(e) => setRawContent(e.target.value)} placeholder="Décris ton produit, ses bénéfices, pour qui c'est fait, ce que le client va obtenir... L'IA s'occupe du reste." rows={7} style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.6' }} />
                 <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>{rawContent.length} caractères</p>
               </div>
 
@@ -284,55 +291,44 @@ export default function NewProductPage() {
               {showPreview && pageContent && (
                 <div style={{ marginTop: '20px', background: '#0D0D0D', borderRadius: '12px', border: '0.5px solid #10B98140', overflow: 'hidden' }}>
                   <div style={{ padding: '16px 20px', borderBottom: '0.5px solid #1F1F1F', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '700' }}>✓ Aperçu de ta page de vente</p>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '700' }}>✓ Aperçu de ta page</p>
                     <button onClick={() => setShowPreview(!showPreview)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '12px', cursor: 'pointer' }}>Masquer</button>
                   </div>
                   <div style={{ padding: '20px' }}>
-
-                    {/* HEADLINE */}
-                    <div style={{ marginBottom: '20px', textAlign: 'center', padding: '20px', background: '#111', borderRadius: '10px' }}>
-                      <p style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: '0 0 8px', lineHeight: '1.3' }}>{pageContent.headline}</p>
-                      <p style={{ fontSize: '14px', color: '#9CA3AF', margin: 0 }}>{pageContent.subheadline}</p>
+                    <div style={{ marginBottom: '16px', textAlign: 'center', padding: '16px', background: '#111', borderRadius: '10px' }}>
+                      <p style={{ fontSize: '18px', fontWeight: '800', color: '#fff', margin: '0 0 6px', lineHeight: '1.3' }}>{pageContent.headline}</p>
+                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0 }}>{pageContent.subheadline}</p>
                     </div>
-
-                    {/* PROBLÈME + SOLUTION */}
-                    <div style={{ display: 'grid', gap: '12px', marginBottom: '20px' }}>
-                      <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
-                        <p style={{ fontSize: '11px', color: '#EF4444', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Le problème</p>
-                        <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.6' }}>{pageContent.problem}</p>
+                    <div style={{ display: 'grid', gap: '10px', marginBottom: '16px' }}>
+                      <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                        <p style={{ fontSize: '10px', color: '#EF4444', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Problème</p>
+                        <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.5' }}>{pageContent.problem}</p>
                       </div>
-                      <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
-                        <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>La solution</p>
-                        <p style={{ fontSize: '13px', color: '#fff', margin: 0, lineHeight: '1.6' }}>{pageContent.solution}</p>
+                      <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                        <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Solution</p>
+                        <p style={{ fontSize: '13px', color: '#fff', margin: 0, lineHeight: '1.5' }}>{pageContent.solution}</p>
                       </div>
                     </div>
-
-                    {/* BÉNÉFICES */}
-                    <div style={{ marginBottom: '20px' }}>
-                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 12px' }}>Bénéfices</p>
+                    <div style={{ marginBottom: '16px' }}>
+                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 10px' }}>Bénéfices</p>
                       <div className="np-preview-benefits" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                         {pageContent.benefits.map((b, i) => (
-                          <div key={i} style={{ background: '#111', borderRadius: '8px', padding: '12px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                            <div style={{ flexShrink: 0, marginTop: '2px' }}><CheckSmall /></div>
-                            <p style={{ margin: 0, fontSize: '13px', color: '#fff', lineHeight: '1.4' }}>{b}</p>
+                          <div key={i} style={{ background: '#111', borderRadius: '8px', padding: '10px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                            <div style={{ flexShrink: 0 }}><CheckSmall /></div>
+                            <p style={{ margin: 0, fontSize: '12px', color: '#fff', lineHeight: '1.4' }}>{b}</p>
                           </div>
                         ))}
                       </div>
                     </div>
-
-                    {/* TÉMOIGNAGE */}
-                    <div style={{ background: '#111', borderRadius: '10px', padding: '16px', marginBottom: '12px' }}>
-                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 10px' }}>Témoignage</p>
-                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: '0 0 8px', fontStyle: 'italic', lineHeight: '1.6' }}>"{pageContent.testimonial.text}"</p>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#10B981', fontWeight: '600' }}>{pageContent.testimonial.name} — {pageContent.testimonial.location}</p>
+                    <div style={{ background: '#111', borderRadius: '8px', padding: '14px', marginBottom: '10px' }}>
+                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Témoignage</p>
+                      <p style={{ fontSize: '12px', color: '#9CA3AF', margin: '0 0 6px', fontStyle: 'italic', lineHeight: '1.5' }}>"{pageContent.testimonial.text}"</p>
+                      <p style={{ margin: 0, fontSize: '11px', color: '#10B981', fontWeight: '600' }}>{pageContent.testimonial.name} — {pageContent.testimonial.location}</p>
                     </div>
-
-                    {/* GARANTIE */}
-                    <div style={{ background: '#111', borderRadius: '10px', padding: '16px' }}>
-                      <p style={{ fontSize: '11px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Garantie</p>
-                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.6' }}>{pageContent.guarantee}</p>
+                    <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Garantie</p>
+                      <p style={{ fontSize: '12px', color: '#9CA3AF', margin: 0, lineHeight: '1.5' }}>{pageContent.guarantee}</p>
                     </div>
-
                   </div>
                 </div>
               )}
@@ -342,16 +338,26 @@ export default function NewProductPage() {
           {/* PRIX */}
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 20px' }}>Prix</p>
-            <div className="np-price-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Prix de vente (FCFA) *</label>
-                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Ex: 25000" style={inputStyle} />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Prix barré (FCFA) <span style={{ color: '#444' }}>optionnel</span></label>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Prix de vente (FCFA) *</label>
+              <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Ex: 25000" style={inputStyle} />
+            </div>
+
+            {/* PRIX BARRÉ TOGGLE */}
+            {!showOriginalPrice ? (
+              <button onClick={() => setShowOriginalPrice(true)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '13px', cursor: 'pointer', padding: '0', marginBottom: '16px', textDecoration: 'underline' }}>
+                + Ajouter un prix barré
+              </button>
+            ) : (
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>
+                  Prix barré (FCFA) <span onClick={() => { setShowOriginalPrice(false); setOriginalPrice('') }} style={{ color: '#444', cursor: 'pointer', fontSize: '11px', marginLeft: '8px' }}>Supprimer</span>
+                </label>
                 <input type="number" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="Ex: 50000" style={inputStyle} />
               </div>
-            </div>
+            )}
+
             {price && parseInt(price) > 0 && (
               <div style={{ background: '#0D0D0D', borderRadius: '8px', padding: '14px', border: '0.5px solid #1F1F1F' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -370,25 +376,33 @@ export default function NewProductPage() {
             )}
           </div>
 
-          {/* FICHIER DIGITAL */}
-          <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
-            <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Fichier digital <span style={{ color: '#444', fontSize: '11px', fontWeight: '400', textTransform: 'none', letterSpacing: '0' }}>optionnel</span></p>
-            <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>PDF, ebook, template... Partagé après paiement.</p>
-            <div onClick={() => document.getElementById('file-input')?.click()} style={{ width: '100%', padding: '20px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '12px' }}>
-              {fileUpload ? (
-                <div>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#fff', fontWeight: '500' }}>{fileUpload.name}</p>
-                  <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{(fileUpload.size / 1024 / 1024).toFixed(2)} MB</p>
-                </div>
-              ) : (
-                <div style={{ textAlign: 'center' }}>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>Clique pour uploader ton fichier</p>
-                  <p style={{ margin: 0, fontSize: '11px', color: '#444' }}>PDF, ZIP, MP4 — max 50MB</p>
-                </div>
-              )}
+          {/* FICHIER DIGITAL — masqué par défaut */}
+          {!showFileUpload ? (
+            <button onClick={() => setShowFileUpload(true)} style={{ background: 'transparent', border: '0.5px dashed #2a2a2a', color: '#6B7280', fontSize: '13px', cursor: 'pointer', padding: '14px', borderRadius: '10px', width: '100%', textAlign: 'center' }}>
+              + Ajouter un fichier digital (PDF, ebook, ZIP...)
+            </button>
+          ) : (
+            <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: 0 }}>Fichier digital</p>
+                <button onClick={() => { setShowFileUpload(false); setFileUpload(null) }} style={{ background: 'transparent', border: 'none', color: '#444', fontSize: '12px', cursor: 'pointer' }}>Supprimer</button>
+              </div>
+              <div onClick={() => document.getElementById('file-input')?.click()} style={{ width: '100%', padding: '20px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '12px' }}>
+                {fileUpload ? (
+                  <div>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#fff', fontWeight: '500' }}>{fileUpload.name}</p>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{(fileUpload.size / 1024 / 1024).toFixed(2)} MB</p>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>Clique pour uploader ton fichier</p>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#444' }}>PDF, ZIP, MP4 — max 50MB</p>
+                  </div>
+                )}
+              </div>
+              <input id="file-input" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
             </div>
-            <input id="file-input" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
-          </div>
+          )}
 
         </div>
 
