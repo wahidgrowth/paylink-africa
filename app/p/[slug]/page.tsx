@@ -15,6 +15,7 @@ type Product = {
   slug: string
   image_url?: string
   file_url?: string
+  redirect_url?: string
   user_id: string
   page_type?: string
   page_content?: {
@@ -92,7 +93,6 @@ export default function PaymentPage() {
     document.head.appendChild(script)
   }, [pixelId])
 
-  // Bloquer scroll quand modal ouvert
   useEffect(() => {
     if (showModal) {
       document.body.style.overflow = 'hidden'
@@ -117,6 +117,13 @@ export default function PaymentPage() {
   const handlePay = () => {
     if (!buyerName || !phone) return
     if (pixelId && window.fbq) window.fbq('track', 'Purchase', { value: product?.price, currency: 'XOF' })
+
+    // Redirection après paiement
+    if (product?.redirect_url) {
+      window.location.href = product.redirect_url
+      return
+    }
+
     setSuccess(true)
     setShowModal(false)
   }
@@ -151,12 +158,17 @@ export default function PaymentPage() {
       <div style={{ textAlign: 'center', maxWidth: '400px', width: '100%' }}>
         <div style={{ width: '72px', height: '72px', background: '#10B98120', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}><CheckIcon /></div>
         <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: '700', margin: '0 0 8px' }}>Paiement confirmé !</h1>
-        <p style={{ color: '#6B7280', fontSize: '15px', margin: '0 0 24px', lineHeight: '1.6' }}>Merci {buyerName}. Ton paiement de <strong style={{ color: '#10B981' }}>{total.toLocaleString('fr-FR')} FCFA</strong> a bien été reçu.</p>
+        <p style={{ color: '#6B7280', fontSize: '15px', margin: '0 0 24px', lineHeight: '1.6' }}>
+          Merci {buyerName}. Ton paiement de <strong style={{ color: '#10B981' }}>{total.toLocaleString('fr-FR')} FCFA</strong> a bien été reçu.
+        </p>
         {product.file_url && (
           <a href={product.file_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-            <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px 24px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto 16px' }}><DownloadIcon /> Télécharger mon fichier</button>
+            <button style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px 24px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto 16px' }}>
+              <DownloadIcon /> Télécharger mon fichier
+            </button>
           </a>
         )}
+        <p style={{ fontSize: '13px', color: '#444', margin: 0 }}>Tu recevras une confirmation via {selectedOperator.name}.</p>
       </div>
     </div>
   )
@@ -165,8 +177,6 @@ export default function PaymentPage() {
   const CheckoutModal = () => (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }} onClick={() => setShowModal(false)}>
       <div style={{ background: '#111111', borderRadius: '20px 20px 0 0', width: '100%', maxWidth: '520px', maxHeight: '90vh', overflowY: 'auto', padding: '0 0 32px' }} onClick={e => e.stopPropagation()}>
-
-        {/* HEADER MODAL */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '0.5px solid #1F1F1F', position: 'sticky', top: 0, background: '#111111', zIndex: 1 }}>
           <div>
             <p style={{ margin: 0, fontSize: '13px', color: '#6B7280' }}>Total à payer</p>
@@ -174,31 +184,23 @@ export default function PaymentPage() {
           </div>
           <button onClick={() => setShowModal(false)} style={{ background: '#1A1A1A', border: '0.5px solid #2a2a2a', color: '#9CA3AF', width: '36px', height: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><CloseIcon /></button>
         </div>
-
         <div style={{ padding: '20px 24px' }}>
-          {/* NOM */}
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Votre nom</label>
             <input type="text" placeholder="Ex: Kofi Mensah" value={buyerName} onChange={(e) => setBuyerName(e.target.value)} style={{ ...selectStyle, appearance: 'auto' as const }} />
           </div>
-
-          {/* PAYS */}
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Pays</label>
             <select value={selectedCountry.code} onChange={handleCountryChange} style={selectStyle}>
               {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.flag} {c.name}</option>)}
             </select>
           </div>
-
-          {/* OPÉRATEUR */}
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Opérateur Mobile Money</label>
             <select value={selectedOperator.name} onChange={handleOperatorChange} style={{ ...selectStyle, border: `0.5px solid ${selectedOperator.color}60`, color: selectedOperator.color }}>
               {selectedCountry.operators.map(op => <option key={op.name} value={op.name} style={{ color: '#fff' }}>{op.name}</option>)}
             </select>
           </div>
-
-          {/* TÉLÉPHONE */}
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Numéro Mobile Money</label>
             <input type="tel" placeholder="Ex: 97 00 00 00" value={phone} onChange={handlePhoneChange} style={{ ...selectStyle, border: `0.5px solid ${selectedOperator.color}60`, appearance: 'auto' as const }} />
@@ -207,8 +209,6 @@ export default function PaymentPage() {
               <span style={{ fontSize: '11px', color: selectedOperator.color, fontWeight: '600' }}>{selectedOperator.name}</span>
             </div>
           </div>
-
-          {/* RÉCAP */}
           <div style={{ background: '#0D0D0D', borderRadius: '8px', padding: '14px', marginBottom: '16px', border: '0.5px solid #1F1F1F' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ fontSize: '13px', color: '#6B7280' }}>Prix produit</span>
@@ -223,11 +223,9 @@ export default function PaymentPage() {
               <span style={{ fontSize: '14px', color: accentColor, fontWeight: '700' }}>{total.toLocaleString('fr-FR')} FCFA</span>
             </div>
           </div>
-
           <button onClick={handlePay} disabled={!buyerName || !phone} style={{ width: '100%', background: buyerName && phone ? accentColor : '#1A1A1A', border: 'none', color: buyerName && phone ? '#000' : '#444', fontSize: '15px', fontWeight: '700', padding: '16px', borderRadius: '10px', cursor: buyerName && phone ? 'pointer' : 'not-allowed', marginBottom: '12px' }}>
             {`Payer via ${selectedOperator.name} →`}
           </button>
-
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
             <span style={{ color: '#444', display: 'flex' }}><LockIcon /></span>
             <span style={{ fontSize: '11px', color: '#444' }}>Paiement sécurisé · Propulsé par PayLink Africa</span>
@@ -237,12 +235,9 @@ export default function PaymentPage() {
     </div>
   )
 
-  // =====================
   // PAGE DE VENTE IA
-  // =====================
   if (product.page_type === 'sales_page' && product.page_content) {
     const pc = product.page_content
-
     return (
       <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
         <style>{`
@@ -254,33 +249,24 @@ export default function PaymentPage() {
           }
         `}</style>
 
-        {/* NAV */}
         <nav style={{ display: 'flex', justifyContent: 'center', padding: '16px 24px', borderBottom: '0.5px solid #1F1F1F' }}>
           <Link href="/" style={{ textDecoration: 'none' }}><Logo size="sm" /></Link>
         </nav>
 
-        {/* HERO */}
         <div style={{ textAlign: 'center', padding: '64px 24px 48px', maxWidth: '860px', margin: '0 auto' }}>
           {product.image_url && (
             <img src={product.image_url} alt={product.title} style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', borderRadius: '16px', marginBottom: '40px', border: '0.5px solid #1F1F1F' }} />
           )}
-          <h1 style={{ fontSize: 'clamp(28px, 5vw, 52px)', fontWeight: '800', lineHeight: '1.15', margin: '0 0 20px', color: '#fff' }}>
-            {pc.headline}
-          </h1>
-          <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', color: '#9CA3AF', margin: '0 0 40px', lineHeight: '1.6', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
-            {pc.subheadline}
-          </p>
+          <h1 style={{ fontSize: 'clamp(28px, 5vw, 52px)', fontWeight: '800', lineHeight: '1.15', margin: '0 0 20px', color: '#fff' }}>{pc.headline}</h1>
+          <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', color: '#9CA3AF', margin: '0 0 40px', lineHeight: '1.6', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>{pc.subheadline}</p>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
             <button onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '18px', fontWeight: '800', padding: '18px 48px', borderRadius: '12px', cursor: 'pointer', width: '100%', maxWidth: '400px' }}>
               {ctaText} →
             </button>
-            <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
-              {product.price.toLocaleString('fr-FR')} FCFA · Paiement Mobile Money sécurisé
-            </p>
+            <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>{product.price.toLocaleString('fr-FR')} FCFA · Paiement Mobile Money sécurisé</p>
           </div>
         </div>
 
-        {/* PROBLÈME */}
         <div style={{ background: '#111111', borderTop: '0.5px solid #1F1F1F', borderBottom: '0.5px solid #1F1F1F' }}>
           <div className="sp-section">
             <p style={{ fontSize: '12px', color: accentColor, fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 16px' }}>Le problème</p>
@@ -288,7 +274,6 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        {/* SOLUTION */}
         <div>
           <div className="sp-section">
             <p style={{ fontSize: '12px', color: accentColor, fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 16px' }}>La solution</p>
@@ -296,7 +281,6 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        {/* BÉNÉFICES */}
         <div style={{ background: '#111111', borderTop: '0.5px solid #1F1F1F', borderBottom: '0.5px solid #1F1F1F' }}>
           <div className="sp-section">
             <p style={{ fontSize: '12px', color: accentColor, fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 24px' }}>Ce que tu obtiens</p>
@@ -311,7 +295,6 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        {/* CTA INTERMÉDIAIRE */}
         <div style={{ textAlign: 'center', padding: '48px 24px' }}>
           <button onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '18px', fontWeight: '800', padding: '18px 48px', borderRadius: '12px', cursor: 'pointer', width: '100%', maxWidth: '400px' }}>
             {ctaText} →
@@ -319,7 +302,6 @@ export default function PaymentPage() {
           <p style={{ fontSize: '13px', color: '#6B7280', margin: '12px 0 0' }}>{product.price.toLocaleString('fr-FR')} FCFA</p>
         </div>
 
-        {/* TÉMOIGNAGE */}
         <div style={{ background: '#111111', borderTop: '0.5px solid #1F1F1F', borderBottom: '0.5px solid #1F1F1F' }}>
           <div className="sp-section" style={{ textAlign: 'center' }}>
             <p style={{ fontSize: '12px', color: accentColor, fontWeight: '700', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 24px' }}>Ce qu'ils disent</p>
@@ -334,7 +316,6 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        {/* GARANTIE */}
         <div>
           <div className="sp-section" style={{ textAlign: 'center' }}>
             <div style={{ width: '56px', height: '56px', background: `${accentColor}20`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: accentColor }}><ShieldIcon /></div>
@@ -343,11 +324,8 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        {/* CTA FINAL */}
         <div style={{ background: `linear-gradient(135deg, ${accentColor}15 0%, #0A0A0A 50%, ${accentColor}15 100%)`, borderTop: '0.5px solid #1F1F1F', textAlign: 'center', padding: '64px 24px' }}>
-          <h2 style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontWeight: '800', margin: '0 0 16px', lineHeight: '1.2' }}>
-            {product.title}
-          </h2>
+          <h2 style={{ fontSize: 'clamp(24px, 4vw, 36px)', fontWeight: '800', margin: '0 0 16px', lineHeight: '1.2' }}>{product.title}</h2>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '40px', fontWeight: '800', color: accentColor }}>{product.price.toLocaleString('fr-FR')} <span style={{ fontSize: '18px', color: '#6B7280', fontWeight: '400' }}>FCFA</span></span>
             {product.original_price && product.original_price > product.price && (
@@ -364,20 +342,16 @@ export default function PaymentPage() {
           <p style={{ fontSize: '13px', color: '#6B7280', margin: '16px 0 0' }}>Paiement Mobile Money sécurisé · 10 pays africains</p>
         </div>
 
-        {/* FOOTER */}
         <footer style={{ padding: '24px 16px', borderTop: '0.5px solid #1F1F1F', textAlign: 'center' }}>
           <p style={{ fontSize: '12px', color: '#444', margin: 0 }}>Propulsé par <Link href="/" style={{ color: accentColor, textDecoration: 'none', fontWeight: '600' }}>PayLink Africa</Link></p>
         </footer>
 
-        {/* MODAL CHECKOUT */}
         {showModal && <CheckoutModal />}
       </div>
     )
   }
 
-  // =====================
-  // PAGE LIEN SIMPLE (existante)
-  // =====================
+  // PAGE LIEN SIMPLE
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif' }}>
       <style>{`
@@ -393,7 +367,6 @@ export default function PaymentPage() {
         <Link href="/" style={{ textDecoration: 'none' }}><Logo size="sm" /></Link>
       </nav>
 
-      {/* DESKTOP */}
       <div className="pl-desktop">
         <div style={{ paddingRight: '48px' }}>
           {product.image_url ? (
@@ -402,7 +375,6 @@ export default function PaymentPage() {
             <div style={{ width: '100%', height: '240px', background: '#111111', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px', border: '0.5px solid #1F1F1F' }}><ProductIcon /></div>
           )}
           <h1 style={{ fontSize: '32px', fontWeight: '800', color: '#fff', margin: '0 0 12px', lineHeight: '1.2' }}>{product.title}</h1>
-          {product.description && <p style={{ fontSize: '17px', color: '#9CA3AF', margin: '0 0 20px', lineHeight: '1.6' }}>{product.description}</p>}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '36px', fontWeight: '800', color: '#10B981' }}>{product.price.toLocaleString('fr-FR')} <span style={{ fontSize: '18px', color: '#6B7280', fontWeight: '400' }}>FCFA</span></span>
             {product.original_price && product.original_price > product.price && (
@@ -419,7 +391,6 @@ export default function PaymentPage() {
           )}
         </div>
         <div style={{ position: 'sticky', top: '24px' }}>
-          {/* CHECKOUT DESKTOP INLINE */}
           <div style={{ background: '#111111', borderRadius: '16px', border: '0.5px solid #1F1F1F', overflow: 'hidden' }}>
             <div style={{ padding: '20px 24px', borderBottom: '0.5px solid #1F1F1F', background: '#0D0D0D' }}>
               <p style={{ margin: '0 0 4px', fontSize: '13px', color: '#6B7280' }}>Total à payer</p>
@@ -458,7 +429,6 @@ export default function PaymentPage() {
         </div>
       </div>
 
-      {/* MOBILE */}
       <div className="pl-mobile">
         {product.image_url ? (
           <img src={product.image_url} alt={product.title} style={{ width: '100%', maxHeight: '260px', objectFit: 'cover' }} />
@@ -467,7 +437,6 @@ export default function PaymentPage() {
         )}
         <div style={{ padding: '20px 16px' }}>
           <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#fff', margin: '0 0 10px', lineHeight: '1.3' }}>{product.title}</h1>
-          {product.description && <p style={{ fontSize: '15px', color: '#9CA3AF', margin: '0 0 16px', lineHeight: '1.6' }}>{product.description}</p>}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
             <span style={{ fontSize: '28px', fontWeight: '800', color: '#10B981' }}>{product.price.toLocaleString('fr-FR')} <span style={{ fontSize: '15px', color: '#6B7280', fontWeight: '400' }}>FCFA</span></span>
           </div>
