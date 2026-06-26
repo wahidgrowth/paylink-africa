@@ -63,7 +63,7 @@ export default function ProductsPage() {
     const url = `${window.location.origin}/p/${slug}`
     navigator.clipboard.writeText(url)
     setCopiedSlug(slug)
-    showToast('Lien copié ! Partage-le sur WhatsApp ou Instagram.', 'success')
+    showToast('Lien copié ! Partage-le pour obtenir des ventes.', 'success')
     setTimeout(() => setCopiedSlug(null), 2000)
   }
 
@@ -96,7 +96,6 @@ export default function ProductsPage() {
         }
       `}</style>
 
-      {/* TOAST */}
       {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
 
       {/* HEADER */}
@@ -125,14 +124,12 @@ export default function ProductsPage() {
         />
       </div>
 
-      {/* CHARGEMENT */}
       {loading && (
         <div style={{ textAlign: 'center', padding: '60px 0' }}>
           <p style={{ color: '#6B7280', fontSize: '14px' }}>Chargement...</p>
         </div>
       )}
 
-      {/* VIDE */}
       {!loading && products.length === 0 && (
         <div style={{ background: '#111111', borderRadius: '16px', padding: '60px 40px', border: '0.5px dashed #2a2a2a', textAlign: 'center' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}><ProductEmptyIcon /></div>
@@ -146,20 +143,17 @@ export default function ProductsPage() {
         </div>
       )}
 
-      {/* AUCUN RÉSULTAT */}
       {!loading && products.length > 0 && filtered.length === 0 && (
         <div style={{ textAlign: 'center', padding: '40px 0' }}>
           <p style={{ color: '#6B7280', fontSize: '14px' }}>Aucun produit trouvé pour "{search}"</p>
         </div>
       )}
 
-      {/* GRILLE */}
       {!loading && filtered.length > 0 && (
         <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
           {filtered.map((product) => (
             <div key={product.id} style={{ background: '#111111', borderRadius: '14px', border: `0.5px solid ${product.is_active ? '#1F1F1F' : '#2a2a2a'}`, overflow: 'hidden', opacity: product.is_active ? 1 : 0.6, transition: 'opacity 0.2s' }}>
 
-              {/* IMAGE */}
               {product.image_url ? (
                 <img src={product.image_url} alt={product.title} style={{ width: '100%', height: '160px', objectFit: 'cover', filter: product.is_active ? 'none' : 'grayscale(50%)' }} />
               ) : (
@@ -168,7 +162,6 @@ export default function ProductsPage() {
                 </div>
               )}
 
-              {/* CONTENU */}
               <div style={{ padding: '16px 20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                   <h3 style={{ fontSize: '15px', fontWeight: '600', color: '#fff', margin: 0, lineHeight: '1.4', flex: 1, marginRight: '8px' }}>{product.title}</h3>
@@ -187,7 +180,6 @@ export default function ProductsPage() {
                 </p>
               </div>
 
-              {/* ACTIONS */}
               <div style={{ padding: '12px 20px', borderTop: '0.5px solid #1F1F1F', display: 'flex', gap: '8px' }}>
                 <button
                   onClick={() => copyLink(product.slug)}
