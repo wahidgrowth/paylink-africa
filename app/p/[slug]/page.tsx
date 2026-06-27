@@ -28,15 +28,8 @@ type PageContent = {
   cta_text: string
   value_items: { label: string; value: string }[]
   final_headline: string
-  // Ancien format (compatibilité)
   headline?: string
   subheadline?: string
-  problem?: string
-  solution?: string
-  benefits_old?: string[]
-  testimonial?: { name: string; text: string; location: string }
-  guarantee?: string
-  cta_urgency?: string
 }
 
 type Product = {
@@ -73,7 +66,6 @@ const COUNTRIES = [
 
 const LockIcon = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 const CheckIcon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-const CheckSmall = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
 const DownloadIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
 const ProductIcon = () => <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
 const SadIcon = () => <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="15" x2="16" y2="15"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
@@ -186,7 +178,6 @@ export default function PaymentPage() {
     </div>
   )
 
-  // MODAL CHECKOUT
   const CheckoutModal = () => (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', background: 'rgba(0,0,0,0.8)' }} onClick={() => setShowModal(false)}>
       <div style={{ background: '#111111', borderRadius: '20px 20px 0 0', width: '100%', maxWidth: '520px', maxHeight: '90vh', overflowY: 'auto', padding: '0 0 32px' }} onClick={e => e.stopPropagation()}>
@@ -248,15 +239,12 @@ export default function PaymentPage() {
     </div>
   )
 
-  // ============================================================
-  // PAGE DE VENTE IA — NOUVEAU TEMPLATE STYLE SYSTEME.IO
-  // ============================================================
+  // PAGE DE VENTE IA
   if (product.page_type === 'sales_page' && product.page_content) {
     const pc = product.page_content
     const isNewFormat = !!pc.hero_headline
     const ctaText = pc.cta_text || product.page_cta_text || 'Accéder maintenant'
 
-    // Compatibilité ancien format
     if (!isNewFormat) {
       return (
         <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
@@ -286,7 +274,6 @@ export default function PaymentPage() {
           .sp-testimonials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
           .sp-label { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 20px; }
           .sp-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; border-bottom: 0.5px solid #1F1F1F; position: sticky; top: 0; background: rgba(10,10,10,0.95); backdrop-filter: blur(10px); z-index: 100; }
-          .sp-cta-btn { background: ${accentColor}; border: none; color: #000; font-size: 16px; font-weight: 800; padding: 16px 36px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
           @media (max-width: 767px) {
             .sp-container { padding: 0 16px; }
             .sp-section { padding: 48px 0; }
@@ -299,10 +286,10 @@ export default function PaymentPage() {
           }
         `}</style>
 
-        {/* NAV STICKY */}
+        {/* NAV */}
         <nav className="sp-nav">
           <Link href="/" style={{ textDecoration: 'none' }}><Logo size="sm" /></Link>
-          <button className="sp-nav-cta sp-cta-btn" onClick={() => setShowModal(true)} style={{ fontSize: '14px', padding: '10px 24px' }}>
+          <button className="sp-nav-cta" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '14px', fontWeight: '800', padding: '10px 24px', borderRadius: '8px', cursor: 'pointer' }}>
             {ctaText} — {product.price.toLocaleString('fr-FR')} FCFA
           </button>
         </nav>
@@ -321,7 +308,7 @@ export default function PaymentPage() {
                 {pc.hero_subheadline}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', marginTop: '40px' }}>
-                <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ fontSize: '18px', padding: '20px 56px' }}>
+                <button onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '18px', fontWeight: '800', padding: '20px 56px', borderRadius: '10px', cursor: 'pointer' }}>
                   {ctaText} →
                 </button>
                 <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>
@@ -406,7 +393,7 @@ export default function PaymentPage() {
         {/* CTA INTERMÉDIAIRE */}
         <div style={{ padding: '56px 0', textAlign: 'center', borderBottom: '0.5px solid #1F1F1F' }}>
           <div className="sp-container">
-            <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ fontSize: '18px', padding: '20px 56px', marginBottom: '12px' }}>
+            <button onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '18px', fontWeight: '800', padding: '20px 56px', borderRadius: '10px', cursor: 'pointer', marginBottom: '12px' }}>
               {ctaText} →
             </button>
             <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>{product.price.toLocaleString('fr-FR')} FCFA</p>
@@ -418,7 +405,7 @@ export default function PaymentPage() {
           <div className="sp-section">
             <div className="sp-container">
               <p className="sp-label" style={{ color: accentColor }}>{pc.steps_title || 'Comment ça marche'}</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {pc.steps.map((step, i) => (
                   <div key={i} style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', padding: '24px 0', borderBottom: i < pc.steps.length - 1 ? '0.5px solid #1F1F1F' : 'none' }}>
                     <div style={{ width: '48px', height: '48px', background: `${accentColor}15`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `0.5px solid ${accentColor}30` }}>
@@ -446,7 +433,7 @@ export default function PaymentPage() {
                     <div style={{ display: 'flex', gap: '4px', marginBottom: '16px' }}>
                       {[1,2,3,4,5].map(s => <StarIcon key={s} />)}
                     </div>
-                    <p style={{ fontSize: '15px', color: '#fff', lineHeight: '1.7', margin: '0 0 20px', fontStyle: 'italic' }}>"{t.text}"</p>
+                    <p style={{ fontSize: '15px', color: '#fff', lineHeight: '1.7', margin: '0 0 16px', fontStyle: 'italic' }}>"{t.text}"</p>
                     {t.result && (
                       <div style={{ background: `${accentColor}15`, borderRadius: '8px', padding: '8px 12px', marginBottom: '16px', display: 'inline-block' }}>
                         <p style={{ margin: 0, fontSize: '13px', color: accentColor, fontWeight: '700' }}>✓ {t.result}</p>
@@ -468,13 +455,10 @@ export default function PaymentPage() {
           <div className="sp-section">
             <div className="sp-container">
               <p className="sp-label" style={{ color: accentColor }}>{pc.faq_title || 'Questions fréquentes'}</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {pc.faq.map((item, i) => (
                   <div key={i} style={{ borderBottom: '0.5px solid #1F1F1F' }}>
-                    <button
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      style={{ width: '100%', background: 'transparent', border: 'none', padding: '20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', textAlign: 'left', gap: '16px' }}
-                    >
+                    <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{ width: '100%', background: 'transparent', border: 'none', padding: '20px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', textAlign: 'left', gap: '16px' }}>
                       <span style={{ fontSize: '15px', fontWeight: '600', color: '#fff', lineHeight: '1.4' }}>{item.question}</span>
                       <span style={{ color: accentColor, flexShrink: 0 }}>{openFaq === i ? <MinusIcon /> : <PlusIcon />}</span>
                     </button>
@@ -503,7 +487,7 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        {/* TABLEAU DE VALEUR + PRIX FINAL */}
+        {/* TABLEAU DE VALEUR */}
         <div className="sp-section">
           <div className="sp-container">
             <div style={{ background: '#111', borderRadius: '20px', border: `1px solid ${accentColor}30`, overflow: 'hidden', maxWidth: '560px', margin: '0 auto' }}>
@@ -517,7 +501,7 @@ export default function PaymentPage() {
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: i < pc.value_items.length - 1 ? '0.5px solid #1F1F1F' : 'none' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{ width: '20px', height: '20px', background: `${accentColor}20`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <CheckSmall style={{ color: accentColor }} />
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
                         <span style={{ fontSize: '14px', color: '#9CA3AF' }}>{item.label}</span>
                       </div>
@@ -540,7 +524,7 @@ export default function PaymentPage() {
                 {pc.urgency_text && (
                   <p style={{ fontSize: '13px', color: '#F59E0B', margin: '0 0 20px', fontWeight: '600' }}>⚡ {pc.urgency_text}</p>
                 )}
-                <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ width: '100%', fontSize: '16px', padding: '18px', marginBottom: '12px', borderRadius: '10px' }}>
+                <button onClick={() => setShowModal(true)} style={{ width: '100%', background: accentColor, border: 'none', color: '#000', fontSize: '16px', fontWeight: '800', padding: '18px', borderRadius: '10px', cursor: 'pointer', marginBottom: '12px' }}>
                   {ctaText} →
                 </button>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -558,7 +542,7 @@ export default function PaymentPage() {
             <h2 style={{ fontSize: 'clamp(22px, 4vw, 32px)', fontWeight: '800', color: '#fff', margin: '0 0 16px', lineHeight: '1.2' }}>
               {pc.final_headline}
             </h2>
-            <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ fontSize: '18px', padding: '20px 56px', marginBottom: '16px' }}>
+            <button onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '18px', fontWeight: '800', padding: '20px 56px', borderRadius: '10px', cursor: 'pointer', marginBottom: '16px' }}>
               {ctaText} →
             </button>
             <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>Paiement Mobile Money · 10 pays africains</p>
@@ -574,9 +558,7 @@ export default function PaymentPage() {
     )
   }
 
-  // ============================================================
   // PAGE LIEN SIMPLE
-  // ============================================================
   return (
     <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif' }}>
       <style>{`
