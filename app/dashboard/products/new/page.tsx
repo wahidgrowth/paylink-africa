@@ -7,15 +7,25 @@ import dynamic from 'next/dynamic'
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
 
 type PageContent = {
-  headline: string
-  subheadline: string
-  problem: string
-  solution: string
-  benefits: string[]
-  testimonial: { name: string; text: string; location: string }
-  guarantee: string
-  cta_urgency: string
-  whatsapp_text: string
+  hero_headline: string
+  hero_subheadline: string
+  hero_stats: { number: string; label: string }[]
+  problem_title: string
+  problem_intro: string
+  problem_points: string[]
+  solution_title: string
+  solution_text: string
+  benefits_title: string
+  benefits: { icon: string; title: string; text: string }[]
+  steps: { number: string; title: string; text: string }[]
+  testimonials: { name: string; location: string; text: string; result: string }[]
+  faq: { question: string; answer: string }[]
+  guarantee_title: string
+  guarantee_text: string
+  urgency_text: string
+  cta_text: string
+  value_items: { label: string; value: string }[]
+  final_headline: string
 }
 
 export default function NewProductPage() {
@@ -168,20 +178,16 @@ export default function NewProductPage() {
     boxSizing: 'border-box' as const,
   }
 
-  const CheckSmall = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-
   return (
     <div style={{ padding: '32px' }}>
       <style>{`
         @media (max-width: 767px) {
-          .np-wrap { padding: 16px !important; }
           .np-inner { max-width: 100% !important; }
           .np-type-grid { grid-template-columns: 1fr !important; }
-          .np-price-grid { grid-template-columns: 1fr !important; }
           .np-market-grid { grid-template-columns: 1fr !important; }
           .np-btn-row { flex-direction: column !important; }
-          .np-preview-benefits { grid-template-columns: 1fr !important; }
           .np-delivery-grid { grid-template-columns: 1fr !important; }
+          .np-preview-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
@@ -194,7 +200,7 @@ export default function NewProductPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-          {/* CHOIX DU TYPE */}
+          {/* TYPE */}
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 16px' }}>Type de produit</p>
             <div className="np-type-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -209,15 +215,12 @@ export default function NewProductPage() {
             </div>
           </div>
 
-          {/* INFORMATIONS DE BASE */}
+          {/* INFOS DE BASE */}
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 20px' }}>Informations de base</p>
 
-            {/* IMAGE */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>
-                Image de couverture <span style={{ color: '#444' }}>— optionnel</span>
-              </label>
+              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Image de couverture <span style={{ color: '#444' }}>— optionnel</span></label>
               <div onClick={() => document.getElementById('image-input')?.click()} style={{ width: '100%', height: '160px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', position: 'relative' }}>
                 {imagePreview ? (
                   <img src={imagePreview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -227,22 +230,16 @@ export default function NewProductPage() {
                     <p style={{ fontSize: '11px', color: '#333', margin: 0 }}>JPG, PNG — max 5MB</p>
                   </div>
                 )}
-                {imagePreview && (
-                  <div style={{ position: 'absolute', bottom: '8px', right: '8px', background: '#000000AA', borderRadius: '6px', padding: '4px 10px' }}>
-                    <p style={{ margin: 0, fontSize: '11px', color: '#fff' }}>Changer</p>
-                  </div>
-                )}
+                {imagePreview && <div style={{ position: 'absolute', bottom: '8px', right: '8px', background: '#000000AA', borderRadius: '6px', padding: '4px 10px' }}><p style={{ margin: 0, fontSize: '11px', color: '#fff' }}>Changer</p></div>}
               </div>
               <input id="image-input" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
             </div>
 
-            {/* TITRE */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Nom du produit *</label>
               <input type="text" value={title} onChange={handleTitleChange} placeholder="Ex: Formation Marketing Digital" style={inputStyle} />
             </div>
 
-            {/* SLUG */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Lien de paiement *</label>
               <div style={{ display: 'flex', alignItems: 'center', background: '#1A1A1A', borderRadius: '8px', border: '0.5px solid #2a2a2a', padding: '12px 16px', flexWrap: 'wrap', gap: '4px' }}>
@@ -263,11 +260,8 @@ export default function NewProductPage() {
           ) : (
             <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
               <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente IA ✨</p>
-              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px', lineHeight: '1.6' }}>
-                Colle tout ton contenu en vrac. Notre IA structure tout automatiquement.
-              </p>
+              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px', lineHeight: '1.6' }}>Colle tout ton contenu en vrac. Notre IA analyse ton produit et crée une page de vente complète qui convertit.</p>
 
-              {/* MARCHÉ */}
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Tes clients sont principalement où ?</label>
                 <div className="np-market-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
@@ -279,7 +273,6 @@ export default function NewProductPage() {
                 </div>
               </div>
 
-              {/* CONTENU BRUT */}
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Ton contenu *</label>
                 <textarea value={rawContent} onChange={(e) => setRawContent(e.target.value)} placeholder="Décris ton produit, ses bénéfices, pour qui c'est fait, ce que le client va obtenir... L'IA s'occupe du reste." rows={7} style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.6' }} />
@@ -287,51 +280,79 @@ export default function NewProductPage() {
               </div>
 
               <button onClick={handleGenerate} disabled={generating} style={{ width: '100%', background: generating ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating ? '#2a2a2a' : '#10B98140'}`, color: generating ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating ? 'not-allowed' : 'pointer' }}>
-                {generating ? '✨ Génération en cours...' : pageContent ? '✓ Page générée — Régénérer' : '✨ Générer ma page de vente'}
+                {generating ? '✨ Génération en cours... (30-60 secondes)' : pageContent ? '✓ Page générée — Régénérer' : '✨ Générer ma page de vente'}
               </button>
 
-              {/* PREVIEW */}
+              {/* PREVIEW NOUVEAU FORMAT */}
               {showPreview && pageContent && (
                 <div style={{ marginTop: '20px', background: '#0D0D0D', borderRadius: '12px', border: '0.5px solid #10B98140', overflow: 'hidden' }}>
                   <div style={{ padding: '16px 20px', borderBottom: '0.5px solid #1F1F1F', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '700' }}>✓ Aperçu de ta page</p>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '700' }}>✓ Page de vente générée</p>
                     <button onClick={() => setShowPreview(!showPreview)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '12px', cursor: 'pointer' }}>Masquer</button>
                   </div>
-                  <div style={{ padding: '20px' }}>
-                    <div style={{ marginBottom: '16px', textAlign: 'center', padding: '16px', background: '#111', borderRadius: '10px' }}>
-                      <p style={{ fontSize: '18px', fontWeight: '800', color: '#fff', margin: '0 0 6px', lineHeight: '1.3' }}>{pageContent.headline}</p>
-                      <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0 }}>{pageContent.subheadline}</p>
+                  <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+
+                    {/* HEADLINE */}
+                    <div style={{ background: '#111', borderRadius: '10px', padding: '16px', textAlign: 'center' }}>
+                      <p style={{ fontSize: '16px', fontWeight: '800', color: '#fff', margin: '0 0 6px', lineHeight: '1.3' }}>{pageContent.hero_headline}</p>
+                      <p style={{ fontSize: '12px', color: '#9CA3AF', margin: 0 }}>{pageContent.hero_subheadline}</p>
                     </div>
-                    <div style={{ display: 'grid', gap: '10px', marginBottom: '16px' }}>
-                      <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
-                        <p style={{ fontSize: '10px', color: '#EF4444', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Problème</p>
-                        <p style={{ fontSize: '13px', color: '#9CA3AF', margin: 0, lineHeight: '1.5' }}>{pageContent.problem}</p>
-                      </div>
-                      <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
-                        <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Solution</p>
-                        <p style={{ fontSize: '13px', color: '#fff', margin: 0, lineHeight: '1.5' }}>{pageContent.solution}</p>
-                      </div>
-                    </div>
-                    <div style={{ marginBottom: '16px' }}>
-                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 10px' }}>Bénéfices</p>
-                      <div className="np-preview-benefits" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                        {pageContent.benefits.map((b, i) => (
-                          <div key={i} style={{ background: '#111', borderRadius: '8px', padding: '10px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                            <div style={{ flexShrink: 0 }}><CheckSmall /></div>
-                            <p style={{ margin: 0, fontSize: '12px', color: '#fff', lineHeight: '1.4' }}>{b}</p>
+
+                    {/* STATS */}
+                    {pageContent.hero_stats && pageContent.hero_stats.length > 0 && (
+                      <div className="np-preview-grid" style={{ display: 'grid', gridTemplateColumns: `repeat(${pageContent.hero_stats.length}, 1fr)`, gap: '8px' }}>
+                        {pageContent.hero_stats.map((stat, i) => (
+                          <div key={i} style={{ background: '#111', borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+                            <p style={{ fontSize: '18px', fontWeight: '800', color: '#10B981', margin: '0 0 4px' }}>{stat.number}</p>
+                            <p style={{ fontSize: '10px', color: '#6B7280', margin: 0 }}>{stat.label}</p>
                           </div>
                         ))}
                       </div>
-                    </div>
-                    <div style={{ background: '#111', borderRadius: '8px', padding: '14px', marginBottom: '10px' }}>
-                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Témoignage</p>
-                      <p style={{ fontSize: '12px', color: '#9CA3AF', margin: '0 0 6px', fontStyle: 'italic', lineHeight: '1.5' }}>"{pageContent.testimonial.text}"</p>
-                      <p style={{ margin: 0, fontSize: '11px', color: '#10B981', fontWeight: '600' }}>{pageContent.testimonial.name} — {pageContent.testimonial.location}</p>
-                    </div>
+                    )}
+
+                    {/* PROBLÈME */}
                     <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
-                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>Garantie</p>
-                      <p style={{ fontSize: '12px', color: '#9CA3AF', margin: 0, lineHeight: '1.5' }}>{pageContent.guarantee}</p>
+                      <p style={{ fontSize: '10px', color: '#EF4444', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>{pageContent.problem_title}</p>
+                      {pageContent.problem_intro && <p style={{ fontSize: '13px', color: '#9CA3AF', margin: '0 0 8px', lineHeight: '1.5' }}>{pageContent.problem_intro}</p>}
+                      {pageContent.problem_points && pageContent.problem_points.slice(0, 2).map((p, i) => (
+                        <p key={i} style={{ fontSize: '12px', color: '#6B7280', margin: '0 0 4px', paddingLeft: '8px', borderLeft: '2px solid #EF444440' }}>✕ {p}</p>
+                      ))}
                     </div>
+
+                    {/* SOLUTION */}
+                    <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>{pageContent.solution_title}</p>
+                      <p style={{ fontSize: '13px', color: '#fff', margin: 0, lineHeight: '1.5' }}>{pageContent.solution_text}</p>
+                    </div>
+
+                    {/* BÉNÉFICES */}
+                    {pageContent.benefits && pageContent.benefits.length > 0 && (
+                      <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                        <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 10px' }}>{pageContent.benefits_title}</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          {pageContent.benefits.slice(0, 3).map((b, i) => (
+                            <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                              <span style={{ fontSize: '16px', flexShrink: 0 }}>{b.icon}</span>
+                              <div>
+                                <p style={{ margin: '0 0 2px', fontSize: '12px', color: '#fff', fontWeight: '600' }}>{b.title}</p>
+                                <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{b.text}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* GARANTIE */}
+                    <div style={{ background: '#111', borderRadius: '8px', padding: '14px' }}>
+                      <p style={{ fontSize: '10px', color: '#10B981', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 6px' }}>{pageContent.guarantee_title}</p>
+                      <p style={{ fontSize: '12px', color: '#9CA3AF', margin: 0, lineHeight: '1.5' }}>{pageContent.guarantee_text}</p>
+                    </div>
+
+                    <div style={{ background: '#10B98115', borderRadius: '8px', padding: '12px', border: '0.5px solid #10B98130', textAlign: 'center' }}>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#10B981', fontWeight: '600' }}>✓ {pageContent.faq ? pageContent.faq.length : 0} FAQ · {pageContent.testimonials ? pageContent.testimonials.length : 0} témoignages · {pageContent.steps ? pageContent.steps.length : 0} étapes · {pageContent.value_items ? pageContent.value_items.length : 0} éléments de valeur générés</p>
+                    </div>
+
                   </div>
                 </div>
               )}
@@ -341,12 +362,10 @@ export default function NewProductPage() {
           {/* PRIX */}
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 20px' }}>Prix</p>
-
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Prix de vente (FCFA) *</label>
               <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Ex: 25000" style={inputStyle} />
             </div>
-
             {!showOriginalPrice ? (
               <button onClick={() => setShowOriginalPrice(true)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '13px', cursor: 'pointer', padding: '0', marginBottom: '16px', textDecoration: 'underline' }}>
                 + Ajouter un prix barré
@@ -360,7 +379,6 @@ export default function NewProductPage() {
                 <input type="number" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="Ex: 50000" style={inputStyle} />
               </div>
             )}
-
             {price && parseInt(price) > 0 && (
               <div style={{ background: '#0D0D0D', borderRadius: '8px', padding: '14px', border: '0.5px solid #1F1F1F' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
@@ -383,8 +401,6 @@ export default function NewProductPage() {
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Après paiement <span style={{ color: '#444', fontSize: '11px', fontWeight: '400', textTransform: 'none', letterSpacing: '0' }}>— optionnel</span></p>
             <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px', lineHeight: '1.5' }}>Que reçoit ton client après avoir payé ?</p>
-
-            {/* CHOIX */}
             {!deliveryType && (
               <div className="np-delivery-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div onClick={() => setDeliveryType('file')} style={{ padding: '16px', borderRadius: '10px', border: '0.5px dashed #2a2a2a', background: '#1A1A1A', cursor: 'pointer', textAlign: 'center' }}>
@@ -397,15 +413,13 @@ export default function NewProductPage() {
                 </div>
               </div>
             )}
-
-            {/* FICHIER DIGITAL */}
             {deliveryType === 'file' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>Fichier digital</p>
                   <button onClick={() => { setDeliveryType(null); setFileUpload(null) }} style={{ background: 'transparent', border: 'none', color: '#444', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}>Changer</button>
                 </div>
-                <div onClick={() => document.getElementById('file-input')?.click()} style={{ width: '100%', padding: '20px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '12px' }}>
+                <div onClick={() => document.getElementById('file-input')?.click()} style={{ width: '100%', padding: '20px', background: '#1A1A1A', borderRadius: '10px', border: '0.5px dashed #2a2a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                   {fileUpload ? (
                     <div style={{ textAlign: 'center' }}>
                       <p style={{ margin: 0, fontSize: '13px', color: '#10B981', fontWeight: '600' }}>✓ {fileUpload.name}</p>
@@ -421,21 +435,13 @@ export default function NewProductPage() {
                 <input id="file-input" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
               </div>
             )}
-
-            {/* LIEN DE REDIRECTION */}
             {deliveryType === 'redirect' && (
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                   <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF' }}>Lien de redirection</p>
                   <button onClick={() => { setDeliveryType(null); setRedirectUrl('') }} style={{ background: 'transparent', border: 'none', color: '#444', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}>Changer</button>
                 </div>
-                <input
-                  type="url"
-                  value={redirectUrl}
-                  onChange={(e) => setRedirectUrl(e.target.value)}
-                  placeholder="https://chat.whatsapp.com/... ou https://ton-cours.com/..."
-                  style={inputStyle}
-                />
+                <input type="url" value={redirectUrl} onChange={(e) => setRedirectUrl(e.target.value)} placeholder="https://chat.whatsapp.com/... ou https://ton-cours.com/..." style={inputStyle} />
                 <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>Le client sera redirigé vers ce lien après paiement.</p>
               </div>
             )}
