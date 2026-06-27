@@ -3,84 +3,119 @@ import Anthropic from '@anthropic-ai/sdk'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-const getMarketPrompt = (market: string) => {
+const getMarketContext = (market: string) => {
   switch (market) {
     case 'europe':
-      return `MARCHÉ CIBLE : Europe francophone / internationale
+      return {
+        profile: `MARCHÉ : Europe francophone
 
-PROFIL PSYCHOLOGIQUE DE L'ACHETEUR EUROPÉEN :
-- Habitué au e-commerce, méfiant des promesses trop fortes
-- Décide sur la base de preuves concrètes, chiffres, résultats mesurables
-- Cherche la crédibilité, la légitimité, la transparence
-- Sensible au gain de temps, à l'efficacité, au ROI
-- Préfère un ton professionnel, direct, factuel
+PSYCHOLOGIE DE L'ACHETEUR :
+- Sceptique et rationnel — il a déjà été déçu par des promesses marketing
+- Décide sur des preuves concrètes : chiffres, résultats mesurables, études de cas
+- Cherche la crédibilité, la transparence, la légitimité
+- Sensible au gain de temps, ROI, efficacité prouvée
+- Méfiant des superlatifs vides et des promesses trop belles
+
+DOULEURS UNIVERSELLES SUR CE MARCHÉ :
+- Manque de temps et surinvestissement sans résultats proportionnels
+- Peur de se tromper et de perdre de l'argent
+- Sentiment d'être dépassé par la concurrence
+- Besoin de clarté et de méthode dans un monde complexe
+
+DÉSIRS PROFONDS :
+- Gagner du temps et de l'efficacité
+- Avoir des résultats mesurables et prévisibles
+- Être reconnu comme compétent et professionnel
+- Construire quelque chose de solide et durable
 
 STYLE D'ÉCRITURE :
-- Français standard, élégant, sans familiarité excessive
-- Promesses mesurables et crédibles, jamais exagérées
+- Français standard, professionnel, sans familiarité excessive
 - Arguments rationnels avant émotionnels
-- Éviter absolument : le jargon africain, les superlatifs vides, les promesses irréalistes
-
-ÉLÉMENTS DE PERSUASION PRIORITAIRES :
-1. Résultats concrets et chiffrés
-2. Processus clair et simple
-3. Garantie solide
-4. Crédibilité de l'auteur/vendeur
-5. Témoignages avec résultats précis`
+- Promesses mesurables et crédibles
+- Ton expert mais accessible
+- Jamais : superlatifs vides, promesses irréalistes, jargon africain`,
+        currency: 'EUR',
+        language: 'fr',
+        testimonialLocation: 'Paris, France',
+        urgencyStyle: 'places limitées cette semaine',
+        guaranteeStyle: 'satisfait ou remboursé sous 30 jours',
+      }
 
     case 'usa':
-      return `TARGET MARKET: United States / English-speaking
+      return {
+        profile: `MARKET: United States / English-speaking
 
-PSYCHOLOGICAL PROFILE OF THE AMERICAN BUYER:
-- Driven by transformation, ambition, and success
-- Responds to bold promises backed by social proof
-- Motivated by FOMO, urgency, and scarcity
-- Values speed of results and ease of implementation
-- Responds to energy, enthusiasm, and confidence
+BUYER PSYCHOLOGY:
+- Ambitious and action-oriented — wants transformation NOW
+- Responds to bold promises backed by massive social proof
+- Motivated by FOMO, urgency, scarcity, and exclusivity
+- Values speed of results and simplicity of implementation
+- Responds to energy, confidence, and "dream life" positioning
+
+UNIVERSAL PAINS ON THIS MARKET:
+- Stuck in mediocrity while seeing others succeed
+- Overwhelmed with information but lacking clear direction
+- Fear of missing out on the "big opportunity"
+- Trading time for money with no leverage
+
+DEEP DESIRES:
+- Financial freedom and time freedom simultaneously
+- Being seen as successful by peers
+- Finding the shortcut that actually works
+- Building something that runs without them
 
 WRITING STYLE:
-- American English, energetic, conversational but powerful
-- Bold headlines that promise transformation
-- Strong emotional hooks before logical arguments
-- Use power words: proven, guaranteed, exclusive, limited, breakthrough
-- Short punchy sentences that build momentum
-
-PRIORITY PERSUASION ELEMENTS:
-1. Powerful transformation promise
-2. Massive social proof (numbers, names, results)
-3. Urgency and scarcity
-4. Risk reversal (strong guarantee)
-5. Clear call to action with benefit-driven language
-
-WRITE EVERYTHING IN AMERICAN ENGLISH ONLY.`
+- American English, energetic, punchy, conversational
+- Bold transformation promises
+- Power words: proven, breakthrough, exclusive, guaranteed, limited
+- Short sentences that build momentum
+- Always: write in ENGLISH ONLY`,
+        currency: 'USD',
+        language: 'en',
+        testimonialLocation: 'New York, USA',
+        urgencyStyle: 'limited spots this week',
+        guaranteeStyle: '30-day money-back guarantee',
+      }
 
     default:
-      return `MARCHÉ CIBLE : Afrique francophone (Bénin, Côte d'Ivoire, Sénégal, Togo, Cameroun...)
+      return {
+        profile: `MARCHÉ : Afrique francophone (Bénin, Côte d'Ivoire, Sénégal, Togo, Cameroun...)
 
-PROFIL PSYCHOLOGIQUE DE L'ACHETEUR AFRICAIN FRANCOPHONE :
-- Méfiant envers les arnaques en ligne — la confiance doit être GAGNÉE, pas supposée
-- Décide principalement sur la base de la confiance et des recommandations
-- Très sensible aux témoignages de personnes de sa région/culture
-- Cherche la réassurance sur la sécurité du paiement Mobile Money
-- Préfère un ton chaleureux, proche, humain — pas corporatif
-- Motivé par l'amélioration concrète de sa vie quotidienne et de ses revenus
-- Attentif au rapport qualité/prix, justifie mentalement son achat
+PSYCHOLOGIE DE L'ACHETEUR :
+- Méfiant envers les arnaques en ligne — la confiance se GAGNE, elle ne se suppose pas
+- Décide sur la base de la confiance, des recommandations et des témoignages locaux
+- Très sensible aux histoires de transformation réelles de personnes de sa région
+- Cherche une réassurance constante sur la sécurité du paiement Mobile Money
+- Préfère un ton chaleureux, proche, humain — comme un ami qui conseille
+- Motivé par l'amélioration concrète de ses revenus et de sa vie quotidienne
+- Attentif au rapport qualité/prix — il justifie mentalement chaque dépense
+
+DOULEURS UNIVERSELLES SUR CE MARCHÉ :
+- Travailler dur sans voir les résultats espérés
+- Manque de clients et d'argent malgré les efforts
+- Peur d'être arnaqué ou de faire le mauvais choix
+- Sentiment d'être seul face aux défis du business
+- Voir d'autres réussir sans comprendre pourquoi
+
+DÉSIRS PROFONDS :
+- Liberté financière et indépendance
+- Être respecté et reconnu dans sa communauté
+- Offrir une meilleure vie à sa famille
+- Trouver une méthode qui marche vraiment pour son contexte africain
 
 STYLE D'ÉCRITURE :
 - Français africain naturel, chaleureux, direct et authentique
-- Utiliser "tu" pour créer de la proximité
-- Phrases courtes, claires, sans jargon occidental
+- "Tu" pour créer de la proximité immédiate
+- Phrases courtes, concrètes, sans jargon occidental
 - Storytelling émotionnel ancré dans la réalité africaine
-- Éviter : anglicismes inutiles, jargon marketing américain, promesses irréalistes
-
-ÉLÉMENTS DE PERSUASION PRIORITAIRES :
-1. Réassurance sur la sécurité du paiement (Mobile Money, pas d'arnaque)
-2. Témoignages de personnes locales avec prénom et ville africaine
-3. Résultat concret et rapide visible dans la vie quotidienne
-4. Proximité humaine (WhatsApp, support accessible)
-5. Garantie claire et rassurante
-6. Urgence douce et naturelle (pas agressive)`
-}
+- Jamais : anglicismes inutiles, promesses irréalistes, ton corporatif froid`,
+        currency: 'FCFA',
+        language: 'fr',
+        testimonialLocation: 'Abidjan, Côte d\'Ivoire',
+        urgencyStyle: 'places limitées cette semaine',
+        guaranteeStyle: 'satisfait ou remboursé sous 7 jours',
+      }
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -91,107 +126,191 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Informations insuffisantes' }, { status: 400 })
     }
 
-    const marketPrompt = getMarketPrompt(market || 'afrique')
+    const marketContext = getMarketContext(market || 'afrique')
 
     let prompt = ''
 
-    // MODE MODIFICATION — page déjà générée, l'utilisateur veut modifier
+    // ============================================================
+    // MODE MODIFICATION
+    // ============================================================
     if (modificationRequest && existingPageContent) {
       prompt = `Tu es un expert copywriter de niveau mondial spécialisé dans les pages de vente à haute conversion.
 
-${marketPrompt}
+${marketContext.profile}
 
-CONTEXTE : Une page de vente a déjà été générée pour ce produit. L'utilisateur veut apporter des modifications précises.
+CONTEXTE : Une page de vente existe déjà. L'utilisateur veut une modification précise.
 
 PAGE ACTUELLE :
 ${JSON.stringify(existingPageContent, null, 2)}
 
-INFORMATIONS PRODUIT :
+PRODUIT :
 - Nom : ${productTitle}
-- Prix : ${price} FCFA
+- Prix : ${price} ${marketContext.currency}
 ${rawContent ? `- Contenu original : ${rawContent}` : ''}
 
-DEMANDE DE MODIFICATION DE L'UTILISATEUR :
-"${modificationRequest}"
+DEMANDE : "${modificationRequest}"
 
-INSTRUCTION : Applique PRÉCISÉMENT la demande de modification. Ne change que ce qui est demandé. Garde tout le reste identique ou améliore-le légèrement.
+INSTRUCTION : Applique PRÉCISÉMENT la modification demandée. Ne change que ce qui est demandé. Améliore légèrement le reste si possible. Garde la même structure JSON.
 
-Retourne la page complète modifiée en JSON avec EXACTEMENT ce format (sans backticks, sans markdown, JSON pur) :
+Réponds UNIQUEMENT avec le JSON pur, sans backticks, sans texte avant ou après :
 {
-  "headline": "...",
-  "subheadline": "...",
-  "problem": "...",
-  "solution": "...",
-  "benefits": ["...", "...", "...", "..."],
-  "testimonial": {"name": "...", "text": "...", "location": "..."},
-  "guarantee": "...",
-  "cta_urgency": "...",
-  "whatsapp_text": "..."
+  "hero_headline": "...",
+  "hero_subheadline": "...",
+  "hero_stats": [{"number": "...", "label": "..."}],
+  "problem_title": "...",
+  "problem_intro": "...",
+  "problem_points": ["...", "...", "...", "..."],
+  "problem_quote": "...",
+  "solution_title": "...",
+  "solution_text": "...",
+  "benefits_title": "...",
+  "benefits": [{"icon": "...", "title": "...", "text": "..."}],
+  "steps_title": "...",
+  "steps": [{"number": "01", "title": "...", "text": "..."}],
+  "testimonials": [{"name": "...", "location": "...", "text": "...", "result": "..."}],
+  "faq_title": "...",
+  "faq": [{"question": "...", "answer": "..."}],
+  "guarantee_title": "...",
+  "guarantee_text": "...",
+  "urgency_text": "...",
+  "cta_text": "...",
+  "value_items": [{"label": "...", "value": "..."}],
+  "final_headline": "..."
 }`
-
     } else {
-      // MODE GÉNÉRATION — première création
-      if (!rawContent || rawContent.length < 10) {
-        return NextResponse.json({ error: 'Contenu insuffisant' }, { status: 400 })
-      }
 
-      prompt = `Tu es un expert copywriter de niveau mondial. Tu as généré des pages de vente pour des milliers d'entrepreneurs africains et internationaux. Tu connais parfaitement la psychologie d'achat, les déclencheurs émotionnels et les structures de pages qui convertissent.
+    // ============================================================
+    // MODE GÉNÉRATION — LE VRAI TRAVAIL DE COPYWRITER
+    // ============================================================
+    if (!rawContent || rawContent.length < 10) {
+      return NextResponse.json({ error: 'Contenu insuffisant' }, { status: 400 })
+    }
 
-${marketPrompt}
+    prompt = `Tu es le meilleur copywriter du monde francophone. Tu as généré des pages de vente qui ont généré des millions en revenus pour des entrepreneurs africains, européens et américains.
 
-INFORMATIONS DU PRODUIT :
-- Nom du produit : ${productTitle}
-- Prix : ${price} FCFA
-- Contenu brut du vendeur : ${rawContent}
+Tu ne te contentes pas de "mettre en forme" du contenu. Tu PENSES comme un stratège marketing :
+1. Tu analyses le produit et identifies son marché cible précis
+2. Tu creuses les douleurs PROFONDES de ce marché — pas les douleurs de surface
+3. Tu identifies les désirs CACHÉS — ce que le client veut vraiment derrière l'achat
+4. Tu construis une page qui crée une tension émotionnelle et présente le produit comme LA seule sortie
 
-MISSION : Crée une page de vente EXCEPTIONNELLE qui convertit. Tu dois :
+${marketContext.profile}
 
-1. HEADLINE : Créer un titre qui arrête le scroll. Utilise une promesse claire, un chiffre si possible, ou une question qui touche une douleur réelle. Maximum 10 mots. Exemples de structures qui marchent :
-   - "Comment [résultat désiré] en [délai] sans [obstacle majeur]"
-   - "[Chiffre] [cible] ont déjà [résultat] grâce à [produit]"
-   - "Arrête de [problème] — voici comment [solution] en [délai]"
+PRODUIT À ANALYSER :
+- Nom : ${productTitle}
+- Prix : ${price} ${marketContext.currency}
+- Informations brutes du vendeur : ${rawContent}
 
-2. SUBHEADLINE : Compléter et amplifier le headline. Préciser qui c'est pour et le résultat principal. Max 20 mots.
+ÉTAPE 1 — ANALYSE STRATÉGIQUE (fais-le mentalement avant d'écrire) :
+- Qui achète ce type de produit ? Quel est son profil exact ?
+- Quelle est sa douleur numéro 1 ? Qu'est-ce qui l'empêche de dormir ?
+- Qu'est-ce qu'il désire profondément ? La vraie raison derrière l'achat ?
+- Quelles sont ses 3 objections principales avant d'acheter ?
+- Quelle preuve sociale le convaincrait le plus ?
+- Quelle transformation promet ce produit ?
 
-3. PROBLEM : Décrire la douleur avec EMPATHIE. L'acheteur doit se reconnaître et penser "c'est exactement moi". 2-3 phrases percutantes. Utiliser des détails spécifiques, pas du vague.
+ÉTAPE 2 — GÉNÈRE LA PAGE (en utilisant ton analyse) :
 
-4. SOLUTION : Présenter le produit comme LA réponse évidente. Montrer comment il résout EXACTEMENT le problème décrit. 2-3 phrases convaincantes.
+RÈGLES DE COPYWRITING ABSOLUES :
+✓ Le headline doit ARRÊTER le scroll — promesse forte, spécifique, inattendue
+✓ Le problème doit faire dire "c'est EXACTEMENT moi" à l'acheteur
+✓ Les bénéfices = transformations concrètes, pas des features
+✓ Les témoignages doivent sembler VRAIS — pas parfaits, humains
+✓ La garantie doit ÉLIMINER le risque perçu totalement
+✓ L'urgence doit être CRÉDIBLE et naturelle, jamais artificielle
+✓ Chaque mot doit servir la conversion — zéro remplissage
 
-5. BENEFITS : 4 bénéfices CONCRETS et SPÉCIFIQUES (jamais vagues). Format : résultat précis + contexte. Pas "tu vas apprendre X" mais "tu vas [résultat mesurable] en [délai] même si [objection]".
+STRUCTURE À GÉNÉRER :
 
-6. TESTIMONIAL : Créer UN témoignage ultra-réaliste et crédible. Utiliser un prénom et une ville locale du marché cible. Le témoignage doit mentionner un résultat précis et une transformation réelle. 2-3 phrases naturelles, pas marketées.
+1. HERO_HEADLINE : Titre principal. Maximum 12 mots. Doit créer une tension immédiate entre la douleur actuelle et le résultat désiré. Structures qui convertissent :
+   - "Tu [problème actuel]. Voilà comment [résultat] en [délai] sans [obstacle]"
+   - "[Résultat désiré] même si [objection principale]"
+   - "Arrête de [problème]. [Résultat promis] commence ici."
 
-7. GUARANTEE : Une garantie qui élimine le risque perçu. Claire, simple, rassurante. 1-2 phrases.
+2. HERO_SUBHEADLINE : Amplifie le headline. Précise pour qui c'est et le résultat principal. 1-2 phrases max.
 
-8. CTA_URGENCY : Créer une urgence naturelle et crédible (pas "offre limitée à 24h" si c'est faux). 1 phrase qui pousse à l'action maintenant.
+3. HERO_STATS : 3-4 chiffres impactants liés au produit (ex: "48h", "Délai de résultat" / "100+", "Entrepreneurs aidés"). Invente des chiffres crédibles et réalistes basés sur le produit.
 
-9. WHATSAPP_TEXT : Message d'invitation WhatsApp chaleureux pour les questions avant achat. 1 phrase.
+4. PROBLEM_TITLE : Titre de section "Le vrai problème". Accrocheur.
 
-RÈGLES ABSOLUES :
-- Réponds UNIQUEMENT avec le JSON pur, aucun texte avant ou après, aucun backtick
-- Adapte TOUT le contenu au marché cible défini ci-dessus
-- Si le contenu brut est pauvre, enrichis-le intelligemment en restant fidèle au produit
-- Chaque mot doit servir la conversion — pas de remplissage
-- Les bénéfices doivent être différents et complémentaires, pas répétitifs
-- Le testimonial doit sembler VRAI et humain
+5. PROBLEM_INTRO : 1-2 phrases qui posent le problème en profondeur.
 
-FORMAT JSON EXACT (respecte PARFAITEMENT cette structure) :
+6. PROBLEM_POINTS : 4 douleurs spécifiques que ressent l'acheteur cible. Format "Tu [situation douloureuse]..." Très précis, très humain.
+
+7. PROBLEM_QUOTE : Une citation courte et percutante sur le problème (comme une insight clé). Entre guillemets.
+
+8. SOLUTION_TITLE : Titre qui présente le produit comme LA solution.
+
+9. SOLUTION_TEXT : 2-3 phrases qui présentent le produit comme la réponse évidente et logique au problème décrit.
+
+10. BENEFITS_TITLE : Titre de la section bénéfices.
+
+11. BENEFITS : 4-6 bénéfices. Chaque bénéfice a :
+    - icon : un emoji pertinent
+    - title : titre court (3-5 mots)
+    - text : description concrète du résultat (1-2 phrases)
+
+12. STEPS_TITLE : Titre "Comment ça marche"
+
+13. STEPS : 3 étapes simples du processus. Chaque étape :
+    - number : "01", "02", "03"
+    - title : titre de l'étape
+    - text : description simple (1 phrase)
+
+14. TESTIMONIALS : 2 témoignages ultra-réalistes. Chaque témoignage :
+    - name : prénom + nom locaux selon le marché
+    - location : ville locale
+    - text : témoignage naturel et humain (2-3 phrases, avec une légère imperfection pour paraître vrai)
+    - result : résultat concret obtenu (ex: "+47% de ventes en 3 semaines")
+
+15. FAQ_TITLE : Titre de la section FAQ
+
+16. FAQ : 4-5 questions/réponses. Les questions doivent être les VRAIES objections de l'acheteur. Les réponses doivent lever ces objections avec élégance.
+
+17. GUARANTEE_TITLE : Titre de la garantie
+
+18. GUARANTEE_TEXT : Texte de garantie qui élimine totalement le risque. Mentionner "${marketContext.guaranteeStyle}". 2-3 phrases.
+
+19. URGENCY_TEXT : Une phrase d'urgence crédible et naturelle.
+
+20. CTA_TEXT : Texte du bouton principal. Orienté bénéfice, pas "Acheter". Ex: "Accéder maintenant →", "Commencer ma transformation →"
+
+21. VALUE_ITEMS : 4-5 éléments du tableau de valeur. Format :
+    - label : ce que l'acheteur reçoit
+    - value : valeur perçue en ${marketContext.currency} (montant élevé pour montrer la valeur vs le prix)
+
+22. FINAL_HEADLINE : Dernière phrase avant le CTA final. Émotionnelle et inspirante. 1 phrase.
+
+RÉPONDS UNIQUEMENT AVEC LE JSON PUR — pas de backticks, pas de texte avant ou après, pas de markdown :
 {
-  "headline": "...",
-  "subheadline": "...",
-  "problem": "...",
-  "solution": "...",
-  "benefits": ["...", "...", "...", "..."],
-  "testimonial": {"name": "Prénom Nom", "text": "...", "location": "Ville, Pays"},
-  "guarantee": "...",
-  "cta_urgency": "...",
-  "whatsapp_text": "..."
+  "hero_headline": "...",
+  "hero_subheadline": "...",
+  "hero_stats": [{"number": "...", "label": "..."}, {"number": "...", "label": "..."}, {"number": "...", "label": "..."}],
+  "problem_title": "...",
+  "problem_intro": "...",
+  "problem_points": ["...", "...", "...", "..."],
+  "problem_quote": "...",
+  "solution_title": "...",
+  "solution_text": "...",
+  "benefits_title": "...",
+  "benefits": [{"icon": "...", "title": "...", "text": "..."}, {"icon": "...", "title": "...", "text": "..."}, {"icon": "...", "title": "...", "text": "..."}, {"icon": "...", "title": "...", "text": "..."}],
+  "steps_title": "...",
+  "steps": [{"number": "01", "title": "...", "text": "..."}, {"number": "02", "title": "...", "text": "..."}, {"number": "03", "title": "...", "text": "..."}],
+  "testimonials": [{"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}],
+  "faq_title": "...",
+  "faq": [{"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}],
+  "guarantee_title": "...",
+  "guarantee_text": "...",
+  "urgency_text": "...",
+  "cta_text": "...",
+  "value_items": [{"label": "...", "value": "..."}, {"label": "...", "value": "..."}, {"label": "...", "value": "..."}, {"label": "...", "value": "..."}],
+  "final_headline": "..."
 }`
     }
 
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 2000,
+      max_tokens: 4000,
       messages: [{ role: 'user', content: prompt }],
     })
 
