@@ -118,6 +118,15 @@ STYLE D'ÉCRITURE :
   }
 }
 
+const ANTI_AI_RULES = `
+RÈGLES D'ÉCRITURE ANTI-IA — TRÈS IMPORTANT :
+- N'utilise JAMAIS le tiret cadratin "—" ou "–" nulle part dans le texte. Utilise plutôt un point, une virgule, ou reformule la phrase.
+- N'utilise JAMAIS de listes avec des deux-points suivis d'énumérations robotiques.
+- Évite les formulations trop parfaites et symétriques qui sonnent artificielles.
+- Écris comme un humain qui tape vite, avec des phrases parfois un peu inégales en longueur.
+- Évite les mots comme "révolutionnaire", "incroyable", "exceptionnel" utilisés à outrance.
+- Les témoignages doivent avoir de légères imperfections naturelles (une hésitation, une tournure familière) pour paraître authentiques et humains, jamais parfaitement formatés.`
+
 export async function POST(req: NextRequest) {
   try {
     const { rawContent, productTitle, price, market, modificationRequest, existingPageContent } = await req.json()
@@ -130,13 +139,12 @@ export async function POST(req: NextRequest) {
 
     let prompt = ''
 
-    // ============================================================
-    // MODE MODIFICATION
-    // ============================================================
     if (modificationRequest && existingPageContent) {
       prompt = `Tu es un expert copywriter de niveau mondial spécialisé dans les pages de vente à haute conversion.
 
 ${marketContext.profile}
+
+${ANTI_AI_RULES}
 
 CONTEXTE : Une page de vente existe déjà. L'utilisateur veut une modification précise.
 
@@ -179,9 +187,6 @@ Réponds UNIQUEMENT avec le JSON pur, sans backticks, sans texte avant ou après
 }`
     } else {
 
-    // ============================================================
-    // MODE GÉNÉRATION — LE VRAI TRAVAIL DE COPYWRITER
-    // ============================================================
     if (!rawContent || rawContent.length < 10) {
       return NextResponse.json({ error: 'Contenu insuffisant' }, { status: 400 })
     }
@@ -190,18 +195,20 @@ Réponds UNIQUEMENT avec le JSON pur, sans backticks, sans texte avant ou après
 
 Tu ne te contentes pas de "mettre en forme" du contenu. Tu PENSES comme un stratège marketing :
 1. Tu analyses le produit et identifies son marché cible précis
-2. Tu creuses les douleurs PROFONDES de ce marché — pas les douleurs de surface
-3. Tu identifies les désirs CACHÉS — ce que le client veut vraiment derrière l'achat
+2. Tu creuses les douleurs PROFONDES de ce marché, pas les douleurs de surface
+3. Tu identifies les désirs CACHÉS, ce que le client veut vraiment derrière l'achat
 4. Tu construis une page qui crée une tension émotionnelle et présente le produit comme LA seule sortie
 
 ${marketContext.profile}
+
+${ANTI_AI_RULES}
 
 PRODUIT À ANALYSER :
 - Nom : ${productTitle}
 - Prix : ${price} ${marketContext.currency}
 - Informations brutes du vendeur : ${rawContent}
 
-ÉTAPE 1 — ANALYSE STRATÉGIQUE (fais-le mentalement avant d'écrire) :
+ÉTAPE 1, ANALYSE STRATÉGIQUE (fais-le mentalement avant d'écrire) :
 - Qui achète ce type de produit ? Quel est son profil exact ?
 - Quelle est sa douleur numéro 1 ? Qu'est-ce qui l'empêche de dormir ?
 - Qu'est-ce qu'il désire profondément ? La vraie raison derrière l'achat ?
@@ -209,79 +216,64 @@ PRODUIT À ANALYSER :
 - Quelle preuve sociale le convaincrait le plus ?
 - Quelle transformation promet ce produit ?
 
-ÉTAPE 2 — GÉNÈRE LA PAGE (en utilisant ton analyse) :
+ÉTAPE 2, GÉNÈRE LA PAGE (en utilisant ton analyse) :
 
 RÈGLES DE COPYWRITING ABSOLUES :
-✓ Le headline doit ARRÊTER le scroll — promesse forte, spécifique, inattendue
-✓ Le problème doit faire dire "c'est EXACTEMENT moi" à l'acheteur
-✓ Les bénéfices = transformations concrètes, pas des features
-✓ Les témoignages doivent sembler VRAIS — pas parfaits, humains
-✓ La garantie doit ÉLIMINER le risque perçu totalement
-✓ L'urgence doit être CRÉDIBLE et naturelle, jamais artificielle
-✓ Chaque mot doit servir la conversion — zéro remplissage
+Le headline doit ARRÊTER le scroll avec une promesse forte, spécifique, inattendue.
+Le problème doit faire dire "c'est exactement moi" à l'acheteur.
+Les bénéfices sont des transformations concrètes, jamais des features.
+Les témoignages doivent sembler vrais, pas parfaits, humains.
+La garantie doit éliminer le risque perçu totalement.
+L'urgence doit être crédible et naturelle, jamais artificielle.
+Chaque mot doit servir la conversion, zéro remplissage.
 
 STRUCTURE À GÉNÉRER :
 
-1. HERO_HEADLINE : Titre principal. Maximum 12 mots. Doit créer une tension immédiate entre la douleur actuelle et le résultat désiré. Structures qui convertissent :
-   - "Tu [problème actuel]. Voilà comment [résultat] en [délai] sans [obstacle]"
-   - "[Résultat désiré] même si [objection principale]"
-   - "Arrête de [problème]. [Résultat promis] commence ici."
+1. HERO_HEADLINE : Titre principal. Maximum 12 mots. Crée une tension immédiate entre la douleur actuelle et le résultat désiré.
 
-2. HERO_SUBHEADLINE : Amplifie le headline. Précise pour qui c'est et le résultat principal. 1-2 phrases max.
+2. HERO_SUBHEADLINE : Amplifie le headline. Précise pour qui c'est et le résultat principal. 1 à 2 phrases max.
 
-3. HERO_STATS : 3-4 chiffres impactants liés au produit (ex: "48h", "Délai de résultat" / "100+", "Entrepreneurs aidés"). Invente des chiffres crédibles et réalistes basés sur le produit.
+3. HERO_STATS : 3 à 4 chiffres impactants liés au produit. Invente des chiffres crédibles et réalistes basés sur le produit.
 
-4. PROBLEM_TITLE : Titre de section "Le vrai problème". Accrocheur.
+4. PROBLEM_TITLE : Titre de section sur le vrai problème. Accrocheur.
 
-5. PROBLEM_INTRO : 1-2 phrases qui posent le problème en profondeur.
+5. PROBLEM_INTRO : 1 à 2 phrases qui posent le problème en profondeur.
 
-6. PROBLEM_POINTS : 4 douleurs spécifiques que ressent l'acheteur cible. Format "Tu [situation douloureuse]..." Très précis, très humain.
+6. PROBLEM_POINTS : 4 douleurs spécifiques que ressent l'acheteur cible. Format "Tu (situation douloureuse)". Très précis, très humain.
 
-7. PROBLEM_QUOTE : Une citation courte et percutante sur le problème (comme une insight clé). Entre guillemets.
+7. PROBLEM_QUOTE : Une citation courte et percutante sur le problème, comme une prise de conscience. Entre guillemets.
 
-8. SOLUTION_TITLE : Titre qui présente le produit comme LA solution.
+8. SOLUTION_TITLE : Titre qui présente le produit comme la solution.
 
-9. SOLUTION_TEXT : 2-3 phrases qui présentent le produit comme la réponse évidente et logique au problème décrit.
+9. SOLUTION_TEXT : 2 à 3 phrases qui présentent le produit comme la réponse évidente et logique au problème décrit.
 
 10. BENEFITS_TITLE : Titre de la section bénéfices.
 
-11. BENEFITS : 4-6 bénéfices. Chaque bénéfice a :
-    - icon : un emoji pertinent
-    - title : titre court (3-5 mots)
-    - text : description concrète du résultat (1-2 phrases)
+11. BENEFITS : 4 à 6 bénéfices. Chaque bénéfice a un icon (emoji pertinent), un title (3 à 5 mots), et un text (description concrète du résultat en 1 à 2 phrases).
 
-12. STEPS_TITLE : Titre "Comment ça marche"
+12. STEPS_TITLE : Titre de la section comment ça marche.
 
-13. STEPS : 3 étapes simples du processus. Chaque étape :
-    - number : "01", "02", "03"
-    - title : titre de l'étape
-    - text : description simple (1 phrase)
+13. STEPS : 3 étapes simples du processus. Chaque étape a un number ("01", "02", "03"), un title, et un text (1 phrase).
 
-14. TESTIMONIALS : 2 témoignages ultra-réalistes. Chaque témoignage :
-    - name : prénom + nom locaux selon le marché
-    - location : ville locale
-    - text : témoignage naturel et humain (2-3 phrases, avec une légère imperfection pour paraître vrai)
-    - result : résultat concret obtenu (ex: "+47% de ventes en 3 semaines")
+14. TESTIMONIALS : 2 témoignages ultra réalistes. Chaque témoignage a un name (prénom et nom locaux selon le marché), une location (ville locale), un text (témoignage naturel et humain de 2 à 3 phrases, avec une légère imperfection pour paraître vrai), et un result (résultat concret obtenu).
 
-15. FAQ_TITLE : Titre de la section FAQ
+15. FAQ_TITLE : Titre de la section FAQ.
 
-16. FAQ : 4-5 questions/réponses. Les questions doivent être les VRAIES objections de l'acheteur. Les réponses doivent lever ces objections avec élégance.
+16. FAQ : 4 à 5 questions et réponses. Les questions doivent être les vraies objections de l'acheteur. Les réponses doivent lever ces objections avec élégance.
 
-17. GUARANTEE_TITLE : Titre de la garantie
+17. GUARANTEE_TITLE : Titre de la garantie.
 
-18. GUARANTEE_TEXT : Texte de garantie qui élimine totalement le risque. Mentionner "${marketContext.guaranteeStyle}". 2-3 phrases.
+18. GUARANTEE_TEXT : Texte de garantie qui élimine totalement le risque. Mentionner "${marketContext.guaranteeStyle}". 2 à 3 phrases.
 
 19. URGENCY_TEXT : Une phrase d'urgence crédible et naturelle.
 
-20. CTA_TEXT : Texte du bouton principal. Orienté bénéfice, pas "Acheter". Ex: "Accéder maintenant →", "Commencer ma transformation →"
+20. CTA_TEXT : Texte du bouton principal. Orienté bénéfice, pas "Acheter".
 
-21. VALUE_ITEMS : 4-5 éléments du tableau de valeur. Format :
-    - label : ce que l'acheteur reçoit
-    - value : valeur perçue en ${marketContext.currency} (montant élevé pour montrer la valeur vs le prix)
+21. VALUE_ITEMS : 4 à 5 éléments du tableau de valeur. Chaque élément a un label (ce que l'acheteur reçoit) et une value (valeur perçue en ${marketContext.currency}).
 
 22. FINAL_HEADLINE : Dernière phrase avant le CTA final. Émotionnelle et inspirante. 1 phrase.
 
-RÉPONDS UNIQUEMENT AVEC LE JSON PUR — pas de backticks, pas de texte avant ou après, pas de markdown :
+RÉPONDS UNIQUEMENT AVEC LE JSON PUR, pas de backticks, pas de texte avant ou après, pas de markdown :
 {
   "hero_headline": "...",
   "hero_subheadline": "...",
