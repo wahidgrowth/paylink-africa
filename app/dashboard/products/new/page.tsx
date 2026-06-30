@@ -255,8 +255,8 @@ export default function NewProductPage() {
                 <p style={{ margin: 0, fontSize: '12px', color: '#6B7280', lineHeight: '1.5' }}>Simple et rapide. Formulaire de paiement direct.</p>
               </div>
               <div onClick={() => setPageType('sales_page')} style={{ padding: '16px', borderRadius: '10px', border: `1.5px solid ${pageType === 'sales_page' ? '#10B981' : '#2a2a2a'}`, background: pageType === 'sales_page' ? '#10B98110' : '#1A1A1A', cursor: 'pointer' }}>
-                <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: '700', color: pageType === 'sales_page' ? '#10B981' : '#fff' }}>Page de vente IA ✨</p>
-                <p style={{ margin: 0, fontSize: '12px', color: '#6B7280', lineHeight: '1.5' }}>Notre IA génère ta page de vente complète.</p>
+                <p style={{ margin: '0 0 4px', fontSize: '14px', fontWeight: '700', color: pageType === 'sales_page' ? '#10B981' : '#fff' }}>Page de vente ✨</p>
+                <p style={{ margin: 0, fontSize: '12px', color: '#6B7280', lineHeight: '1.5' }}>Notre système génère ta page de vente complète.</p>
               </div>
             </div>
           </div>
@@ -312,8 +312,8 @@ export default function NewProductPage() {
             </>
           ) : (
             <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
-              <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente IA ✨</p>
-              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px', lineHeight: '1.6' }}>Réponds à quelques questions pour que notre IA crée une page de vente vraiment adaptée à ton produit.</p>
+              <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente ✨</p>
+              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px', lineHeight: '1.6' }}>Réponds à quelques questions pour créer une page de vente vraiment adaptée à ton produit.</p>
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Tes clients sont principalement où ?</label>
@@ -348,7 +348,7 @@ export default function NewProductPage() {
                 <div style={{ marginBottom: '20px' }}>
                   <div style={{ background: '#0D0D0D', borderRadius: '10px', padding: '24px', border: '0.5px dashed #2a2a2a', textAlign: 'center' }}>
                     <p style={{ fontSize: '13px', color: '#9CA3AF', margin: '0 0 16px', lineHeight: '1.6' }}>
-                      Réponds à 8 questions rapides sur ton produit. Ça prend 2 minutes et ça permet à l'IA de créer une page beaucoup plus précise et convaincante.
+                      Réponds à 8 questions rapides sur ton produit. Ça prend 2 minutes et ça permet de créer une page beaucoup plus précise et convaincante.
                     </p>
                     <button onClick={() => setShowQuestionFlow(true)} style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer' }}>
                       Commencer le questionnaire →
