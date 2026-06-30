@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import QuestionFlow from '@/components/QuestionFlow'
 
 const RichEditor = dynamic(() => import('@/components/RichEditor'), { ssr: false })
 
@@ -33,6 +34,7 @@ export default function NewProductPage() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [rawContent, setRawContent] = useState('')
+  const [showQuestionFlow, setShowQuestionFlow] = useState(false)
   const [market, setMarket] = useState<'afrique' | 'europe' | 'usa'>('afrique')
   const [price, setPrice] = useState('')
   const [originalPrice, setOriginalPrice] = useState('')
@@ -75,9 +77,14 @@ export default function NewProductPage() {
   const fee = price ? Math.round(parseInt(price) * 0.01) : 0
   const sellerReceives = price ? parseInt(price) - fee : 0
 
+  const handleQuestionFlowComplete = (generatedContent: string) => {
+    setRawContent(generatedContent)
+    setShowQuestionFlow(false)
+  }
+
   const handleGenerate = async () => {
     if (!rawContent || rawContent.length < 20) {
-      setMessage('Ajoute plus de contenu pour générer ta page de vente.')
+      setMessage('Réponds au questionnaire pour générer ta page de vente.')
       return
     }
     if (!title || !price) {
@@ -260,7 +267,7 @@ export default function NewProductPage() {
           ) : (
             <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
               <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente IA ✨</p>
-              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px', lineHeight: '1.6' }}>Colle tout ton contenu en vrac. Notre IA analyse ton produit et crée une page de vente complète qui convertit.</p>
+              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 20px', lineHeight: '1.6' }}>Réponds à quelques questions pour que notre IA crée une page de vente vraiment adaptée à ton produit.</p>
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Tes clients sont principalement où ?</label>
@@ -273,15 +280,42 @@ export default function NewProductPage() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Ton contenu *</label>
-                <textarea value={rawContent} onChange={(e) => setRawContent(e.target.value)} placeholder="Décris ton produit, ses bénéfices, pour qui c'est fait, ce que le client va obtenir... L'IA s'occupe du reste." rows={7} style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.6' }} />
-                <p style={{ fontSize: '11px', color: '#444', margin: '6px 0 0' }}>{rawContent.length} caractères</p>
-              </div>
+              {/* QUESTIONNAIRE OU RÉSUMÉ */}
+              {showQuestionFlow ? (
+                <QuestionFlow
+                  onComplete={handleQuestionFlowComplete}
+                  onCancel={() => setShowQuestionFlow(false)}
+                />
+              ) : rawContent ? (
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ fontSize: '13px', color: '#9CA3AF' }}>Informations collectées</label>
+                    <button onClick={() => setShowQuestionFlow(true)} style={{ background: 'transparent', border: 'none', color: '#10B981', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}>
+                      Modifier mes réponses
+                    </button>
+                  </div>
+                  <div style={{ background: '#0D0D0D', borderRadius: '10px', padding: '16px', border: '0.5px solid #1F1F1F', maxHeight: '180px', overflowY: 'auto' }}>
+                    <p style={{ fontSize: '12px', color: '#9CA3AF', margin: 0, lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>{rawContent}</p>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ background: '#0D0D0D', borderRadius: '10px', padding: '24px', border: '0.5px dashed #2a2a2a', textAlign: 'center' }}>
+                    <p style={{ fontSize: '13px', color: '#9CA3AF', margin: '0 0 16px', lineHeight: '1.6' }}>
+                      Réponds à 7 questions rapides sur ton produit. Ça prend 2 minutes et ça permet à l'IA de créer une page beaucoup plus précise et convaincante.
+                    </p>
+                    <button onClick={() => setShowQuestionFlow(true)} style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer' }}>
+                      Commencer le questionnaire →
+                    </button>
+                  </div>
+                </div>
+              )}
 
-              <button onClick={handleGenerate} disabled={generating} style={{ width: '100%', background: generating ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating ? '#2a2a2a' : '#10B98140'}`, color: generating ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating ? 'not-allowed' : 'pointer' }}>
-                {generating ? '✨ Génération en cours... (30-60 secondes)' : pageContent ? '✓ Page générée — Régénérer' : '✨ Générer ma page de vente'}
-              </button>
+              {!showQuestionFlow && (
+                <button onClick={handleGenerate} disabled={generating || !rawContent} style={{ width: '100%', background: generating || !rawContent ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating || !rawContent ? '#2a2a2a' : '#10B98140'}`, color: generating || !rawContent ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating || !rawContent ? 'not-allowed' : 'pointer' }}>
+                  {generating ? '✨ Génération en cours... (30-60 secondes)' : pageContent ? '✓ Page générée — Régénérer' : '✨ Générer ma page de vente'}
+                </button>
+              )}
 
               {/* PREVIEW NOUVEAU FORMAT */}
               {showPreview && pageContent && (
@@ -332,7 +366,7 @@ export default function NewProductPage() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                           {pageContent.benefits.slice(0, 3).map((b, i) => (
                             <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                              <span style={{ fontSize: '16px', flexShrink: 0 }}>{b.icon}</span>
+                              <span style={{ fontSize: '16px', flexShrink: 0, filter: 'grayscale(100%) brightness(1.4)', opacity: 0.85 }}>{b.icon}</span>
                               <div>
                                 <p style={{ margin: '0 0 2px', fontSize: '12px', color: '#fff', fontWeight: '600' }}>{b.title}</p>
                                 <p style={{ margin: 0, fontSize: '11px', color: '#6B7280' }}>{b.text}</p>
