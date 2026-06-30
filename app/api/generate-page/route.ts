@@ -188,7 +188,7 @@ Réponds UNIQUEMENT avec le JSON pur, sans backticks, sans texte avant ou après
   "steps": [{"number": "01", "title": "...", "text": "..."}],
   "testimonials": [{"name": "...", "location": "...", "text": "...", "result": "..."}],
   "faq_title": "...",
-  "faq": [{"question": "...", "answer": "..."}],
+  "faq": [{"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}],
   "guarantee_title": "...",
   "guarantee_text": "...",
   "urgency_text": "...",
@@ -273,7 +273,7 @@ STRUCTURE À GÉNÉRER :
 
 15. FAQ_TITLE : Titre de la section FAQ. Court.
 
-16. FAQ : 4 à 5 questions et réponses. Les questions doivent être les vraies objections de l'acheteur, courtes. Les réponses doivent lever ces objections avec élégance, en 2 phrases maximum.
+16. FAQ : EXACTEMENT 5 questions et réponses, ni plus ni moins. Avant de les écrire, mets-toi mentalement à la place de l'acheteur sur cette page précise, dans le contexte du marché cible défini plus haut. Demande-toi : "Quelles sont les questions que je me poserais en lisant cette page, dans mon contexte culturel et économique, et qui, sans réponse claire, me feraient abandonner l'achat ?" Liste mentalement toutes les objections possibles propres à ce marché, puis choisis les 5 qui ont le plus fort impact sur la décision d'achat. Les questions doivent être courtes et réelles. Les réponses doivent lever ces objections avec élégance, en 2 phrases maximum.
 
 17. GUARANTEE_TITLE : Titre de la garantie. Court, 2 à 4 mots.
 
@@ -306,7 +306,7 @@ RÉPONDS UNIQUEMENT AVEC LE JSON PUR, pas de backticks, pas de texte avant ou ap
   "steps": [{"number": "01", "title": "...", "text": "..."}, {"number": "02", "title": "...", "text": "..."}, {"number": "03", "title": "...", "text": "..."}],
   "testimonials": [{"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}],
   "faq_title": "...",
-  "faq": [{"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}],
+  "faq": [{"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}],
   "guarantee_title": "...",
   "guarantee_text": "...",
   "urgency_text": "...",
