@@ -86,9 +86,9 @@ PSYCHOLOGIE DE L'ACHETEUR :
 - Décide sur la base de la confiance, des recommandations et des témoignages locaux
 - Très sensible aux histoires de transformation réelles de personnes de sa région
 - Cherche une réassurance constante sur la sécurité du paiement Mobile Money
-- Préfère un ton chaleureux, proche, humain — comme un ami qui conseille
+- Préfère un ton chaleureux, proche, humain, comme un ami qui conseille
 - Motivé par l'amélioration concrète de ses revenus et de sa vie quotidienne
-- Attentif au rapport qualité/prix — il justifie mentalement chaque dépense
+- Attentif au rapport qualité/prix, il justifie mentalement chaque dépense
 
 DOULEURS UNIVERSELLES SUR CE MARCHÉ :
 - Travailler dur sans voir les résultats espérés
@@ -119,13 +119,22 @@ STYLE D'ÉCRITURE :
 }
 
 const ANTI_AI_RULES = `
-RÈGLES D'ÉCRITURE ANTI-IA — TRÈS IMPORTANT :
-- N'utilise JAMAIS le tiret cadratin "—" ou "–" nulle part dans le texte. Utilise plutôt un point, une virgule, ou reformule la phrase.
+RÈGLES D'ÉCRITURE ANTI-IA, TRÈS IMPORTANT :
+- N'utilise JAMAIS le tiret cadratin "—" ou le tiret demi-cadratin "–" nulle part dans le texte, sous aucun prétexte. Si tu veux marquer une pause ou une transition, utilise un point, une virgule, ou simplement deux phrases séparées.
+- Avant de finaliser chaque champ texte, relis-le mentalement et vérifie qu'aucun tiret long n'y figure. Si tu en trouves un, reformule la phrase entièrement.
 - N'utilise JAMAIS de listes avec des deux-points suivis d'énumérations robotiques.
 - Évite les formulations trop parfaites et symétriques qui sonnent artificielles.
 - Écris comme un humain qui tape vite, avec des phrases parfois un peu inégales en longueur.
 - Évite les mots comme "révolutionnaire", "incroyable", "exceptionnel" utilisés à outrance.
 - Les témoignages doivent avoir de légères imperfections naturelles (une hésitation, une tournure familière) pour paraître authentiques et humains, jamais parfaitement formatés.`
+
+const CTA_RULES = `
+RÈGLES POUR LE CTA_TEXT, TRÈS IMPORTANT :
+- Le CTA_TEXT doit faire MAXIMUM 4 mots. Jamais plus.
+- Il doit être orienté action et résultat immédiat, pas une description longue.
+- Mauvais exemples (trop longs) : "Je veux mes premiers clients en ligne", "Je veux transformer mon business maintenant"
+- Bons exemples (courts et percutants) : "Je me lance", "Commencer maintenant", "Je veux ça", "Obtenir mes clients", "Démarrer aujourd'hui", "Réserver ma place"
+- Le CTA doit créer une envie d'agir immédiatement sans être une phrase complète.`
 
 export async function POST(req: NextRequest) {
   try {
@@ -145,6 +154,8 @@ export async function POST(req: NextRequest) {
 ${marketContext.profile}
 
 ${ANTI_AI_RULES}
+
+${CTA_RULES}
 
 CONTEXTE : Une page de vente existe déjà. L'utilisateur veut une modification précise.
 
@@ -183,6 +194,7 @@ Réponds UNIQUEMENT avec le JSON pur, sans backticks, sans texte avant ou après
   "urgency_text": "...",
   "cta_text": "...",
   "value_items": [{"label": "...", "value": "..."}],
+  "price_card_title": "...",
   "final_headline": "..."
 }`
     } else {
@@ -202,6 +214,8 @@ Tu ne te contentes pas de "mettre en forme" du contenu. Tu PENSES comme un strat
 ${marketContext.profile}
 
 ${ANTI_AI_RULES}
+
+${CTA_RULES}
 
 PRODUIT À ANALYSER :
 - Nom : ${productTitle}
@@ -231,47 +245,49 @@ STRUCTURE À GÉNÉRER :
 
 1. HERO_HEADLINE : Titre principal. Maximum 12 mots. Crée une tension immédiate entre la douleur actuelle et le résultat désiré.
 
-2. HERO_SUBHEADLINE : Amplifie le headline. Précise pour qui c'est et le résultat principal. 1 à 2 phrases max.
+2. HERO_SUBHEADLINE : Amplifie le headline. Précise pour qui c'est et le résultat principal. 1 à 2 phrases max, COURTES.
 
 3. HERO_STATS : 3 à 4 chiffres impactants liés au produit. Invente des chiffres crédibles et réalistes basés sur le produit.
 
-4. PROBLEM_TITLE : Titre de section sur le vrai problème. Accrocheur.
+4. PROBLEM_TITLE : Titre de section sur le vrai problème. Court, 4 à 6 mots maximum.
 
-5. PROBLEM_INTRO : 1 à 2 phrases qui posent le problème en profondeur.
+5. PROBLEM_INTRO : 1 phrase COURTE (maximum 15 mots) qui pose le problème en une accroche brève. Ce n'est PAS un second titre, c'est un texte de transition court.
 
-6. PROBLEM_POINTS : 4 douleurs spécifiques que ressent l'acheteur cible. Format "Tu (situation douloureuse)". Très précis, très humain.
+6. PROBLEM_POINTS : 4 douleurs spécifiques que ressent l'acheteur cible. Format "Tu (situation douloureuse)". Très précis, très humain, chaque point 1 à 2 phrases maximum.
 
-7. PROBLEM_QUOTE : Une citation courte et percutante sur le problème, comme une prise de conscience. Entre guillemets.
+7. PROBLEM_QUOTE : Une citation courte et percutante sur le problème, comme une prise de conscience. Maximum 15 mots. Entre guillemets.
 
-8. SOLUTION_TITLE : Titre qui présente le produit comme la solution.
+8. SOLUTION_TITLE : Titre qui présente le produit comme la solution. Court, 4 à 6 mots.
 
-9. SOLUTION_TEXT : 2 à 3 phrases qui présentent le produit comme la réponse évidente et logique au problème décrit.
+9. SOLUTION_TEXT : 2 phrases courtes qui présentent le produit comme la réponse évidente et logique au problème décrit.
 
-10. BENEFITS_TITLE : Titre de la section bénéfices.
+10. BENEFITS_TITLE : Titre de la section bénéfices. Court, 3 à 5 mots.
 
-11. BENEFITS : 4 à 6 bénéfices. Chaque bénéfice a un icon (emoji pertinent), un title (3 à 5 mots), et un text (description concrète du résultat en 1 à 2 phrases).
+11. BENEFITS : 4 à 6 bénéfices. Chaque bénéfice a un icon (emoji pertinent), un title (3 à 5 mots), et un text (description concrète du résultat en 1 phrase courte).
 
-12. STEPS_TITLE : Titre de la section comment ça marche.
+12. STEPS_TITLE : Titre de la section comment ça marche. Court.
 
-13. STEPS : 3 étapes simples du processus. Chaque étape a un number ("01", "02", "03"), un title, et un text (1 phrase).
+13. STEPS : 3 étapes simples du processus. Chaque étape a un number ("01", "02", "03"), un title court, et un text (1 phrase courte).
 
-14. TESTIMONIALS : 2 témoignages ultra réalistes. Chaque témoignage a un name (prénom et nom locaux selon le marché), une location (ville locale), un text (témoignage naturel et humain de 2 à 3 phrases, avec une légère imperfection pour paraître vrai), et un result (résultat concret obtenu).
+14. TESTIMONIALS : 5 témoignages ultra réalistes et VARIÉS entre eux (résultats différents, tons légèrement différents, profils différents). Chaque témoignage a un name (prénom et nom locaux selon le marché), une location (ville locale différente pour chaque témoignage), un text (témoignage naturel et humain de 2 phrases courtes, avec une légère imperfection pour paraître vrai), et un result (résultat concret obtenu, court).
 
-15. FAQ_TITLE : Titre de la section FAQ.
+15. FAQ_TITLE : Titre de la section FAQ. Court.
 
-16. FAQ : 4 à 5 questions et réponses. Les questions doivent être les vraies objections de l'acheteur. Les réponses doivent lever ces objections avec élégance.
+16. FAQ : 4 à 5 questions et réponses. Les questions doivent être les vraies objections de l'acheteur, courtes. Les réponses doivent lever ces objections avec élégance, en 2 phrases maximum.
 
-17. GUARANTEE_TITLE : Titre de la garantie.
+17. GUARANTEE_TITLE : Titre de la garantie. Court, 2 à 4 mots.
 
-18. GUARANTEE_TEXT : Texte de garantie qui élimine totalement le risque. Mentionner "${marketContext.guaranteeStyle}". 2 à 3 phrases.
+18. GUARANTEE_TEXT : Texte de garantie qui élimine totalement le risque. Mentionner "${marketContext.guaranteeStyle}". 2 phrases courtes maximum.
 
-19. URGENCY_TEXT : Une phrase d'urgence crédible et naturelle.
+19. URGENCY_TEXT : Une phrase d'urgence courte et crédible, maximum 12 mots.
 
-20. CTA_TEXT : Texte du bouton principal. Orienté bénéfice, pas "Acheter".
+20. CTA_TEXT : Suis STRICTEMENT les CTA_RULES ci-dessus. Maximum 4 mots.
 
-21. VALUE_ITEMS : 4 à 5 éléments du tableau de valeur. Chaque élément a un label (ce que l'acheteur reçoit) et une value (valeur perçue en ${marketContext.currency}).
+21. VALUE_ITEMS : 4 à 5 éléments du tableau de valeur. Chaque élément a un label (ce que l'acheteur reçoit, court) et une value (valeur perçue en ${marketContext.currency}).
 
-22. FINAL_HEADLINE : Dernière phrase avant le CTA final. Émotionnelle et inspirante. 1 phrase.
+22. PRICE_CARD_TITLE : Le titre affiché en haut du tableau de prix. Ce n'est PAS le nom brut du produit, c'est une PROMESSE orientée résultat. Transforme le nom du produit en bénéfice final. Exemple : si le produit s'appelle "Formation Marketing Digital", le price_card_title pourrait être "Tes premiers clients en 30 jours". Maximum 6 mots, percutant.
+
+23. FINAL_HEADLINE : Dernière phrase avant le CTA final. Émotionnelle et inspirante, mais COURTE, maximum 12 mots, pas un paragraphe.
 
 RÉPONDS UNIQUEMENT AVEC LE JSON PUR, pas de backticks, pas de texte avant ou après, pas de markdown :
 {
@@ -288,7 +304,7 @@ RÉPONDS UNIQUEMENT AVEC LE JSON PUR, pas de backticks, pas de texte avant ou ap
   "benefits": [{"icon": "...", "title": "...", "text": "..."}, {"icon": "...", "title": "...", "text": "..."}, {"icon": "...", "title": "...", "text": "..."}, {"icon": "...", "title": "...", "text": "..."}],
   "steps_title": "...",
   "steps": [{"number": "01", "title": "...", "text": "..."}, {"number": "02", "title": "...", "text": "..."}, {"number": "03", "title": "...", "text": "..."}],
-  "testimonials": [{"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}],
+  "testimonials": [{"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}, {"name": "...", "location": "...", "text": "...", "result": "..."}],
   "faq_title": "...",
   "faq": [{"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}, {"question": "...", "answer": "..."}],
   "guarantee_title": "...",
@@ -296,6 +312,7 @@ RÉPONDS UNIQUEMENT AVEC LE JSON PUR, pas de backticks, pas de texte avant ou ap
   "urgency_text": "...",
   "cta_text": "...",
   "value_items": [{"label": "...", "value": "..."}, {"label": "...", "value": "..."}, {"label": "...", "value": "..."}, {"label": "...", "value": "..."}],
+  "price_card_title": "...",
   "final_headline": "..."
 }`
     }

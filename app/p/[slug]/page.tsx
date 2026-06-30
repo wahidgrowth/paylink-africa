@@ -27,6 +27,7 @@ type PageContent = {
   urgency_text: string
   cta_text: string
   value_items: { label: string; value: string }[]
+  price_card_title?: string
   final_headline: string
   headline?: string
   subheadline?: string
@@ -267,7 +268,8 @@ export default function PaymentPage() {
   if (product.page_type === 'sales_page' && product.page_content) {
     const pc = product.page_content
     const isNewFormat = !!pc.hero_headline
-    const ctaText = pc.cta_text || product.page_cta_text || 'Accéder maintenant'
+    const ctaText = pc.cta_text || product.page_cta_text || 'Je le veux'
+    const priceCardTitle = pc.price_card_title || product.title
 
     if (!isNewFormat) {
       return (
@@ -352,12 +354,12 @@ export default function PaymentPage() {
                 </Reveal>
               )}
               <Reveal>
-                <h1 style={{ fontSize: '44px', fontWeight: '800', lineHeight: '1.15', margin: '0 0 20px', color: '#fff', letterSpacing: '-0.5px' }} className="sp-hero-headline">
+                <h1 style={{ fontSize: '44px', fontWeight: '800', lineHeight: '1.15', margin: '0 0 20px', color: '#fff', letterSpacing: '-0.5px' }}>
                   {pc.hero_headline}
                 </h1>
               </Reveal>
               <Reveal delay={0.1}>
-                <p style={{ fontSize: '17px', color: '#9CA3AF', margin: '0 auto 32px', lineHeight: '1.7', maxWidth: '580px' }} className="sp-hero-subheadline">
+                <p style={{ fontSize: '17px', color: '#9CA3AF', margin: '0 auto 32px', lineHeight: '1.7', maxWidth: '580px' }}>
                   {pc.hero_subheadline}
                 </p>
               </Reveal>
@@ -403,7 +405,7 @@ export default function PaymentPage() {
             </Reveal>
             {pc.problem_intro && (
               <Reveal delay={0.05}>
-                <p style={{ fontSize: '20px', color: '#fff', fontWeight: '700', margin: '0 0 28px', lineHeight: '1.5', maxWidth: '600px', letterSpacing: '-0.3px' }}>
+                <p style={{ fontSize: '15px', color: '#9CA3AF', fontWeight: '500', margin: '0 0 24px', lineHeight: '1.6', maxWidth: '600px' }}>
                   {pc.problem_intro}
                 </p>
               </Reveal>
@@ -439,7 +441,7 @@ export default function PaymentPage() {
           <div className="sp-container">
             <Reveal>
               <p className="sp-label" style={{ color: accentColor }}>{pc.solution_title || 'La solution'}</p>
-              <p style={{ fontSize: '19px', color: '#fff', lineHeight: '1.7', margin: 0, maxWidth: '600px', fontWeight: '500' }}>
+              <p style={{ fontSize: '16px', color: '#fff', lineHeight: '1.7', margin: 0, maxWidth: '600px', fontWeight: '500' }}>
                 {pc.solution_text}
               </p>
             </Reveal>
@@ -459,7 +461,7 @@ export default function PaymentPage() {
                 <Reveal key={i} delay={i * 0.07}>
                   <div className="sp-benefit-card" style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box' }}>
                     <div style={{ fontSize: '26px', marginBottom: '12px' }}>{benefit.icon}</div>
-                    <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#fff', margin: '0 0 6px' }}>{benefit.title}</h3>
+                    <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#fff', margin: '0 0 6px' }}>{benefit.title}</h3>
                     <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF', lineHeight: '1.6' }}>{benefit.text}</p>
                   </div>
                 </Reveal>
@@ -521,7 +523,7 @@ export default function PaymentPage() {
               </Reveal>
               <div className="sp-testimonials-grid">
                 {pc.testimonials.map((t, i) => (
-                  <Reveal key={i} delay={i * 0.1}>
+                  <Reveal key={i} delay={i * 0.08}>
                     <div style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box' }}>
                       <div style={{ display: 'flex', gap: '3px', marginBottom: '12px' }}>
                         {[1,2,3,4,5].map(s => <StarIcon key={s} />)}
@@ -580,7 +582,7 @@ export default function PaymentPage() {
                 <ShieldIcon />
               </div>
               <p className="sp-label" style={{ color: accentColor }}>{pc.guarantee_title || 'Garantie'}</p>
-              <p style={{ fontSize: '16px', color: '#9CA3AF', lineHeight: '1.8', margin: '0 auto', maxWidth: '520px' }}>
+              <p style={{ fontSize: '15px', color: '#9CA3AF', lineHeight: '1.8', margin: '0 auto', maxWidth: '520px' }}>
                 {pc.guarantee_text}
               </p>
             </Reveal>
@@ -595,7 +597,7 @@ export default function PaymentPage() {
             <Reveal>
               <div style={{ background: '#111', borderRadius: '18px', border: `1px solid ${accentColor}30`, overflow: 'hidden', maxWidth: '520px', margin: '0 auto' }}>
                 <div style={{ padding: '24px 28px', borderBottom: '0.5px solid #1F1F1F' }}>
-                  <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: '0 0 4px', letterSpacing: '-0.3px' }}>{product.title}</h2>
+                  <h2 style={{ fontSize: '19px', fontWeight: '800', color: '#fff', margin: '0 0 4px', letterSpacing: '-0.3px', lineHeight: '1.3' }}>{priceCardTitle}</h2>
                   <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>Ce que tu obtiens</p>
                 </div>
                 {pc.value_items && pc.value_items.length > 0 && (
@@ -643,9 +645,9 @@ export default function PaymentPage() {
         {/* FINAL CTA */}
         <div style={{ padding: '64px 24px', textAlign: 'center', background: `linear-gradient(180deg, #0A0A0A 0%, ${accentColor}08 100%)`, borderTop: '0.5px solid #1F1F1F', position: 'relative', overflow: 'hidden' }}>
           <div className="sp-hero-glow" style={{ top: '-180px', opacity: 0.5 }} />
-          <div style={{ maxWidth: '520px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div style={{ maxWidth: '480px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
             <Reveal>
-              <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 16px', lineHeight: '1.25', letterSpacing: '-0.3px' }}>
+              <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#fff', margin: '0 0 16px', lineHeight: '1.3', letterSpacing: '-0.2px' }}>
                 {pc.final_headline}
               </h2>
               <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '16px', fontWeight: '700', padding: '16px 44px', borderRadius: '10px', cursor: 'pointer', marginBottom: '12px', width: '100%', maxWidth: '380px' }}>
@@ -656,8 +658,11 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        <footer style={{ padding: '20px 16px', borderTop: '0.5px solid #1F1F1F', textAlign: 'center' }}>
-          <p style={{ fontSize: '11px', color: '#444', margin: 0 }}>Propulsé par <Link href="/" style={{ color: accentColor, textDecoration: 'none', fontWeight: '600' }}>PayLink Africa</Link></p>
+        <footer style={{ padding: '24px 16px', borderTop: '0.5px solid #1F1F1F', textAlign: 'center' }}>
+          <p style={{ fontSize: '11px', color: '#444', margin: '0 0 6px' }}>Propulsé par <Link href="/" style={{ color: accentColor, textDecoration: 'none', fontWeight: '600' }}>PayLink Africa</Link></p>
+          <p style={{ fontSize: '10px', color: '#333', margin: 0, maxWidth: '420px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.5' }}>
+            Ce site n'est pas affilié à Facebook ni à Facebook Inc. FACEBOOK est une marque déposée de Facebook, Inc.
+          </p>
         </footer>
 
         {showModal && <CheckoutModal />}
@@ -759,7 +764,7 @@ export default function PaymentPage() {
               <div dangerouslySetInnerHTML={{ __html: product.content }} className="rich-content" style={{ fontSize: '14px' }} />
             </div>
           )}
-          <button onClick={() => setShowModal(true)} style={{ width: '100%', background: '#10B981', border: 'none', color: '#000', fontSize: '15px', fontWeight: '700', padding: '16px', borderRadius: '10px', cursor: 'pointer' }}>
+          <button onClick={() => setShowModal(true)} style={{ width: '100%', background: '#10B981', border: 'none', color: '#000', fontSize: '16px', fontWeight: '700', padding: '18px', borderRadius: '12px', cursor: 'pointer' }}>
             Payer {total.toLocaleString('fr-FR')} FCFA →
           </button>
         </div>
