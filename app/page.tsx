@@ -10,7 +10,7 @@ const faqs = [
   },
   {
     q: "Quels opérateurs Mobile Money sont acceptés ?",
-    a: "MTN MoMo, Moov Money, Orange Money et Wave. Le numéro de ton client détecte automatiquement l'opérateur, il n'a rien à choisir."
+    a: "MTN MoMo, Moov Money, Orange Money, Wave et bien d'autres, plus de 14 opérateurs à travers les pays couverts. Le numéro de ton client détecte automatiquement l'opérateur, il n'a rien à choisir."
   },
   {
     q: "Dans quels pays PayLink Africa fonctionne-t-il ?",
@@ -97,8 +97,53 @@ export default function LandingPage() {
         .fade-line { height: 1px; background: linear-gradient(90deg, transparent 0%, #2a2a2a 50%, transparent 100%); width: 100%; }
         .premium-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .premium-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px #10B98140; }
-        .dashboard-preview-wrap { max-width: 1000px; margin: 56px auto 0; padding: 0 16px; }
+        .dashboard-preview-wrap { max-width: 1000px; margin: 56px auto 0; padding: 0 16px; position: relative; z-index: 1; }
         .dashboard-preview-img { width: 100%; border-radius: 14px; border: 0.5px solid #1F1F1F; box-shadow: 0 30px 80px -20px rgba(16,185,129,0.25), 0 20px 50px -10px rgba(0,0,0,0.6); display: block; }
+
+        .hero-bg-wrap { position: relative; overflow: hidden; }
+        .hero-grid {
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(to right, #10B98112 1px, transparent 1px),
+            linear-gradient(to bottom, #10B98112 1px, transparent 1px);
+          background-size: 44px 44px;
+          mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, black 30%, transparent 75%);
+          -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, black 30%, transparent 75%);
+          pointer-events: none;
+        }
+        .hero-glow {
+          position: absolute;
+          top: -120px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 900px;
+          height: 600px;
+          background: radial-gradient(ellipse at center, #10B98122 0%, transparent 70%);
+          pointer-events: none;
+          filter: blur(20px);
+        }
+        .section-glow-tr {
+          position: absolute;
+          top: -100px;
+          right: -150px;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, #10B98112 0%, transparent 70%);
+          pointer-events: none;
+          filter: blur(20px);
+        }
+        .section-glow-bl {
+          position: absolute;
+          bottom: -120px;
+          left: -150px;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, #10B98110 0%, transparent 70%);
+          pointer-events: none;
+          filter: blur(20px);
+        }
+        .relative-section { position: relative; overflow: hidden; }
 
         @media (max-width: 767px) {
           .nav-links { display: none !important; }
@@ -121,6 +166,7 @@ export default function LandingPage() {
           .footer-logo-col { grid-column: 1 / -1; }
           .section-pad { padding: 44px 16px; }
           .dashboard-preview-wrap { margin-top: 36px; }
+          .hero-grid { background-size: 32px 32px; }
         }
       `}</style>
 
@@ -171,70 +217,76 @@ export default function LandingPage() {
         )}
       </nav>
 
-      {/* HERO */}
-      <div style={{ textAlign: 'center', padding: '64px 16px 0' }}>
-        <Reveal>
-          <div style={{ display: 'inline-block', background: '#10B98118', border: '0.5px solid #10B98140', borderRadius: '20px', padding: '6px 16px', marginBottom: '24px' }}>
-            <span style={{ fontSize: '12px', color: '#10B981', fontWeight: '500' }}>À partir de 0.5% de commission</span>
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <h1 className="hero-title" style={{ maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}>
-            Les autres plateformes prennent <span style={{ color: '#10B981' }}>jusqu'à 15%</span> de tes ventes.<br />Nous, à partir de <span style={{ color: '#10B981' }}>0.5%.</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <p className="hero-subtitle" style={{ color: '#9CA3AF', margin: '0 0 32px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.7' }}>
-            Crée ta page de vente avec l'IA. Partage le lien. Garde presque tout.
-          </p>
-        </Reveal>
-        <Reveal delay={0.3}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Link href="/auth" style={{ textDecoration: 'none' }}>
-              <button className="hero-btn premium-btn" style={{ background: '#10B981', border: 'none', color: '#000', fontWeight: '700', borderRadius: '10px', cursor: 'pointer' }}>
-                Créer mon premier lien gratuit →
-              </button>
-            </Link>
-          </div>
-          <p style={{ fontSize: '12px', color: '#444', marginTop: '12px' }}>Aucune carte bancaire requise</p>
-        </Reveal>
+      {/* HERO avec grille + glow */}
+      <div className="hero-bg-wrap">
+        <div className="hero-grid" />
+        <div className="hero-glow" />
 
-        {/* CAPTURE DASHBOARD */}
-        <Reveal delay={0.4}>
-          <div className="dashboard-preview-wrap">
-            <img src="/dashboard-preview.png" alt="Dashboard PayLink Africa" className="dashboard-preview-img" />
-          </div>
-        </Reveal>
-      </div>
-
-      {/* STATS */}
-      <div className="stats-gap" style={{ display: 'flex', justifyContent: 'center', padding: '56px 16px 32px' }}>
-        {[
-          { value: '0.5%', label: 'Commission minimum' },
-          { value: '15', label: 'Pays africains' },
-          { value: '0 FCFA', label: 'Pour commencer' },
-        ].map((stat, i) => (
-          <Reveal key={stat.label} delay={i * 0.08}>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ fontSize: '28px', fontWeight: '800', color: '#10B981', margin: '0 0 4px' }}>{stat.value}</p>
-              <p style={{ fontSize: '12px', color: '#6B7280', margin: 0 }}>{stat.label}</p>
+        <div style={{ textAlign: 'center', padding: '64px 16px 0', position: 'relative', zIndex: 1 }}>
+          <Reveal>
+            <div style={{ display: 'inline-block', background: '#10B98118', border: '0.5px solid #10B98140', borderRadius: '20px', padding: '6px 16px', marginBottom: '24px' }}>
+              <span style={{ fontSize: '12px', color: '#10B981', fontWeight: '500' }}>À partir de 0.5% de commission</span>
             </div>
           </Reveal>
-        ))}
+          <Reveal delay={0.1}>
+            <h1 className="hero-title" style={{ maxWidth: '720px', marginLeft: 'auto', marginRight: 'auto' }}>
+              Les autres plateformes prennent <span style={{ color: '#10B981' }}>jusqu'à 15%</span> de tes ventes.<br />Nous, à partir de <span style={{ color: '#10B981' }}>0.5%.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="hero-subtitle" style={{ color: '#9CA3AF', margin: '0 0 32px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.7' }}>
+              Crée ta page de vente avec l'IA. Partage le lien. Garde presque tout.
+            </p>
+          </Reveal>
+          <Reveal delay={0.3}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Link href="/auth" style={{ textDecoration: 'none' }}>
+                <button className="hero-btn premium-btn" style={{ background: '#10B981', border: 'none', color: '#000', fontWeight: '700', borderRadius: '10px', cursor: 'pointer' }}>
+                  Créer mon premier lien gratuit →
+                </button>
+              </Link>
+            </div>
+            <p style={{ fontSize: '12px', color: '#444', marginTop: '12px' }}>Aucune carte bancaire requise</p>
+          </Reveal>
+
+          {/* CAPTURE DASHBOARD */}
+          <Reveal delay={0.4}>
+            <div className="dashboard-preview-wrap">
+              <img src="/dashboard-preview.png" alt="Dashboard PayLink Africa" className="dashboard-preview-img" />
+            </div>
+          </Reveal>
+        </div>
+
+        {/* STATS */}
+        <div className="stats-gap" style={{ display: 'flex', justifyContent: 'center', padding: '56px 16px 32px', position: 'relative', zIndex: 1 }}>
+          {[
+            { value: '0.5%', label: 'Commission minimum' },
+            { value: '15', label: 'Pays africains' },
+            { value: '0 FCFA', label: 'Pour commencer' },
+          ].map((stat, i) => (
+            <Reveal key={stat.label} delay={i * 0.08}>
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '28px', fontWeight: '800', color: '#10B981', margin: '0 0 4px' }}>{stat.value}</p>
+                <p style={{ fontSize: '12px', color: '#6B7280', margin: 0 }}>{stat.label}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </div>
 
       <div className="fade-line" />
 
       {/* COMMENT CA MARCHE */}
-      <div className="section-pad">
+      <div className="section-pad relative-section">
+        <div className="section-glow-tr" />
         <Reveal>
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '48px', position: 'relative', zIndex: 1 }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 12px' }}>Comment ça marche</p>
             <h2 style={{ fontSize: '24px', fontWeight: '700', margin: '0 0 12px' }}>De zéro à ta première vente en 3 étapes</h2>
             <p style={{ fontSize: '14px', color: '#6B7280', margin: 0 }}>Pas de technique. Pas de frais cachés. Juste toi et tes clients.</p>
           </div>
         </Reveal>
-        <div className="steps-grid" style={{ maxWidth: '860px', margin: '0 auto' }}>
+        <div className="steps-grid" style={{ maxWidth: '860px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div className="steps-line" />
           {[
             { step: '01', title: 'Crée ta page', desc: "Colle ton contenu, l'IA génère ta page de vente complète en quelques secondes.", icon: <EditIcon /> },
@@ -270,7 +322,7 @@ export default function LandingPage() {
         <div className="features-grid" style={{ maxWidth: '900px', margin: '0 auto' }}>
           {[
             { title: 'Page de vente IA', desc: "Colle ton contenu, l'IA crée une page qui convertit, sans compétence requise.", icon: <ShopIcon /> },
-            { title: 'Mobile Money intégré', desc: "MTN, Moov, Orange, Wave. Détection automatique de l'opérateur par numéro.", icon: <PhoneIcon /> },
+            { title: 'Mobile Money intégré', desc: "MTN, Moov, Orange, Wave et bien d'autres, 14+ opérateurs couverts.", icon: <PhoneIcon /> },
             { title: 'Pixel Facebook', desc: "Installe ton pixel en 1 clic. Track tes conversions et optimise tes pubs.", icon: <PixelIcon /> },
             { title: 'Analytics en temps réel', desc: "Vues, ventes, revenus. Tout en direct dans ton dashboard.", icon: <AnalyticsIcon /> },
             { title: 'Checkout sans friction', desc: "Un seul champ à remplir. Moins de friction, plus de ventes.", icon: <ZapIcon /> },
@@ -292,15 +344,16 @@ export default function LandingPage() {
       <div className="fade-line" />
 
       {/* COMPARAISON */}
-      <div className="section-pad">
+      <div className="section-pad relative-section">
+        <div className="section-glow-bl" />
         <Reveal>
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '40px', position: 'relative', zIndex: 1 }}>
             <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 0 12px' }}>Comparaison</p>
             <h2 style={{ fontSize: '24px', fontWeight: '700', margin: 0 }}>Pourquoi choisir PayLink Africa ?</h2>
           </div>
         </Reveal>
         <Reveal>
-          <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '700px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
             <div className="compare-grid" style={{ background: '#111', borderRadius: '16px', overflow: 'hidden', border: '0.5px solid #1F1F1F' }}>
               <div className="compare-cell-sm" style={{ background: '#0A0A0A', borderBottom: '0.5px solid #1F1F1F' }}>
                 <p style={{ margin: 0, fontSize: '12px', color: '#6B7280', fontWeight: '600' }}>Critère</p>
@@ -314,7 +367,7 @@ export default function LandingPage() {
               {[
                 { label: 'Commission', ours: '0.5% à 2%', theirs: '5–15%' },
                 { label: 'Page de vente', ours: 'Générée par IA', theirs: 'Manuelle' },
-                { label: 'Mobile Money', ours: '4 opérateurs', theirs: '1 à 2' },
+                { label: 'Mobile Money', ours: '14+ opérateurs', theirs: '1 à 2' },
                 { label: 'Audit IA', ours: '✓ Inclus', theirs: '✗ Absent' },
                 { label: 'Multi-pays', ours: '15 pays', theirs: '1 à 3' },
               ].map((row, i) => (
@@ -365,25 +418,28 @@ export default function LandingPage() {
       <div className="fade-line" />
 
       {/* CTA FINAL */}
-      <div style={{ textAlign: 'center', padding: '64px 16px', background: 'linear-gradient(135deg, #10B98112 0%, #0A0A0A 50%, #10B98112 100%)' }}>
+      <div className="relative-section" style={{ textAlign: 'center', padding: '64px 16px', background: 'linear-gradient(135deg, #10B98112 0%, #0A0A0A 50%, #10B98112 100%)' }}>
+        <div className="hero-glow" style={{ top: '-200px', opacity: 0.6 }} />
         <Reveal>
-          <div style={{ display: 'inline-block', background: '#10B98118', border: '0.5px solid #10B98140', borderRadius: '20px', padding: '6px 16px', marginBottom: '20px' }}>
-            <span style={{ fontSize: '12px', color: '#10B981', fontWeight: '500' }}>Rejoins PayLink Africa aujourd'hui</span>
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'inline-block', background: '#10B98118', border: '0.5px solid #10B98140', borderRadius: '20px', padding: '6px 16px', marginBottom: '20px' }}>
+              <span style={{ fontSize: '12px', color: '#10B981', fontWeight: '500' }}>Rejoins PayLink Africa aujourd'hui</span>
+            </div>
+            <h2 className="cta-title" style={{ fontWeight: '800', margin: '0 0 16px', lineHeight: '1.25' }}>
+              Prêt à vendre intelligemment<br />et garder presque tout ?
+            </h2>
+            <p style={{ fontSize: '15px', color: '#9CA3AF', margin: '0 0 32px', maxWidth: '460px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.7' }}>
+              Crée ton compte gratuitement. Génère ta première page de vente avec l'IA. Partage ton lien.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Link href="/auth" style={{ textDecoration: 'none' }}>
+                <button className="hero-btn premium-btn" style={{ background: '#10B981', border: 'none', color: '#000', fontWeight: '700', borderRadius: '10px', cursor: 'pointer' }}>
+                  Créer mon compte gratuitement →
+                </button>
+              </Link>
+            </div>
+            <p style={{ fontSize: '12px', color: '#444', marginTop: '16px' }}>Aucune carte bancaire requise · Gratuit pour toujours sur le plan Free</p>
           </div>
-          <h2 className="cta-title" style={{ fontWeight: '800', margin: '0 0 16px', lineHeight: '1.25' }}>
-            Prêt à vendre intelligemment<br />et garder presque tout ?
-          </h2>
-          <p style={{ fontSize: '15px', color: '#9CA3AF', margin: '0 0 32px', maxWidth: '460px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.7' }}>
-            Crée ton compte gratuitement. Génère ta première page de vente avec l'IA. Partage ton lien.
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Link href="/auth" style={{ textDecoration: 'none' }}>
-              <button className="hero-btn premium-btn" style={{ background: '#10B981', border: 'none', color: '#000', fontWeight: '700', borderRadius: '10px', cursor: 'pointer' }}>
-                Créer mon compte gratuitement →
-              </button>
-            </Link>
-          </div>
-          <p style={{ fontSize: '12px', color: '#444', marginTop: '16px' }}>Aucune carte bancaire requise · Gratuit pour toujours sur le plan Free</p>
         </Reveal>
       </div>
 
