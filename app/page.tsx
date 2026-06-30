@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     q: "Quelle est la différence entre les plans ?",
-    a: "Le plan Free te donne des liens illimités avec 2% de commission. Le plan Starter ajoute une page de vente IA pour 4 900 FCFA par mois avec 1% de commission. Le plan Pro débloque les pages illimitées et l'audit IA pour 14 900 FCFA par mois avec 0.8% de commission."
+    a: "Le plan Free te donne des liens illimités avec 2% de commission. Le plan Starter ajoute une page de vente professionnelle pour 4 900 FCFA par mois avec 1% de commission. Le plan Pro débloque les pages illimitées et l'audit IA pour 14 900 FCFA par mois avec 0.8% de commission."
   },
   {
     q: "Qu'est-ce que l'Audit IA ?",
@@ -235,7 +235,7 @@ export default function LandingPage() {
           </Reveal>
           <Reveal delay={0.2}>
             <p className="hero-subtitle" style={{ color: '#9CA3AF', margin: '0 0 32px', maxWidth: '480px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.7' }}>
-              Crée ta page de vente avec l'IA. Partage le lien. Garde presque tout.
+              Page de vente professionnelle, pour plus de ventes. Partage le lien. Garde presque tout.
             </p>
           </Reveal>
           <Reveal delay={0.3}>
@@ -289,7 +289,7 @@ export default function LandingPage() {
         <div className="steps-grid" style={{ maxWidth: '860px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div className="steps-line" />
           {[
-            { step: '01', title: 'Crée ta page', desc: "Colle ton contenu, l'IA génère ta page de vente complète en quelques secondes.", icon: <EditIcon /> },
+            { step: '01', title: 'Crée ta page', desc: "Colle ton contenu, on génère ta page de vente professionnelle en quelques secondes.", icon: <EditIcon /> },
             { step: '02', title: 'Partage ton lien', desc: "Copie ton lien PayLink et partage-le sur WhatsApp, Instagram, TikTok ou par SMS.", icon: <LinkIcon /> },
             { step: '03', title: 'Encaisse en Mobile Money', desc: "Ton client entre son numéro, confirme sur son téléphone. Tu gardes jusqu'à 99.5%.", icon: <MoneyIcon /> },
           ].map((item, i) => (
@@ -321,7 +321,7 @@ export default function LandingPage() {
         </Reveal>
         <div className="features-grid" style={{ maxWidth: '900px', margin: '0 auto' }}>
           {[
-            { title: 'Page de vente IA', desc: "Colle ton contenu, l'IA crée une page qui convertit, sans compétence requise.", icon: <ShopIcon /> },
+            { title: 'Page de vente professionnelle', desc: "Colle ton contenu, on crée une page qui convertit, sans compétence requise.", icon: <ShopIcon /> },
             { title: 'Mobile Money intégré', desc: "MTN, Moov, Orange, Wave et bien d'autres, 14+ opérateurs couverts.", icon: <PhoneIcon /> },
             { title: 'Pixel Facebook', desc: "Installe ton pixel en 1 clic. Track tes conversions et optimise tes pubs.", icon: <PixelIcon /> },
             { title: 'Analytics en temps réel', desc: "Vues, ventes, revenus. Tout en direct dans ton dashboard.", icon: <AnalyticsIcon /> },
@@ -366,7 +366,7 @@ export default function LandingPage() {
               </div>
               {[
                 { label: 'Commission', ours: '0.5% à 2%', theirs: '5–15%' },
-                { label: 'Page de vente', ours: 'Générée par IA', theirs: 'Manuelle' },
+                { label: 'Page de vente', ours: 'Générée automatiquement', theirs: 'Manuelle' },
                 { label: 'Mobile Money', ours: '14+ opérateurs', theirs: '1 à 2' },
                 { label: 'Audit IA', ours: '✓ Inclus', theirs: '✗ Absent' },
                 { label: 'Multi-pays', ours: '15 pays', theirs: '1 à 3' },
@@ -429,7 +429,7 @@ export default function LandingPage() {
               Prêt à vendre intelligemment<br />et garder presque tout ?
             </h2>
             <p style={{ fontSize: '15px', color: '#9CA3AF', margin: '0 0 32px', maxWidth: '460px', marginLeft: 'auto', marginRight: 'auto', lineHeight: '1.7' }}>
-              Crée ton compte gratuitement. Génère ta première page de vente avec l'IA. Partage ton lien.
+              Crée ton compte gratuitement. Génère ta première page de vente professionnelle. Partage ton lien.
             </p>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <Link href="/auth" style={{ textDecoration: 'none' }}>
