@@ -76,47 +76,31 @@ const XIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" 
 const PlusIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 const MinusIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
 
-declare global { interface Window { fbq: (...args: unknown[]) => void } }
-
-// Hook pour fade-in au scroll
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
-
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          observer.unobserve(el)
-        }
-      },
-      { threshold: 0.15 }
-    )
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { setVisible(true); observer.unobserve(el) }
+    }, { threshold: 0.15 })
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
-
   return { ref, visible }
 }
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const { ref, visible } = useReveal()
   return (
-    <div
-      ref={ref}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(24px)',
-        transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
-      }}
-    >
+    <div ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s` }}>
       {children}
     </div>
   )
 }
+
+declare global { interface Window { fbq: (...args: unknown[]) => void } }
 
 export default function PaymentPage() {
   const [product, setProduct] = useState<Product | null>(null)
@@ -247,7 +231,7 @@ export default function PaymentPage() {
           </div>
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: '500' }}>Numéro Mobile Money</label>
-            <input type="tel" placeholder="Ex: 97 00 00 00" value={phone} onChange={handlePhoneChange} style={{ ...selectStyle, appearance: 'auto' as const }} />
+            <input type="tel" placeholder="Ex: 97 00 00 00" value={phone} onChange={handlePhoneChange} style={{ ...selectStyle, border: `0.5px solid ${selectedOperator.color}60`, appearance: 'auto' as const }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: selectedOperator.color }} />
               <span style={{ fontSize: '11px', color: selectedOperator.color, fontWeight: '600' }}>{selectedOperator.name}</span>
@@ -306,61 +290,80 @@ export default function PaymentPage() {
     return (
       <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
         <style>{`
-          .sp-container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
-          .sp-section { padding: 56px 0; }
-          .sp-section-alt { padding: 56px 0; background: #0D0D0D; position: relative; }
-          .sp-fade-line { height: 1px; background: linear-gradient(90deg, transparent 0%, #2a2a2a 50%, transparent 100%); width: 100%; }
-          .sp-benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-          .sp-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+          .sp-container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+          .sp-section { padding: 72px 0; }
+          .sp-section-alt { padding: 72px 0; background: #0D0D0D; position: relative; overflow: hidden; }
+          .sp-benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+          .sp-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
           .sp-testimonials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-          .sp-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 16px; }
-          .sp-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; border-bottom: 0.5px solid #1F1F1F; position: sticky; top: 0; background: rgba(10,10,10,0.97); backdrop-filter: blur(10px); z-index: 100; }
+          .sp-label { font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 12px; }
+          .sp-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-bottom: 0.5px solid #1F1F1F; position: sticky; top: 0; background: rgba(10,10,10,0.95); backdrop-filter: blur(10px); z-index: 100; }
           .sp-cta-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
           .sp-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px ${accentColor}40; }
           .sp-benefit-card { transition: transform 0.25s ease, border-color 0.25s ease; }
           .sp-benefit-card:hover { transform: translateY(-3px); border-color: ${accentColor}50; }
+          .sp-hero-bg { position: relative; overflow: hidden; }
+          .sp-hero-grid {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(to right, ${accentColor}12 1px, transparent 1px), linear-gradient(to bottom, ${accentColor}12 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, black 30%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, black 30%, transparent 75%);
+            pointer-events: none;
+          }
+          .sp-hero-glow {
+            position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+            width: 900px; height: 600px;
+            background: radial-gradient(ellipse at center, ${accentColor}22 0%, transparent 70%);
+            pointer-events: none; filter: blur(20px);
+          }
+          .sp-fade-line { height: 1px; background: linear-gradient(90deg, transparent 0%, #2a2a2a 50%, transparent 100%); width: 100%; }
           @media (max-width: 767px) {
             .sp-container { padding: 0 16px; }
-            .sp-section { padding: 40px 0; }
-            .sp-section-alt { padding: 40px 0; }
+            .sp-section { padding: 48px 0; }
+            .sp-section-alt { padding: 48px 0; }
             .sp-benefits-grid { grid-template-columns: 1fr; gap: 10px; }
             .sp-stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .sp-testimonials-grid { grid-template-columns: 1fr; gap: 14px; }
             .sp-nav { padding: 12px 16px; }
             .sp-nav-cta { display: none; }
+            .sp-hero-grid { background-size: 32px 32px; }
           }
         `}</style>
 
         {/* NAV */}
         <nav className="sp-nav">
           <Link href="/" style={{ textDecoration: 'none' }}><Logo size="sm" /></Link>
-          <button className="sp-nav-cta sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '13px', fontWeight: '800', padding: '9px 20px', borderRadius: '8px', cursor: 'pointer' }}>
+          <button className="sp-nav-cta sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '13px', fontWeight: '700', padding: '9px 20px', borderRadius: '8px', cursor: 'pointer' }}>
             {ctaText} — {product.price.toLocaleString('fr-FR')} FCFA
           </button>
         </nav>
 
-        {/* HERO */}
-        <div>
+        {/* HERO avec grille + glow */}
+        <div className="sp-hero-bg">
+          <div className="sp-hero-grid" />
+          <div className="sp-hero-glow" />
+
           <div className="sp-container">
-            <div className="sp-section" style={{ textAlign: 'center' }}>
+            <div className="sp-section" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
               {product.image_url && (
                 <Reveal>
                   <img src={product.image_url} alt={product.title} style={{ width: '100%', maxHeight: '360px', objectFit: 'cover', borderRadius: '14px', marginBottom: '40px', border: '0.5px solid #1F1F1F' }} />
                 </Reveal>
               )}
               <Reveal>
-                <h1 style={{ fontSize: 'clamp(22px, 3.5vw, 40px)', fontWeight: '800', lineHeight: '1.2', margin: '0 0 20px', color: '#fff', letterSpacing: '-0.3px' }}>
+                <h1 style={{ fontSize: '44px', fontWeight: '800', lineHeight: '1.15', margin: '0 0 20px', color: '#fff', letterSpacing: '-0.5px' }} className="sp-hero-headline">
                   {pc.hero_headline}
                 </h1>
               </Reveal>
               <Reveal delay={0.1}>
-                <p style={{ fontSize: 'clamp(14px, 2vw, 17px)', color: '#9CA3AF', margin: '0 auto 32px', lineHeight: '1.7', maxWidth: '580px' }}>
+                <p style={{ fontSize: '17px', color: '#9CA3AF', margin: '0 auto 32px', lineHeight: '1.7', maxWidth: '580px' }} className="sp-hero-subheadline">
                   {pc.hero_subheadline}
                 </p>
               </Reveal>
               <Reveal delay={0.2}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                  <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '16px', fontWeight: '800', padding: '16px 44px', borderRadius: '10px', cursor: 'pointer', width: '100%', maxWidth: '380px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                  <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '16px', fontWeight: '700', padding: '16px 44px', borderRadius: '10px', cursor: 'pointer', width: '100%', maxWidth: '380px' }}>
                     {ctaText} →
                   </button>
                   <p style={{ fontSize: '12px', color: '#6B7280', margin: 0 }}>
@@ -370,27 +373,25 @@ export default function PaymentPage() {
               </Reveal>
             </div>
           </div>
-        </div>
 
-        <div className="sp-fade-line" />
-
-        {/* STATS */}
-        {pc.hero_stats && pc.hero_stats.length > 0 && (
-          <div style={{ padding: '32px 0' }}>
-            <div className="sp-container">
-              <Reveal>
-                <div className="sp-stats-grid">
-                  {pc.hero_stats.map((stat, i) => (
-                    <div key={i} style={{ textAlign: 'center', padding: '16px 12px', background: '#111', borderRadius: '10px', border: '0.5px solid #1F1F1F' }}>
-                      <p style={{ fontSize: 'clamp(18px, 2.5vw, 26px)', fontWeight: '800', color: accentColor, margin: '0 0 4px', lineHeight: 1 }}>{stat.number}</p>
-                      <p style={{ fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: '1.4' }}>{stat.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </Reveal>
+          {/* STATS */}
+          {pc.hero_stats && pc.hero_stats.length > 0 && (
+            <div style={{ padding: '0 0 56px', position: 'relative', zIndex: 1 }}>
+              <div className="sp-container">
+                <Reveal delay={0.3}>
+                  <div className="sp-stats-grid">
+                    {pc.hero_stats.map((stat, i) => (
+                      <div key={i} style={{ textAlign: 'center', padding: '20px 14px', background: '#111', borderRadius: '12px', border: '0.5px solid #1F1F1F' }}>
+                        <p style={{ fontSize: '26px', fontWeight: '800', color: accentColor, margin: '0 0 4px', lineHeight: 1 }}>{stat.number}</p>
+                        <p style={{ fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: '1.4' }}>{stat.label}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Reveal>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <div className="sp-fade-line" />
 
@@ -402,7 +403,7 @@ export default function PaymentPage() {
             </Reveal>
             {pc.problem_intro && (
               <Reveal delay={0.05}>
-                <p style={{ fontSize: 'clamp(16px, 2.5vw, 20px)', color: '#fff', fontWeight: '600', margin: '0 0 28px', lineHeight: '1.6', maxWidth: '600px' }}>
+                <p style={{ fontSize: '20px', color: '#fff', fontWeight: '700', margin: '0 0 28px', lineHeight: '1.5', maxWidth: '600px', letterSpacing: '-0.3px' }}>
                   {pc.problem_intro}
                 </p>
               </Reveal>
@@ -411,9 +412,9 @@ export default function PaymentPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
                 {pc.problem_points.map((point, i) => (
                   <Reveal key={i} delay={i * 0.06}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '14px 18px', background: '#0A0A0A', borderRadius: '8px', border: '0.5px solid #1F1F1F' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '16px 20px', background: '#0A0A0A', borderRadius: '10px', border: '0.5px solid #1F1F1F' }}>
                       <div style={{ flexShrink: 0, marginTop: '2px' }}><XIcon /></div>
-                      <p style={{ margin: 0, fontSize: '14px', color: '#9CA3AF', lineHeight: '1.5' }}>{point}</p>
+                      <p style={{ margin: 0, fontSize: '14px', color: '#9CA3AF', lineHeight: '1.6' }}>{point}</p>
                     </div>
                   </Reveal>
                 ))}
@@ -421,7 +422,7 @@ export default function PaymentPage() {
             )}
             {pc.problem_quote && (
               <Reveal>
-                <blockquote style={{ margin: '28px 0 0', padding: '18px 20px', borderLeft: `3px solid ${accentColor}`, background: '#0A0A0A', borderRadius: '0 8px 8px 0' }}>
+                <blockquote style={{ margin: '28px 0 0', padding: '20px 24px', borderLeft: `3px solid ${accentColor}`, background: '#0A0A0A', borderRadius: '0 10px 10px 0' }}>
                   <p style={{ margin: 0, fontSize: '15px', color: '#fff', fontStyle: 'italic', lineHeight: '1.6' }}>
                     "{pc.problem_quote}"
                   </p>
@@ -438,7 +439,7 @@ export default function PaymentPage() {
           <div className="sp-container">
             <Reveal>
               <p className="sp-label" style={{ color: accentColor }}>{pc.solution_title || 'La solution'}</p>
-              <p style={{ fontSize: 'clamp(16px, 2.5vw, 19px)', color: '#fff', lineHeight: '1.7', margin: 0, maxWidth: '600px', fontWeight: '500' }}>
+              <p style={{ fontSize: '19px', color: '#fff', lineHeight: '1.7', margin: 0, maxWidth: '600px', fontWeight: '500' }}>
                 {pc.solution_text}
               </p>
             </Reveal>
@@ -456,8 +457,8 @@ export default function PaymentPage() {
             <div className="sp-benefits-grid">
               {pc.benefits && pc.benefits.map((benefit, i) => (
                 <Reveal key={i} delay={i * 0.07}>
-                  <div className="sp-benefit-card" style={{ background: '#0A0A0A', borderRadius: '12px', padding: '20px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box' }}>
-                    <div style={{ fontSize: '24px', marginBottom: '10px' }}>{benefit.icon}</div>
+                  <div className="sp-benefit-card" style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box' }}>
+                    <div style={{ fontSize: '26px', marginBottom: '12px' }}>{benefit.icon}</div>
                     <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#fff', margin: '0 0 6px' }}>{benefit.title}</h3>
                     <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF', lineHeight: '1.6' }}>{benefit.text}</p>
                   </div>
@@ -473,7 +474,7 @@ export default function PaymentPage() {
         <div style={{ padding: '48px 0', textAlign: 'center' }}>
           <div className="sp-container">
             <Reveal>
-              <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '16px', fontWeight: '800', padding: '16px 44px', borderRadius: '10px', cursor: 'pointer', marginBottom: '10px', width: '100%', maxWidth: '380px' }}>
+              <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '16px', fontWeight: '700', padding: '16px 44px', borderRadius: '10px', cursor: 'pointer', marginBottom: '10px', width: '100%', maxWidth: '380px' }}>
                 {ctaText} →
               </button>
               <p style={{ fontSize: '12px', color: '#6B7280', margin: 0 }}>{product.price.toLocaleString('fr-FR')} FCFA</p>
@@ -494,7 +495,7 @@ export default function PaymentPage() {
                 {pc.steps.map((step, i) => (
                   <Reveal key={i} delay={i * 0.08}>
                     <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', padding: '20px 0', borderBottom: i < pc.steps.length - 1 ? '0.5px solid #1F1F1F' : 'none' }}>
-                      <div style={{ width: '40px', height: '40px', background: `${accentColor}15`, borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `0.5px solid ${accentColor}30` }}>
+                      <div style={{ width: '42px', height: '42px', background: `${accentColor}15`, borderRadius: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: `0.5px solid ${accentColor}30` }}>
                         <span style={{ fontSize: '13px', fontWeight: '800', color: accentColor }}>{step.number}</span>
                       </div>
                       <div>
@@ -521,7 +522,7 @@ export default function PaymentPage() {
               <div className="sp-testimonials-grid">
                 {pc.testimonials.map((t, i) => (
                   <Reveal key={i} delay={i * 0.1}>
-                    <div style={{ background: '#0A0A0A', borderRadius: '12px', padding: '20px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box' }}>
+                    <div style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box' }}>
                       <div style={{ display: 'flex', gap: '3px', marginBottom: '12px' }}>
                         {[1,2,3,4,5].map(s => <StarIcon key={s} />)}
                       </div>
@@ -557,7 +558,7 @@ export default function PaymentPage() {
                   <div key={i} style={{ borderBottom: '0.5px solid #1F1F1F' }}>
                     <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{ width: '100%', background: 'transparent', border: 'none', padding: '18px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', textAlign: 'left', gap: '16px' }}>
                       <span style={{ fontSize: '14px', fontWeight: '600', color: '#fff', lineHeight: '1.4' }}>{item.question}</span>
-                      <span style={{ color: accentColor, flexShrink: 0, transition: 'transform 0.2s ease', transform: openFaq === i ? 'rotate(180deg)' : 'rotate(0deg)' }}>{openFaq === i ? <MinusIcon /> : <PlusIcon />}</span>
+                      <span style={{ color: accentColor, flexShrink: 0, transition: 'transform 0.2s ease', transform: openFaq === i ? 'rotate(45deg)' : 'rotate(0deg)' }}><PlusIcon /></span>
                     </button>
                     <div style={{ maxHeight: openFaq === i ? '300px' : '0px', overflow: 'hidden', transition: 'max-height 0.3s ease' }}>
                       <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF', lineHeight: '1.7', paddingBottom: '18px' }}>{item.answer}</p>
@@ -579,7 +580,7 @@ export default function PaymentPage() {
                 <ShieldIcon />
               </div>
               <p className="sp-label" style={{ color: accentColor }}>{pc.guarantee_title || 'Garantie'}</p>
-              <p style={{ fontSize: 'clamp(14px, 2vw, 16px)', color: '#9CA3AF', lineHeight: '1.8', margin: '0 auto', maxWidth: '520px' }}>
+              <p style={{ fontSize: '16px', color: '#9CA3AF', lineHeight: '1.8', margin: '0 auto', maxWidth: '520px' }}>
                 {pc.guarantee_text}
               </p>
             </Reveal>
@@ -592,9 +593,9 @@ export default function PaymentPage() {
         <div className="sp-section">
           <div className="sp-container">
             <Reveal>
-              <div style={{ background: '#111', borderRadius: '16px', border: `1px solid ${accentColor}30`, overflow: 'hidden', maxWidth: '520px', margin: '0 auto' }}>
+              <div style={{ background: '#111', borderRadius: '18px', border: `1px solid ${accentColor}30`, overflow: 'hidden', maxWidth: '520px', margin: '0 auto' }}>
                 <div style={{ padding: '24px 28px', borderBottom: '0.5px solid #1F1F1F' }}>
-                  <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: '0 0 4px' }}>{product.title}</h2>
+                  <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: '0 0 4px', letterSpacing: '-0.3px' }}>{product.title}</h2>
                   <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>Ce que tu obtiens</p>
                 </div>
                 {pc.value_items && pc.value_items.length > 0 && (
@@ -614,7 +615,7 @@ export default function PaymentPage() {
                 )}
                 <div style={{ padding: '20px 28px', background: `${accentColor}08`, borderTop: '0.5px solid #1F1F1F' }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginBottom: '6px', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '36px', fontWeight: '800', color: accentColor, lineHeight: 1 }}>{product.price.toLocaleString('fr-FR')}</span>
+                    <span style={{ fontSize: '38px', fontWeight: '800', color: accentColor, lineHeight: 1, letterSpacing: '-0.5px' }}>{product.price.toLocaleString('fr-FR')}</span>
                     <span style={{ fontSize: '14px', color: '#6B7280' }}>FCFA</span>
                     {product.original_price && product.original_price > product.price && (
                       <>
@@ -626,7 +627,7 @@ export default function PaymentPage() {
                   {pc.urgency_text && (
                     <p style={{ fontSize: '12px', color: '#F59E0B', margin: '0 0 16px', fontWeight: '600' }}>⚡ {pc.urgency_text}</p>
                   )}
-                  <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ width: '100%', background: accentColor, border: 'none', color: '#000', fontSize: '15px', fontWeight: '800', padding: '16px', borderRadius: '10px', cursor: 'pointer', marginBottom: '10px' }}>
+                  <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ width: '100%', background: accentColor, border: 'none', color: '#000', fontSize: '15px', fontWeight: '700', padding: '16px', borderRadius: '10px', cursor: 'pointer', marginBottom: '10px' }}>
                     {ctaText} →
                   </button>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -640,16 +641,17 @@ export default function PaymentPage() {
         </div>
 
         {/* FINAL CTA */}
-        <div style={{ padding: '56px 24px', textAlign: 'center', background: `linear-gradient(180deg, #0A0A0A 0%, ${accentColor}08 100%)`, borderTop: '0.5px solid #1F1F1F' }}>
-          <div style={{ maxWidth: '520px', margin: '0 auto' }}>
+        <div style={{ padding: '64px 24px', textAlign: 'center', background: `linear-gradient(180deg, #0A0A0A 0%, ${accentColor}08 100%)`, borderTop: '0.5px solid #1F1F1F', position: 'relative', overflow: 'hidden' }}>
+          <div className="sp-hero-glow" style={{ top: '-180px', opacity: 0.5 }} />
+          <div style={{ maxWidth: '520px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
             <Reveal>
-              <h2 style={{ fontSize: 'clamp(18px, 3vw, 26px)', fontWeight: '800', color: '#fff', margin: '0 0 16px', lineHeight: '1.3' }}>
+              <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 16px', lineHeight: '1.25', letterSpacing: '-0.3px' }}>
                 {pc.final_headline}
               </h2>
-              <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '16px', fontWeight: '800', padding: '16px 44px', borderRadius: '10px', cursor: 'pointer', marginBottom: '12px', width: '100%', maxWidth: '380px' }}>
+              <button className="sp-cta-btn" onClick={() => setShowModal(true)} style={{ background: accentColor, border: 'none', color: '#000', fontSize: '16px', fontWeight: '700', padding: '16px 44px', borderRadius: '10px', cursor: 'pointer', marginBottom: '12px', width: '100%', maxWidth: '380px' }}>
                 {ctaText} →
               </button>
-              <p style={{ fontSize: '12px', color: '#6B7280', margin: 0 }}>Paiement Mobile Money · 10 pays africains</p>
+              <p style={{ fontSize: '12px', color: '#6B7280', margin: 0 }}>Paiement Mobile Money · 15 pays africains</p>
             </Reveal>
           </div>
         </div>
