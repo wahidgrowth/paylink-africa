@@ -185,6 +185,45 @@ export default function NewProductPage() {
     boxSizing: 'border-box' as const,
   }
 
+  const PriceBlock = () => (
+    <div style={{ background: '#0D0D0D', borderRadius: '10px', padding: '20px', border: '0.5px solid #1F1F1F', marginBottom: '20px' }}>
+      <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 16px' }}>Prix</p>
+      <div style={{ marginBottom: '12px' }}>
+        <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Prix de vente (FCFA) *</label>
+        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Ex: 25000" style={inputStyle} />
+      </div>
+      {!showOriginalPrice ? (
+        <button onClick={() => setShowOriginalPrice(true)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '13px', cursor: 'pointer', padding: '0', marginBottom: '12px', textDecoration: 'underline' }}>
+          + Ajouter un prix barré
+        </button>
+      ) : (
+        <div style={{ marginBottom: '12px' }}>
+          <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>
+            Prix barré (FCFA)
+            <span onClick={() => { setShowOriginalPrice(false); setOriginalPrice('') }} style={{ color: '#444', cursor: 'pointer', fontSize: '11px', marginLeft: '8px', textDecoration: 'underline' }}>Supprimer</span>
+          </label>
+          <input type="number" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="Ex: 50000" style={inputStyle} />
+        </div>
+      )}
+      {price && parseInt(price) > 0 && (
+        <div style={{ background: '#111', borderRadius: '8px', padding: '14px', border: '0.5px solid #1F1F1F' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ fontSize: '13px', color: '#6B7280' }}>Prix de vente</span>
+            <span style={{ fontSize: '13px', color: '#fff' }}>{parseInt(price).toLocaleString('fr-FR')} FCFA</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ fontSize: '13px', color: '#6B7280' }}>Commission PayLink (1%)</span>
+            <span style={{ fontSize: '13px', color: '#F59E0B' }}>-{fee.toLocaleString('fr-FR')} FCFA</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '0.5px solid #1F1F1F' }}>
+            <span style={{ fontSize: '13px', color: '#10B981', fontWeight: '600' }}>Tu reçois</span>
+            <span style={{ fontSize: '14px', color: '#10B981', fontWeight: '700' }}>{sellerReceives.toLocaleString('fr-FR')} FCFA</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+
   return (
     <div style={{ padding: '32px' }}>
       <style>{`
@@ -259,11 +298,18 @@ export default function NewProductPage() {
 
           {/* CONTENU */}
           {pageType === 'link' ? (
-            <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
-              <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Description</p>
-              <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>Décris ton produit pour convaincre tes clients d'acheter.</p>
-              <RichEditor content={content} onChange={setContent} />
-            </div>
+            <>
+              <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
+                <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Description</p>
+                <p style={{ fontSize: '13px', color: '#6B7280', margin: '0 0 16px' }}>Décris ton produit pour convaincre tes clients d'acheter.</p>
+                <RichEditor content={content} onChange={setContent} />
+              </div>
+
+              {/* PRIX (LIEN SIMPLE) */}
+              <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
+                <PriceBlock />
+              </div>
+            </>
           ) : (
             <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
               <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 8px' }}>Page de vente IA ✨</p>
@@ -287,7 +333,7 @@ export default function NewProductPage() {
                   onCancel={() => setShowQuestionFlow(false)}
                 />
               ) : rawContent ? (
-                <div style={{ marginBottom: '16px' }}>
+                <div style={{ marginBottom: '20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <label style={{ fontSize: '13px', color: '#9CA3AF' }}>Informations collectées</label>
                     <button onClick={() => setShowQuestionFlow(true)} style={{ background: 'transparent', border: 'none', color: '#10B981', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}>
@@ -299,10 +345,10 @@ export default function NewProductPage() {
                   </div>
                 </div>
               ) : (
-                <div style={{ marginBottom: '16px' }}>
+                <div style={{ marginBottom: '20px' }}>
                   <div style={{ background: '#0D0D0D', borderRadius: '10px', padding: '24px', border: '0.5px dashed #2a2a2a', textAlign: 'center' }}>
                     <p style={{ fontSize: '13px', color: '#9CA3AF', margin: '0 0 16px', lineHeight: '1.6' }}>
-                      Réponds à 7 questions rapides sur ton produit. Ça prend 2 minutes et ça permet à l'IA de créer une page beaucoup plus précise et convaincante.
+                      Réponds à 8 questions rapides sur ton produit. Ça prend 2 minutes et ça permet à l'IA de créer une page beaucoup plus précise et convaincante.
                     </p>
                     <button onClick={() => setShowQuestionFlow(true)} style={{ background: '#10B981', border: 'none', color: '#000', fontSize: '14px', fontWeight: '700', padding: '12px 24px', borderRadius: '8px', cursor: 'pointer' }}>
                       Commencer le questionnaire →
@@ -310,6 +356,9 @@ export default function NewProductPage() {
                   </div>
                 </div>
               )}
+
+              {/* PRIX (avant le bouton générer) */}
+              {!showQuestionFlow && rawContent && <PriceBlock />}
 
               {!showQuestionFlow && (
                 <button onClick={handleGenerate} disabled={generating || !rawContent} style={{ width: '100%', background: generating || !rawContent ? '#1A1A1A' : '#10B98115', border: `1px solid ${generating || !rawContent ? '#2a2a2a' : '#10B98140'}`, color: generating || !rawContent ? '#6B7280' : '#10B981', fontSize: '14px', fontWeight: '700', padding: '14px', borderRadius: '8px', cursor: generating || !rawContent ? 'not-allowed' : 'pointer' }}>
@@ -392,44 +441,6 @@ export default function NewProductPage() {
               )}
             </div>
           )}
-
-          {/* PRIX */}
-          <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
-            <p style={{ fontSize: '12px', color: '#10B981', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', margin: '0 0 20px' }}>Prix</p>
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>Prix de vente (FCFA) *</label>
-              <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Ex: 25000" style={inputStyle} />
-            </div>
-            {!showOriginalPrice ? (
-              <button onClick={() => setShowOriginalPrice(true)} style={{ background: 'transparent', border: 'none', color: '#6B7280', fontSize: '13px', cursor: 'pointer', padding: '0', marginBottom: '16px', textDecoration: 'underline' }}>
-                + Ajouter un prix barré
-              </button>
-            ) : (
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', color: '#9CA3AF', marginBottom: '8px' }}>
-                  Prix barré (FCFA)
-                  <span onClick={() => { setShowOriginalPrice(false); setOriginalPrice('') }} style={{ color: '#444', cursor: 'pointer', fontSize: '11px', marginLeft: '8px', textDecoration: 'underline' }}>Supprimer</span>
-                </label>
-                <input type="number" value={originalPrice} onChange={(e) => setOriginalPrice(e.target.value)} placeholder="Ex: 50000" style={inputStyle} />
-              </div>
-            )}
-            {price && parseInt(price) > 0 && (
-              <div style={{ background: '#0D0D0D', borderRadius: '8px', padding: '14px', border: '0.5px solid #1F1F1F' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '13px', color: '#6B7280' }}>Prix de vente</span>
-                  <span style={{ fontSize: '13px', color: '#fff' }}>{parseInt(price).toLocaleString('fr-FR')} FCFA</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontSize: '13px', color: '#6B7280' }}>Commission PayLink (1%)</span>
-                  <span style={{ fontSize: '13px', color: '#F59E0B' }}>-{fee.toLocaleString('fr-FR')} FCFA</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '0.5px solid #1F1F1F' }}>
-                  <span style={{ fontSize: '13px', color: '#10B981', fontWeight: '600' }}>Tu reçois</span>
-                  <span style={{ fontSize: '14px', color: '#10B981', fontWeight: '700' }}>{sellerReceives.toLocaleString('fr-FR')} FCFA</span>
-                </div>
-              </div>
-            )}
-          </div>
 
           {/* APRÈS PAIEMENT */}
           <div style={{ background: '#111111', borderRadius: '12px', padding: '24px', border: '0.5px solid #1F1F1F' }}>
