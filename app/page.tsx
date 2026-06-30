@@ -97,6 +97,8 @@ export default function LandingPage() {
         .fade-line { height: 1px; background: linear-gradient(90deg, transparent 0%, #2a2a2a 50%, transparent 100%); width: 100%; }
         .premium-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .premium-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px #10B98140; }
+        .dashboard-preview-wrap { max-width: 1000px; margin: 56px auto 0; padding: 0 16px; }
+        .dashboard-preview-img { width: 100%; border-radius: 14px; border: 0.5px solid #1F1F1F; box-shadow: 0 30px 80px -20px rgba(16,185,129,0.25), 0 20px 50px -10px rgba(0,0,0,0.6); display: block; }
 
         @media (max-width: 767px) {
           .nav-links { display: none !important; }
@@ -118,6 +120,7 @@ export default function LandingPage() {
           .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
           .footer-logo-col { grid-column: 1 / -1; }
           .section-pad { padding: 44px 16px; }
+          .dashboard-preview-wrap { margin-top: 36px; }
         }
       `}</style>
 
@@ -169,7 +172,7 @@ export default function LandingPage() {
       </nav>
 
       {/* HERO */}
-      <div style={{ textAlign: 'center', padding: '64px 16px 48px' }}>
+      <div style={{ textAlign: 'center', padding: '64px 16px 0' }}>
         <Reveal>
           <div style={{ display: 'inline-block', background: '#10B98118', border: '0.5px solid #10B98140', borderRadius: '20px', padding: '6px 16px', marginBottom: '24px' }}>
             <span style={{ fontSize: '12px', color: '#10B981', fontWeight: '500' }}>À partir de 0.5% de commission</span>
@@ -195,10 +198,17 @@ export default function LandingPage() {
           </div>
           <p style={{ fontSize: '12px', color: '#444', marginTop: '12px' }}>Aucune carte bancaire requise</p>
         </Reveal>
+
+        {/* CAPTURE DASHBOARD */}
+        <Reveal delay={0.4}>
+          <div className="dashboard-preview-wrap">
+            <img src="/dashboard-preview.png" alt="Dashboard PayLink Africa" className="dashboard-preview-img" />
+          </div>
+        </Reveal>
       </div>
 
       {/* STATS */}
-      <div className="stats-gap" style={{ display: 'flex', justifyContent: 'center', padding: '32px 16px' }}>
+      <div className="stats-gap" style={{ display: 'flex', justifyContent: 'center', padding: '56px 16px 32px' }}>
         {[
           { value: '0.5%', label: 'Commission minimum' },
           { value: '15', label: 'Pays africains' },
