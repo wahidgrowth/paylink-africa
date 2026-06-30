@@ -293,12 +293,13 @@ export default function PaymentPage() {
       <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
         <style>{`
           .sp-container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
-          .sp-section { padding: 72px 0; }
-          .sp-section-alt { padding: 72px 0; background: #0D0D0D; position: relative; overflow: hidden; }
+          .sp-section { padding: 72px 0; text-align: center; }
+          .sp-section-alt { padding: 72px 0; background: #0D0D0D; position: relative; overflow: hidden; text-align: center; }
           .sp-benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
           .sp-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
           .sp-testimonials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-          .sp-label { font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 12px; }
+          .sp-label { font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 16px; text-align: center; }
+          .sp-content-block { text-align: left; max-width: 620px; margin: 0 auto; }
           .sp-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-bottom: 0.5px solid #1F1F1F; position: sticky; top: 0; background: rgba(10,10,10,0.95); backdrop-filter: blur(10px); z-index: 100; }
           .sp-cta-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
           .sp-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px ${accentColor}40; }
@@ -347,7 +348,7 @@ export default function PaymentPage() {
           <div className="sp-hero-glow" />
 
           <div className="sp-container">
-            <div className="sp-section" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+            <div className="sp-section" style={{ position: 'relative', zIndex: 1 }}>
               {product.image_url && (
                 <Reveal>
                   <img src={product.image_url} alt={product.title} style={{ width: '100%', maxHeight: '360px', objectFit: 'cover', borderRadius: '14px', marginBottom: '40px', border: '0.5px solid #1F1F1F' }} />
@@ -403,34 +404,36 @@ export default function PaymentPage() {
             <Reveal>
               <p className="sp-label" style={{ color: accentColor }}>{pc.problem_title || 'Le vrai problème'}</p>
             </Reveal>
-            {pc.problem_intro && (
-              <Reveal delay={0.05}>
-                <p style={{ fontSize: '15px', color: '#9CA3AF', fontWeight: '500', margin: '0 0 24px', lineHeight: '1.6', maxWidth: '600px' }}>
-                  {pc.problem_intro}
-                </p>
-              </Reveal>
-            )}
-            {pc.problem_points && pc.problem_points.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
-                {pc.problem_points.map((point, i) => (
-                  <Reveal key={i} delay={i * 0.06}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '16px 20px', background: '#0A0A0A', borderRadius: '10px', border: '0.5px solid #1F1F1F' }}>
-                      <div style={{ flexShrink: 0, marginTop: '2px' }}><XIcon /></div>
-                      <p style={{ margin: 0, fontSize: '14px', color: '#9CA3AF', lineHeight: '1.6' }}>{point}</p>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            )}
-            {pc.problem_quote && (
-              <Reveal>
-                <blockquote style={{ margin: '28px 0 0', padding: '20px 24px', borderLeft: `3px solid ${accentColor}`, background: '#0A0A0A', borderRadius: '0 10px 10px 0' }}>
-                  <p style={{ margin: 0, fontSize: '15px', color: '#fff', fontStyle: 'italic', lineHeight: '1.6' }}>
-                    "{pc.problem_quote}"
+            <div className="sp-content-block">
+              {pc.problem_intro && (
+                <Reveal delay={0.05}>
+                  <p style={{ fontSize: '15px', color: '#9CA3AF', fontWeight: '500', margin: '0 0 24px', lineHeight: '1.6', textAlign: 'center' }}>
+                    {pc.problem_intro}
                   </p>
-                </blockquote>
-              </Reveal>
-            )}
+                </Reveal>
+              )}
+              {pc.problem_points && pc.problem_points.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
+                  {pc.problem_points.map((point, i) => (
+                    <Reveal key={i} delay={i * 0.06}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '16px 20px', background: '#0A0A0A', borderRadius: '10px', border: '0.5px solid #1F1F1F' }}>
+                        <div style={{ flexShrink: 0, marginTop: '2px' }}><XIcon /></div>
+                        <p style={{ margin: 0, fontSize: '14px', color: '#9CA3AF', lineHeight: '1.6' }}>{point}</p>
+                      </div>
+                    </Reveal>
+                  ))}
+                </div>
+              )}
+              {pc.problem_quote && (
+                <Reveal>
+                  <blockquote style={{ margin: '28px 0 0', padding: '20px 24px', borderLeft: `3px solid ${accentColor}`, background: '#0A0A0A', borderRadius: '0 10px 10px 0' }}>
+                    <p style={{ margin: 0, fontSize: '15px', color: '#fff', fontStyle: 'italic', lineHeight: '1.6' }}>
+                      "{pc.problem_quote}"
+                    </p>
+                  </blockquote>
+                </Reveal>
+              )}
+            </div>
           </div>
         </div>
 
@@ -441,7 +444,7 @@ export default function PaymentPage() {
           <div className="sp-container">
             <Reveal>
               <p className="sp-label" style={{ color: accentColor }}>{pc.solution_title || 'La solution'}</p>
-              <p style={{ fontSize: '16px', color: '#fff', lineHeight: '1.7', margin: 0, maxWidth: '600px', fontWeight: '500' }}>
+              <p style={{ fontSize: '16px', color: '#fff', lineHeight: '1.7', margin: '0 auto', maxWidth: '600px', fontWeight: '500' }}>
                 {pc.solution_text}
               </p>
             </Reveal>
@@ -459,7 +462,7 @@ export default function PaymentPage() {
             <div className="sp-benefits-grid">
               {pc.benefits && pc.benefits.map((benefit, i) => (
                 <Reveal key={i} delay={i * 0.07}>
-                  <div className="sp-benefit-card" style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box' }}>
+                  <div className="sp-benefit-card" style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
                     <div style={{ fontSize: '26px', marginBottom: '12px' }}>{benefit.icon}</div>
                     <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#fff', margin: '0 0 6px' }}>{benefit.title}</h3>
                     <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF', lineHeight: '1.6' }}>{benefit.text}</p>
@@ -493,7 +496,7 @@ export default function PaymentPage() {
               <Reveal>
                 <p className="sp-label" style={{ color: accentColor }}>{pc.steps_title || 'Comment ça marche'}</p>
               </Reveal>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="sp-content-block" style={{ display: 'flex', flexDirection: 'column' }}>
                 {pc.steps.map((step, i) => (
                   <Reveal key={i} delay={i * 0.08}>
                     <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', padding: '20px 0', borderBottom: i < pc.steps.length - 1 ? '0.5px solid #1F1F1F' : 'none' }}>
@@ -524,7 +527,7 @@ export default function PaymentPage() {
               <div className="sp-testimonials-grid">
                 {pc.testimonials.map((t, i) => (
                   <Reveal key={i} delay={i * 0.08}>
-                    <div style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box' }}>
+                    <div style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
                       <div style={{ display: 'flex', gap: '3px', marginBottom: '12px' }}>
                         {[1,2,3,4,5].map(s => <StarIcon key={s} />)}
                       </div>
@@ -555,7 +558,7 @@ export default function PaymentPage() {
               <Reveal>
                 <p className="sp-label" style={{ color: accentColor }}>{pc.faq_title || 'Questions fréquentes'}</p>
               </Reveal>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="sp-content-block" style={{ display: 'flex', flexDirection: 'column' }}>
                 {pc.faq.map((item, i) => (
                   <div key={i} style={{ borderBottom: '0.5px solid #1F1F1F' }}>
                     <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{ width: '100%', background: 'transparent', border: 'none', padding: '18px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', textAlign: 'left', gap: '16px' }}>
@@ -576,7 +579,7 @@ export default function PaymentPage() {
 
         {/* GARANTIE */}
         <div className="sp-section-alt">
-          <div className="sp-container" style={{ textAlign: 'center' }}>
+          <div className="sp-container">
             <Reveal>
               <div style={{ width: '56px', height: '56px', background: `${accentColor}15`, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: accentColor }}>
                 <ShieldIcon />
@@ -595,7 +598,7 @@ export default function PaymentPage() {
         <div className="sp-section">
           <div className="sp-container">
             <Reveal>
-              <div style={{ background: '#111', borderRadius: '18px', border: `1px solid ${accentColor}30`, overflow: 'hidden', maxWidth: '520px', margin: '0 auto' }}>
+              <div style={{ background: '#111', borderRadius: '18px', border: `1px solid ${accentColor}30`, overflow: 'hidden', maxWidth: '520px', margin: '0 auto', textAlign: 'left' }}>
                 <div style={{ padding: '24px 28px', borderBottom: '0.5px solid #1F1F1F' }}>
                   <h2 style={{ fontSize: '19px', fontWeight: '800', color: '#fff', margin: '0 0 4px', letterSpacing: '-0.3px', lineHeight: '1.3' }}>{priceCardTitle}</h2>
                   <p style={{ fontSize: '13px', color: '#6B7280', margin: 0 }}>Ce que tu obtiens</p>
