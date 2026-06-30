@@ -6,9 +6,19 @@ type Question = {
   question: string
   placeholder: string
   helper?: string
+  hasCheckbox?: boolean
+  checkboxLabel?: string
 }
 
 const QUESTIONS: Question[] = [
+  {
+    id: 'offer_details',
+    question: "Quelle est ton offre exactement ?",
+    placeholder: "Ex: Formation vidéo de 4 semaines, accès à vie, avec groupe WhatsApp de support",
+    helper: "Formation, accompagnement, coaching, ebook... précise le format et la durée.",
+    hasCheckbox: true,
+    checkboxLabel: "Voudrais-tu qu'on optimise ton offre pour maximiser les ventes ?",
+  },
   {
     id: 'what_it_does',
     question: "En une phrase, qu'est-ce que ton produit permet à quelqu'un de faire ou d'obtenir ?",
@@ -59,6 +69,7 @@ export default function QuestionFlow({ onComplete, onCancel }: QuestionFlowProps
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [currentAnswer, setCurrentAnswer] = useState('')
+  const [optimizeOffer, setOptimizeOffer] = useState(true)
 
   const currentQuestion = QUESTIONS[currentIndex]
   const isLast = currentIndex === QUESTIONS.length - 1
@@ -66,6 +77,10 @@ export default function QuestionFlow({ onComplete, onCancel }: QuestionFlowProps
 
   const buildRawContent = (finalAnswers: Record<string, string>) => {
     const parts: string[] = []
+    if (finalAnswers.offer_details) {
+      parts.push(`Offre exacte : ${finalAnswers.offer_details}`)
+      parts.push(`Optimisation de l'offre demandée : ${optimizeOffer ? 'oui, reformule la présentation de l\'offre pour maximiser la valeur perçue et les ventes' : 'non, garde la présentation de l\'offre telle quelle'}`)
+    }
     if (finalAnswers.what_it_does) parts.push(`Ce que le produit permet : ${finalAnswers.what_it_does}`)
     if (finalAnswers.ideal_client) parts.push(`Client idéal : ${finalAnswers.ideal_client}`)
     if (finalAnswers.main_problem) parts.push(`Problème principal : ${finalAnswers.main_problem}`)
@@ -162,6 +177,18 @@ export default function QuestionFlow({ onComplete, onCancel }: QuestionFlowProps
             style={{ ...inputStyle, marginTop: currentQuestion.helper ? 0 : '12px' }}
             autoFocus
           />
+
+          {currentQuestion.hasCheckbox && (
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '14px', cursor: 'pointer', padding: '14px', background: '#0D0D0D', borderRadius: '10px', border: '0.5px solid #1F1F1F' }}>
+              <input
+                type="checkbox"
+                checked={optimizeOffer}
+                onChange={(e) => setOptimizeOffer(e.target.checked)}
+                style={{ marginTop: '2px', width: '16px', height: '16px', accentColor: '#10B981', cursor: 'pointer', flexShrink: 0 }}
+              />
+              <span style={{ fontSize: '13px', color: '#9CA3AF', lineHeight: '1.5' }}>{currentQuestion.checkboxLabel}</span>
+            </label>
+          )}
         </div>
 
         {/* NAVIGATION */}
