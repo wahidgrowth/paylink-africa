@@ -463,7 +463,7 @@ export default function PaymentPage() {
               {pc.benefits && pc.benefits.map((benefit, i) => (
                 <Reveal key={i} delay={i * 0.07}>
                   <div className="sp-benefit-card" style={{ background: '#0A0A0A', borderRadius: '14px', padding: '22px', border: '0.5px solid #1F1F1F', height: '100%', boxSizing: 'border-box', textAlign: 'left' }}>
-                    <div style={{ fontSize: '26px', marginBottom: '12px' }}>{benefit.icon}</div>
+                    <div style={{ fontSize: '26px', marginBottom: '12px', filter: 'grayscale(100%) brightness(1.4)', opacity: 0.85 }}>{benefit.icon}</div>
                     <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#fff', margin: '0 0 6px' }}>{benefit.title}</h3>
                     <p style={{ margin: 0, fontSize: '13px', color: '#9CA3AF', lineHeight: '1.6' }}>{benefit.text}</p>
                   </div>
