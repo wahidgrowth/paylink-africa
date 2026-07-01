@@ -59,8 +59,11 @@ function useReveal() {
 
 function Reveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const { ref, visible } = useReveal()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  const shown = !mounted || visible
   return (
-    <div ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s` }}>
+    <div ref={ref} style={{ opacity: shown ? 1 : 0, transform: shown ? 'translateY(0)' : 'translateY(24px)', transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s` }}>
       {children}
     </div>
   )
