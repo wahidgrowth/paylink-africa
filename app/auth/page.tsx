@@ -95,9 +95,9 @@ export default function AuthPage() {
         .auth-mobile-header { display: none; }
 
         @media (max-width: 767px) {
-          .auth-container { flex-direction: column; }
+          .auth-container { flex-direction: column; height: 100vh; }
           .auth-left { display: none !important; }
-          .auth-right { padding: 24px 16px 40px; align-items: flex-start; }
+          .auth-right { padding: 24px 16px; align-items: center; flex: 1; }
           .auth-mobile-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 0.5px solid #1F1F1F; }
         }
       `}</style>
