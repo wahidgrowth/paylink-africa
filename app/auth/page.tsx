@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import Logo from '@/components/Logo'
 
 function getPasswordStrength(password: string): { score: number; label: string; color: string } {
@@ -143,11 +144,14 @@ export default function AuthPage() {
           </div>
 
           {/* IMAGE — remplit l'espace restant en bas */}
-          <div style={{ flex: 1, position: 'relative', marginTop: '32px', minHeight: '220px' }}>
-            <img
-              src="/auth-illustration.png"
+          <div style={{ flex: 1, position: 'relative', marginTop: '32px', minHeight: '260px' }}>
+            <Image
+              src="/auth-illustration.jpg"
               alt=""
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              fill
+              priority
+              sizes="50vw"
+              style={{ objectFit: 'cover' }}
             />
             {/* Dégradé pour fondre l'image dans le fond du panneau */}
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, #111111 0%, rgba(17,17,17,0) 25%, rgba(17,17,17,0) 70%, #111111 100%)' }} />
