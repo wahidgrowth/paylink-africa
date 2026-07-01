@@ -32,6 +32,7 @@ export default function AuthPage() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
   const [isLogin, setIsLogin] = useState(true)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -62,6 +63,14 @@ export default function AuthPage() {
       }
     }
     setLoading(false)
+  }
+
+  const labelStyle = {
+    display: 'block',
+    fontSize: '13px',
+    fontWeight: '600' as const,
+    color: '#fff',
+    marginBottom: '6px',
   }
 
   const inputStyle = {
@@ -129,7 +138,7 @@ export default function AuthPage() {
               Un lien, tous les pays,<br />tout ton argent.
             </h2>
             <p style={{ fontSize: '14px', color: '#D1D5DB', margin: 0, lineHeight: '1.6' }}>
-              PayLink Africa s'occupe des paiements, partout en Afrique.
+              Paiements simplifiés, conversions optimisées grâce à PayLink Africa.
             </p>
           </div>
         </div>
@@ -139,42 +148,72 @@ export default function AuthPage() {
           <div style={{ width: '100%', maxWidth: '400px' }}>
 
             <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: '800', margin: '0 0 4px' }}>
-              {isLogin ? 'Connexion' : 'Créer un compte'}
+              {isLogin ? 'Connexion à votre compte' : 'Créer un compte'}
             </h1>
             <p style={{ color: '#6B7280', fontSize: '14px', margin: '0 0 28px' }}>
-              {isLogin ? 'Content de te revoir' : 'Gratuit. Sans carte bancaire.'}
+              {isLogin ? 'Entrez votre e-mail et mot de passe pour vous connecter' : 'Gratuit. Sans carte bancaire.'}
             </p>
 
             {!isLogin && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
-                <input type="text" placeholder="Prénom" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={inputStyle} />
-                <input type="text" placeholder="Nom" value={lastName} onChange={(e) => setLastName(e.target.value)} style={inputStyle} />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+                <div>
+                  <label style={labelStyle}>Prénom</label>
+                  <input type="text" placeholder="Prénom" value={firstName} onChange={(e) => setFirstName(e.target.value)} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Nom</label>
+                  <input type="text" placeholder="Nom" value={lastName} onChange={(e) => setLastName(e.target.value)} style={inputStyle} />
+                </div>
               </div>
             )}
 
-            <input type="email" placeholder="Adresse email" value={email} onChange={(e) => setEmail(e.target.value)} style={{ ...inputStyle, marginBottom: '10px' }} />
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>Adresse e-mail</label>
+              <input type="email" placeholder="email@exemple.com" value={email} onChange={(e) => setEmail(e.target.value)} style={inputStyle} />
+            </div>
 
-            <div style={{ position: 'relative', marginBottom: !isLogin && password ? '8px' : '20px' }}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Mot de passe"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ ...inputStyle, paddingRight: '44px' }}
-              />
-              <span onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#6B7280', display: 'flex' }}>
-                {showPassword ? <EyeOffIcon /> : <EyeOnIcon />}
-              </span>
+            <div style={{ marginBottom: !isLogin && password ? '8px' : '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ ...labelStyle, marginBottom: 0 }}>Mot de passe</label>
+                {isLogin && (
+                  <Link href="/auth/mot-de-passe-oublie" style={{ fontSize: '12px', color: '#10B981', textDecoration: 'underline' }}>
+                    Mot de passe oublié ?
+                  </Link>
+                )}
+              </div>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Mot de passe"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ ...inputStyle, paddingRight: '44px' }}
+                />
+                <span onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#6B7280', display: 'flex' }}>
+                  {showPassword ? <EyeOffIcon /> : <EyeOnIcon />}
+                </span>
+              </div>
             </div>
 
             {!isLogin && password && (
-              <div style={{ marginBottom: '20px' }}>
+              <div style={{ marginBottom: '16px' }}>
                 <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
                   {[1, 2, 3, 4].map((level) => (
                     <div key={level} style={{ flex: 1, height: '3px', borderRadius: '2px', background: strength.score >= level ? strength.color : '#1F1F1F' }} />
                   ))}
                 </div>
                 {strength.label && <p style={{ margin: 0, fontSize: '11px', color: strength.color }}>{strength.label}</p>}
+              </div>
+            )}
+
+            {isLogin && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+                <div onClick={() => setRememberMe(!rememberMe)} style={{ width: '18px', height: '18px', borderRadius: '4px', border: `1.5px solid ${rememberMe ? '#10B981' : '#2a2a2a'}`, background: rememberMe ? '#10B981' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                  {rememberMe && <span style={{ color: '#000', fontSize: '11px', fontWeight: '700' }}>✓</span>}
+                </div>
+                <p onClick={() => setRememberMe(!rememberMe)} style={{ margin: 0, fontSize: '13px', color: '#D1D5DB', cursor: 'pointer' }}>
+                  Se souvenir de moi
+                </p>
               </div>
             )}
 
@@ -194,7 +233,7 @@ export default function AuthPage() {
 
             <button onClick={handleAuth} disabled={loading}
               style={{ width: '100%', background: loading ? '#059669' : '#10B981', border: 'none', color: '#000', fontWeight: '700', fontSize: '14px', padding: '14px', borderRadius: '10px', cursor: loading ? 'not-allowed' : 'pointer' }}>
-              {loading ? 'Chargement...' : isLogin ? 'Se connecter →' : 'Créer mon compte gratuitement →'}
+              {loading ? 'Chargement...' : isLogin ? 'Connexion' : 'Créer mon compte gratuitement →'}
             </button>
 
             {message && (
@@ -206,7 +245,7 @@ export default function AuthPage() {
             <p style={{ color: '#6B7280', marginTop: '20px', fontSize: '13px', textAlign: 'center' }}>
               {isLogin ? 'Pas encore de compte ?' : 'Déjà un compte ?'}{' '}
               <span onClick={() => { setIsLogin(!isLogin); setMessage('') }} style={{ color: '#10B981', cursor: 'pointer', fontWeight: '600' }}>
-                {isLogin ? "S'inscrire gratuitement" : 'Se connecter'}
+                {isLogin ? "Ouvrir un compte" : 'Se connecter'}
               </span>
             </p>
 
