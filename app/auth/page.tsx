@@ -116,28 +116,42 @@ export default function AuthPage() {
       <div className="auth-container">
 
         {/* PANNEAU GAUCHE — Desktop only */}
-        <div className="auth-left" style={{ flex: 1, background: '#111111', borderRight: '0.5px solid #1F1F1F', flexDirection: 'column', justifyContent: 'center', padding: '60px 48px' }}>
-          <Link href="/" style={{ textDecoration: 'none', marginBottom: '48px', display: 'inline-block' }}>
-            <Logo size="md" />
-          </Link>
-          <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 12px', lineHeight: '1.3' }}>
-            Vends partout en Afrique.<br /><span style={{ color: '#10B981' }}>Garde presque tout.</span>
-          </h2>
-          <p style={{ fontSize: '14px', color: '#6B7280', margin: '0 0 48px', lineHeight: '1.7' }}>
-            Crée ta page de vente, partage ton lien Mobile Money et encaisse en quelques secondes.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {avantages.map((item, i) => (
-              <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                <div style={{ width: '40px', height: '40px', background: '#10B98115', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
-                  {item.icon}
+        <div className="auth-left" style={{ flex: 1, background: '#111111', borderRight: '0.5px solid #1F1F1F', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ padding: '60px 48px 0', position: 'relative', zIndex: 2 }}>
+            <Link href="/" style={{ textDecoration: 'none', marginBottom: '48px', display: 'inline-block' }}>
+              <Logo size="md" />
+            </Link>
+            <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#fff', margin: '0 0 12px', lineHeight: '1.3' }}>
+              Vends partout en Afrique.<br /><span style={{ color: '#10B981' }}>Garde presque tout.</span>
+            </h2>
+            <p style={{ fontSize: '14px', color: '#6B7280', margin: '0 0 40px', lineHeight: '1.7' }}>
+              Crée ta page de vente, partage ton lien Mobile Money et encaisse en quelques secondes.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {avantages.map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                  <div style={{ width: '40px', height: '40px', background: '#10B98115', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10B981', flexShrink: 0 }}>
+                    {item.icon}
+                  </div>
+                  <div>
+                    <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: '600', color: '#fff' }}>{item.title}</p>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#6B7280' }}>{item.desc}</p>
+                  </div>
                 </div>
-                <div>
-                  <p style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: '600', color: '#fff' }}>{item.title}</p>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#6B7280' }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* IMAGE — remplit l'espace restant en bas */}
+          <div style={{ flex: 1, position: 'relative', marginTop: '32px', minHeight: '220px' }}>
+            <img
+              src="/auth-illustration.png"
+              alt=""
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+            {/* Dégradé pour fondre l'image dans le fond du panneau */}
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, #111111 0%, rgba(17,17,17,0) 25%, rgba(17,17,17,0) 70%, #111111 100%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, #111111 0%, rgba(17,17,17,0) 15%)' }} />
           </div>
         </div>
 
